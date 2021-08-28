@@ -5,7 +5,7 @@ const { study } = require('../../../sequelize/controllers')
 
 router.post('/', async (req, res, next) => {
   let sid = req.body.sid || null;
-  let id = req.body.idx_m_complaint_attachment || null
+  let id = req.body.idx_t_study_attachment || null
 
   console.log(req.body)
   try {

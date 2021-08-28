@@ -112,7 +112,7 @@ module.exports = {
 
         if (!fs.existsSync(path)) {
           fs.mkdirSync(path);
-          mv(tmp_path, path + obj.name, function (err) {
+          mv(tmp_path, path + obj.originalFilename, function (err) {
             if (err) reject(err)
             fs.unlink(tmp_path, function () {
               if (err) reject(err)
@@ -120,7 +120,7 @@ module.exports = {
             })
           })
         } else {
-          mv(tmp_path, path + obj.name, function (err) {
+          mv(tmp_path, path + obj.originalFilename, function (err) {
             if (err) reject(err)
             fs.unlink(tmp_path, function () {
               if (err) reject(err)

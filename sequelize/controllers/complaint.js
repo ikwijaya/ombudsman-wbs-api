@@ -745,7 +745,7 @@ module.exports = {
           attributes: ['fullname', 'idx_m_user'],
           where: {
             idx_m_user: {
-              [Op.in]: complaint.filter(e => e.legal_standing.idx_m_legal_standing !== -1).map(e => parseInt(e.ucreate))
+              [Op.in]: complaint.filter(e => e.legal_standing ? e.legal_standing.idx_m_legal_standing !== -1 : false).map(e => parseInt(e.ucreate))
             }
           }
         }

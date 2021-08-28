@@ -9,6 +9,7 @@ const { UPLOAD_PATH } = require('../../../config')
 router.post('/', multiparty, async (req, res, next) => {
   try {
     let upload = req.files.upload || []
+    console.log('upload', JSON.stringify(upload))
 
     await helper.uploadFile(upload, upload.path, UPLOAD_PATH)
       .then(async (r) => res.status(200).send(r))
