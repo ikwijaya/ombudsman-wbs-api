@@ -894,7 +894,7 @@ module.exports = {
       let v = await models.complaints.findOne(
         {
           attributes: ['form_no'],
-          where: { form_status: { [Op.in]: [1, 99] } },
+          where: { form_status: { [Op.in]: ['1', '99'] } },
           order: [
             ['dcreate', 'DESC']
           ]
