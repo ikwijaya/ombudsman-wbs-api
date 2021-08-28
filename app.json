@@ -1,0 +1,6 @@
+{
+  "name": "ombudsman",
+  "description": "API System for OMBUDSMAN RI 2.0",
+  "image": "heroku/nodejs",
+  "addons": []
+}

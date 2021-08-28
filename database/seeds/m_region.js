@@ -1,0 +1,316 @@
+
+exports.seed = function (knex) {
+  // Deletes ALL existing entries
+  return knex('m_region').del()
+    .then(function () {
+      // Inserts seed entries
+      return knex('m_region').insert([
+        {
+          "idx_m_region": 1,
+          "name": "BENGKULU",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 2,
+          "name": "BANTEN",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 3,
+          "name": "ACEH",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 4,
+          "name": "MALUKU UTARA",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 5,
+          "name": "KALIMANTAN BARAT",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 6,
+          "name": "JAWA TENGAH",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 7,
+          "name": "DKI JAKARTA",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 8,
+          "name": "SULAWESI TENGAH",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 9,
+          "name": "NUSA TENGGARA TIMUR",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 10,
+          "name": "LAMPUNG",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 11,
+          "name": "BALI",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 12,
+          "name": "JAWA BARAT",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 13,
+          "name": "NUSA TENGGARA BARAT",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 14,
+          "name": "KALIMANTAN SELATAN",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 15,
+          "name": "DI YOGYAKARTA",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 16,
+          "name": "JAMBI",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 17,
+          "name": "MALUKU",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 18,
+          "name": "SULAWESI TENGGARA",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 19,
+          "name": "GORONTALO",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 20,
+          "name": "SUMATERA SELATAN",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 21,
+          "name": "KALIMANTAN UTARA",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 22,
+          "name": "JAWA TIMUR",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 23,
+          "name": "KALIMANTAN TENGAH",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 24,
+          "name": "SULAWESI BARAT",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 25,
+          "name": "KEPULAUAN RIAU",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 26,
+          "name": "RIAU",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 27,
+          "name": "SUMATERA UTARA",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 28,
+          "name": "KALIMANTAN TIMUR",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 29,
+          "name": "SULAWESI SELATAN",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 30,
+          "name": "KEPULAUAN BANGKA BELITUNG",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 31,
+          "name": "SUMATERA BARAT",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 32,
+          "name": "PAPUA",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 33,
+          "name": "PAPUA BARAT",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        },
+        {
+          "idx_m_region": 34,
+          "name": "SULAWESI UTARA",
+          "ucreate": "sa",
+          "dcreate": "2021-05-24T08:24:13.000Z",
+          "umodified": null,
+          "dmodified": null,
+          "record_status": "A"
+        }
+      ]);
+    });
+};

@@ -1,0 +1,94 @@
+{
+  "violations": [
+    {
+      "idx_m_violation": 1,
+      "name": "Tindak Pidana Korupsi",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T13:44:34.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_violation": 2,
+      "name": "Kecurangan (Fraud)",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T13:44:34.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_violation": 3,
+      "name": "Tindak Pidana Lainnya",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T13:44:35.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_violation": 4,
+      "name": "Pelanggaran Kode Etik dan Perilaku",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T13:44:35.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_violation": 5,
+      "name": "Pelanggaran Maladministras",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T13:44:35.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_violation": 6,
+      "name": "Pelanggaran Disiplin Insan Ombudsman",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T13:44:35.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_violation": 7,
+      "name": "Perbuatan yang Dapat Menimbulkan Kerugian Finansial atau Non-Finansial terhadap Ombudsman RI atau merugikan Kepentingan Ombudsman RI",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T13:44:35.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_violation": 8,
+      "name": "Pelanggaran Prosedur Operasi Standar (SOP) Pelaksanaan Tugas dan Fungsi",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T13:44:35.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_violation": 9,
+      "name": "(SOP) Pelaksanaan Tugas dan Fungsi Pelanggaran Prosedur Operasi Standar (SOP), terkait Penanganan Laporan Masyarakat yang telah Ditutup",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T13:44:35.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_violation": 10,
+      "name": "Pelanggaran Prosedur Operasi Standar (SOP), terkait Penanganan Laporan Masyarakat yang masih dalam Proses",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T13:44:35.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    }
+  ]
+}

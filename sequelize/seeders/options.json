@@ -1,0 +1,202 @@
+{
+  "options": [
+    {
+      "option_id": "0",
+      "name": "GENERAL_STATUS",
+      "value": "0",
+      "text": "DRAFT",
+      "remarks": null,
+      "order_no": "0",
+      "id": 1
+    },
+    {
+      "option_id": "0",
+      "name": "GENERAL_STATUS",
+      "value": "1",
+      "text": "SUBMIT",
+      "remarks": null,
+      "order_no": "1",
+      "id": 2
+    },
+    {
+      "option_id": "2",
+      "name": "VERIFICATION_TYPE",
+      "value": "0",
+      "text": "DITERIMA",
+      "remarks": null,
+      "order_no": "0",
+      "id": 9
+    },
+    {
+      "option_id": "2",
+      "name": "VERIFICATION_TYPE",
+      "value": "1",
+      "text": "DITOLAK",
+      "remarks": null,
+      "order_no": "1",
+      "id": 10
+    },
+    {
+      "option_id": "3",
+      "name": "MEDIA",
+      "value": "TELEPON",
+      "text": "TELEPON",
+      "remarks": null,
+      "order_no": "1",
+      "id": 11
+    },
+    {
+      "option_id": "3",
+      "name": "MEDIA",
+      "value": "WHATSAPP",
+      "text": "WHATSAPP",
+      "remarks": null,
+      "order_no": "2",
+      "id": 12
+    },
+    {
+      "option_id": "3",
+      "name": "MEDIA",
+      "value": "SMS",
+      "text": "SMS",
+      "remarks": null,
+      "order_no": "3",
+      "id": 13
+    },
+    {
+      "option_id": "3",
+      "name": "MEDIA",
+      "value": "EMAIL",
+      "text": "EMAIL",
+      "remarks": null,
+      "order_no": "4",
+      "id": 14
+    },
+    {
+      "option_id": "3",
+      "name": "MEDIA",
+      "value": "SURAT",
+      "text": "SURAT",
+      "remarks": null,
+      "order_no": "5",
+      "id": 15
+    },
+    {
+      "option_id": "4",
+      "name": "TAHAPAN_VALIDASI",
+      "value": "PENERIMAAN DAN VERIFIKASI",
+      "text": "PENERIMAAN DAN VERIFIKASI",
+      "remarks": null,
+      "order_no": "1",
+      "id": 16
+    },
+    {
+      "option_id": "4",
+      "name": "TAHAPAN_VALIDASI",
+      "value": "PEMERIKSAAN LAPORAN",
+      "text": "PEMERIKSAAN LAPORAN",
+      "remarks": null,
+      "order_no": "2",
+      "id": 17
+    },
+    {
+      "option_id": "4",
+      "name": "TAHAPAN_VALIDASI",
+      "value": "RESOLUSI DAN MONITORING",
+      "text": "RESOLUSI DAN MONITORING",
+      "remarks": null,
+      "order_no": "3",
+      "id": 18
+    },
+    {
+      "option_id": "5",
+      "name": "DOC_CHECKLIST_VALIDASI",
+      "value": "INFORMASI ADMINISTRASI PENGADUAN PUTUSAN PENANGGUNG JAWAB WBS BUKTI PENGADUAN YANG DISAMPAIKAN OLEH PENGADU DOKUMEN PENDUKUNG PENGADUAN",
+      "text": "INFORMASI ADMINISTRASI PENGADUAN PUTUSAN PENANGGUNG JAWAB WBS BUKTI PENGADUAN YANG DISAMPAIKAN OLEH PENGADU DOKUMEN PENDUKUNG PENGADUAN",
+      "remarks": null,
+      "order_no": "1",
+      "id": 19
+    },
+    {
+      "option_id": "5",
+      "name": "DOC_CHECKLIST_VALIDASI",
+      "value": "PUTUSAN PENANGGUNG JAWAB WBS",
+      "text": "PUTUSAN PENANGGUNG JAWAB WBS",
+      "remarks": null,
+      "order_no": "2",
+      "id": 20
+    },
+    {
+      "option_id": "5",
+      "name": "DOC_CHECKLIST_VALIDASI",
+      "value": "BUKTI PENGADUAN YANG DISAMPAIKAN OLEH PENGADU",
+      "text": "BUKTI PENGADUAN YANG DISAMPAIKAN OLEH PENGADU",
+      "remarks": null,
+      "order_no": "3",
+      "id": 21
+    },
+    {
+      "option_id": "5",
+      "name": "DOC_CHECKLIST_VALIDASI",
+      "value": "DOKUMEN PENDUKUNG PENGADUAN",
+      "text": "DOKUMEN PENDUKUNG PENGADUAN",
+      "remarks": null,
+      "order_no": "4",
+      "id": 22
+    },
+    {
+      "option_id": "1",
+      "name": "SOURCE_COMPLAINT",
+      "value": "DATANG LANGSUNG",
+      "text": "DATANG LANGSUNG",
+      "remarks": null,
+      "order_no": "1",
+      "id": 3
+    },
+    {
+      "option_id": "1",
+      "name": "SOURCE_COMPLAINT",
+      "value": "SURAT",
+      "text": "SURAT",
+      "remarks": null,
+      "order_no": "2",
+      "id": 4
+    },
+    {
+      "option_id": "1",
+      "name": "SOURCE_COMPLAINT",
+      "value": "CALL CENTER 137",
+      "text": "CALL CENTER 137",
+      "remarks": null,
+      "order_no": "3",
+      "id": 5
+    },
+    {
+      "option_id": "1",
+      "name": "SOURCE_COMPLAINT",
+      "value": "EMAIL",
+      "text": "EMAIL",
+      "remarks": null,
+      "order_no": "4",
+      "id": 6
+    },
+    {
+      "option_id": "1",
+      "name": "SOURCE_COMPLAINT",
+      "value": "APLIKASI LAPOR!",
+      "text": "APLIKASI LAPOR!",
+      "remarks": null,
+      "order_no": "5",
+      "id": 7
+    },
+    {
+      "option_id": "1",
+      "name": "SOURCE_COMPLAINT",
+      "value": "WEB",
+      "text": "WEB",
+      "remarks": null,
+      "order_no": "0",
+      "id": 8
+    }
+  ]
+}

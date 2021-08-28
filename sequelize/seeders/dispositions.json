@@ -1,0 +1,85 @@
+{
+  "dispositions": [
+    {
+      "idx_m_disposition": 1,
+      "name": "Pemeriksaan Inspektorat",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T16:12:04.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_disposition": 2,
+      "name": "Pemeriksaan Keasistenan Utama Manajemen Mutu : Proses",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T16:12:04.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_disposition": 3,
+      "name": "Pemeriksaan Keasistenan Utama Manajemen Mutu : Ditutup",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T16:12:04.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_disposition": 4,
+      "name": "Pemeriksaan tim Gabungan",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T16:12:04.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_disposition": 5,
+      "name": "Pemeriksaan dengan Mekanisme Penegakan Etik : Majelis Etik",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T16:12:04.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_disposition": 6,
+      "name": "Pemeriksaan dengan Mekanisme Penegakan Etik : Dewan Etik",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T16:12:04.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_disposition": 7,
+      "name": "Pembinaan Oleh Atasan Langsung",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T16:12:04.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_disposition": 8,
+      "name": "Supervisi Monitoring Pengampu",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T16:12:04.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    },
+    {
+      "idx_m_disposition": 9,
+      "name": "Tidak dilanjutkan dengan pemeriksaan",
+      "ucreate": "sa",
+      "dcreate": "2021-05-10T16:12:04.000Z",
+      "umodified": null,
+      "dmodified": null,
+      "record_status": "A"
+    }
+  ]
+}

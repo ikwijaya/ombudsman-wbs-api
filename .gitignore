@@ -1,0 +1,12 @@
+node_modules
+body-request-example.json
+log_info.txt
+documentation/*.js
+documentation/*.json
+documentation/*.text
+documentation/*.tmp
+documentation/*.txt
+curl
+images/*
+file.json
+junk
