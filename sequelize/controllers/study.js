@@ -695,7 +695,7 @@ module.exports = {
 
       await models.complaint_study_attachments.destroy({
         transaction: t,
-        where: { idx_m_complaint_attachment: id }
+        where: { idx_t_study_attachment: id }
       });
 
       await t.commit()
