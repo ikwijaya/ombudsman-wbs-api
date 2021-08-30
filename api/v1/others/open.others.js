@@ -21,6 +21,7 @@ router.get('/:filename', async (req, res, next) => {
         .catch(e => console.log(e))
     }
   } catch (err) {
+    console.log('err_open_content', err)
     res.status(401).send(response.failed(err, []))
   }
 });

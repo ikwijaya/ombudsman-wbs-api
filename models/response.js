@@ -1,3 +1,5 @@
+const json = require('./data.json')
+
 const success = (msg = 'OK', data = []) => {
     return {
         "status_code": 'success',
@@ -16,8 +18,13 @@ const failed = (msg = 'Failed', is_relogin = false) => {
     }
 }
 
+const data = () => {
+    return json;
+}
+
 
 module.exports = {
     success,
-    failed
+    failed,
+    data
 }

@@ -185,14 +185,8 @@ module.exports = {
           },
           {
             type: 'E',
-            title: '3. Survei',
-            by: null,
-            idx_t_lhpa: lhpa_01.getDataValue('idx_t_lhpa')
-          },
-          {
-            type: 'E',
-            title: '4. Perlakuan Pelaksanaan Saran',
-            by: null,
+            title: '3. Perlakuan Pelaksanaan Saran',
+            by: '',
             idx_t_lhpa: lhpa_01.getDataValue('idx_t_lhpa')
           },
         ], { transaction: t });
@@ -200,168 +194,174 @@ module.exports = {
 
         let lhpa_01EDetail = [
           {
-            step: 'Pemetaan Data Laporan',
+            sort: 1,
+            step: 'Inventarisasi',
             idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '1. Deteksi').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '1. Deteksi')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
+            sort: 2,
             step: 'Identifikasi',
             idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '1. Deteksi').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '1. Deteksi')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
+            sort: 3,
             step: 'Pemuktahiran',
             idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '1. Deteksi').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '1. Deteksi')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Penyusunan Laporan Hasil Deteksi',
+            sort: 4,
+            step: 'Penyusunan Hasil Deteksi',
+            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '1. Deteksi').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '1. Deteksi')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          {
+            sort: 5,
+            step: 'Rapat Pleno/Perwakilan',
             idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '1. Deteksi').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '1. Deteksi')[0].getDataValue('idx_t_lhpa_action') : null
           },
           // analisis
           {
-            step: 'Penyusunan Rencana Tindak Lanjut',
+            sort: 1,
+            step: 'Penyusunan Rencana Tindak Lanjut Analisis',
             idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '2. Analisis').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '2. Analisis')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
+            sort: 2,
             step: 'Pengumpulan Data',
             idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '2. Analisis').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '2. Analisis')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
+            sort: 3,
             step: 'Penelaahan',
             idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '2. Analisis').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '2. Analisis')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
+            sort: 4,
             step: 'Perumusan Saran',
             idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '2. Analisis').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '2. Analisis')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Penyusunan Laporan Hasil Analisis',
+            sort: 5,
+            step: 'Konsultasi dan Koordinasi',
             idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '2. Analisis').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '2. Analisis')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Pengendalian Kualitas Perumusan Saran Kantor-Kantor Perwakilan*',
+            sort: 6,
+            step: 'Rapat Pleno/Perwakilan',
             idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '2. Analisis').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '2. Analisis')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Penyampaian Laporan Hasil Analisis',
+            sort: 7,
+            step: 'Penyampaian Saran',
             idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '2. Analisis').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '2. Analisis')[0].getDataValue('idx_t_lhpa_action') : null
-          },
-          // survey
-          {
-            step: 'Penyusunan Rencana Tindak Lanjut',
-            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Survei').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Survei')[0].getDataValue('idx_t_lhpa_action') : null
-          },
-          {
-            step: 'Pengumpulan Data Survei',
-            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Survei').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Survei')[0].getDataValue('idx_t_lhpa_action') : null
-          },
-          {
-            step: 'Penelaahan Hasil Survei',
-            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Survei').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Survei')[0].getDataValue('idx_t_lhpa_action') : null
-          },
-          {
-            step: 'Perumusan Hasil Survei',
-            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Survei').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Survei')[0].getDataValue('idx_t_lhpa_action') : null
-          },
-          {
-            step: 'Penyampaian Laporan Hasil Survei',
-            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Survei').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Survei')[0].getDataValue('idx_t_lhpa_action') : null
           },
           // Perlakukan Pelaksanaan Saran
           {
-            step: 'Monitoring',
+            sort: 1,
+            step: 'Penyusunan Rencana Tindak  Lanjut Perlakuan Pelaksanaan Saran',
             idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Pendampingan',
+            sort: 2,
+            step: 'Monitoring/Pendampingan',
             idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Publikasi',
+            sort: 3,
+            step: 'Penyusunan Laporan Hasil Perlakuan Pelaksanaan Saran',
             idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Tahapan Perlakuan Lain',
+            sort: 4,
+            step: 'Rapat Pleno/Perwakilan',
+            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          {
+            sort: 5,
+            step: 'Tindak Lanjut (Tanpa Publikasi/Publikasi/Laporan)',
             idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran')[0].getDataValue('idx_t_lhpa_action') : null
           },
         ];
         await models.lhpa_act_detail.bulkCreate(lhpa_01EDetail, { transaction: t });
 
         // pemeriksaan aduan
-        let lhpa_01F = await models.lhpa_actions.create(
-          {
+        let lhpa_01F = await models.lhpa_actions.bulkCreate(
+          [{
             type: 'F',
             title: '1. Proses Pemeriksaan Aduan',
             by: null,
             idx_t_lhpa: lhpa_01.getDataValue('idx_t_lhpa')
-          }, { transaction: t });
+          }], { transaction: t });
 
         let lhpa_01FDetail = [
           {
-            step: 'Penetapan Tim Pemeriksa',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
+            sort: 1,
+            step: 'Surat Tugas/Disposisi KKU',
+            idx_t_lhpa_action: lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Validasi Pengaduan - Memastikan dokumen pengaduan yang diteruskan oleh Inspektorat',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
+            sort: 2,
+            step: 'Validasi Pengaduan',
+            idx_t_lhpa_action: lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Validasi Pengaduan - Komunikasi dengan Pengadu',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
+            sort: 3,
+            step: 'Permintaan Data, Informasi, dan Dokumen ke Pengadu',
+            idx_t_lhpa_action: lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Validasi Pengaduan - Komunikasi dengan Teradu',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
+            sort: 4,
+            step: 'Tanggapan Pengadu',
+            idx_t_lhpa_action: lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Validasi Pengaduan - Penelusuran data pada Sistem Informasi',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
+            sort: 5,
+            step: 'Permintaan Data, Informasi, dan Dokumen ke Teradu',
+            idx_t_lhpa_action: lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Permintaan Data, Informasi, dan Dokumen - Pengadu',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
+            sort: 6,
+            step: 'Tanggapan Teradu',
+            idx_t_lhpa_action: lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Permintaan Data, Informasi, dan Dokumen - Tanggapan Pengadu',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
+            sort: 7,
+            step: 'Permintaan Data, Informasi, dan Dokumen ke Pihak Terkait',
+            idx_t_lhpa_action: lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Permintaan Data, Informasi, dan Dokumen - Teradu',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
+            sort: 8,
+            step: 'Tanggapan Pihak Terkait',
+            idx_t_lhpa_action: lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Permintaan Data, Informasi, dan Dokumen - Tanggapan Teradu',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
+            sort: 9,
+            step: 'Pemeriksaan Dokumen Pengaduan',
+            idx_t_lhpa_action: lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Permintaan Data, Informasi, dan Dokumen - Pihak Terkait',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
+            sort: 10,
+            step: 'Pokok Aduan Klarifikasi',
+            idx_t_lhpa_action: lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Permintaan Data, Informasi, dan Dokumen - Tanggapan Pihak Terkait',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
+            sort: 11,
+            step: 'Penyampaian Pemberitahuan Permintaan Klarifikasi Kepada Terperiksa',
+            idx_t_lhpa_action: lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Telaah dan Analisis - Pemeriksaan Dokumen Pengaduan',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
+            sort: 12,
+            step: 'Hasil Klarifikasi Kepada Terperiksa',
+            idx_t_lhpa_action: lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Telaah dan Analisis - Penyusunan Kertas Kerja Pemeriksaan',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
+            sort: 13,
+            step: 'Penyampaian BA Klarifikasi Kepada Terperiksa',
+            idx_t_lhpa_action: lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Klarifikasi kepada Terperiksa - Penyampaian pemberitahuan permintaan klarifikasi kepada Terperiksa',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
-          },
-          {
-            step: 'Klarifikasi kepada Terperiksa - Permintaan Klarifikasi kepada Terperiksa',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
-          },
-          {
-            step: 'Klarifikasi kepada Terperiksa - Penyampaian Berita Acara Klarifikasi Kepada Terperiksa',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
-          },
-          {
-            step: 'Konfirmasi kepada Pengadu',
-            idx_t_lhpa_action: lhpa_01F.getDataValue('idx_t_lhpa_action')
+            sort: 14,
+            step: 'Konfirmasi Kepada Pengadu',
+            idx_t_lhpa_action: lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
         ]
         await models.lhpa_act_detail.bulkCreate(lhpa_01FDetail, { transaction: t });
@@ -376,91 +376,143 @@ module.exports = {
       }, { transaction: t });
 
       if (lhpa_02 instanceof models.lhpa) {
-        let lhpa_02E = await models.lhpa_actions.create(
-          {
-            type: 'E',
-            title: '1. Penerimaan dan Verifikasi Laporan',
-            by: 'Keasistenan Utama Pengaduan Masyarakat/Unit PVL Ombudsman Perwakilan',
-            idx_t_lhpa: lhpa_02.getDataValue('idx_t_lhpa')
-          }, { transaction: t });
+        let lhpa_02E = await models.lhpa_actions.bulkCreate(
+          [
+            {
+              type: 'E',
+              title: '1. Penerimaan dan Verifikasi Laporan',
+              by: '',
+              idx_t_lhpa: lhpa_02.getDataValue('idx_t_lhpa')
+            },
+            {
+              type: 'E',
+              title: '2. Pemeriksaan Laporan',
+              by: '',
+              idx_t_lhpa: lhpa_02.getDataValue('idx_t_lhpa')
+            },
+            {
+              type: 'E',
+              title: '3. Resolusi dan Monitoring',
+              by: '',
+              idx_t_lhpa: lhpa_02.getDataValue('idx_t_lhpa')
+            },
+            {
+              type: 'E',
+              title: '4. Penutupan Laporan',
+              by: '',
+              idx_t_lhpa: lhpa_02.getDataValue('idx_t_lhpa')
+            }
+          ], { transaction: t });
 
         let lhpa_02EDetail = [
           {
-            step: 'Penerimaan Laporan',
-            idx_t_lhpa_action: lhpa_02E.getDataValue('idx_t_lhpa_action')
+            sort: 1,
+            step: 'Penerimaan dan Laporan',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '1. Penerimaan dan Verifikasi Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '1. Penerimaan dan Verifikasi Laporan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Pencatatan Laporan',
-            idx_t_lhpa_action: lhpa_02E.getDataValue('idx_t_lhpa_action')
-          },
-          {
+            sort: 2,
             step: 'Verifikasi Formil',
-            idx_t_lhpa_action: lhpa_02E.getDataValue('idx_t_lhpa_action')
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '1. Penerimaan dan Verifikasi Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '1. Penerimaan dan Verifikasi Laporan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
-            step: 'Tindak Lanjut Verifikasi Formil - Surat Permintaan Kelengkapan Data',
-            idx_t_lhpa_action: lhpa_02E.getDataValue('idx_t_lhpa_action')
-          },
-          {
-            step: 'Tindak Lanjut Verifikasi Formil - Surat Pemberitahuan Kepada Pelapor (Penolakan Laporan di Formil)',
-            idx_t_lhpa_action: lhpa_02E.getDataValue('idx_t_lhpa_action')
-          },
-          {
-            step: 'Tindak Lanjut Verifikasi Formil - Berita Acara Penutupan Laporan Tidak Memenuhi Syarat Formil',
-            idx_t_lhpa_action: lhpa_02E.getDataValue('idx_t_lhpa_action')
-          },
-          {
-            step: 'Verifikasi Formil',
-            idx_t_lhpa_action: lhpa_02E.getDataValue('idx_t_lhpa_action')
-          },
-          {
+            sort: 3,
             step: 'Verifikasi Materiil',
-            idx_t_lhpa_action: lhpa_02E.getDataValue('idx_t_lhpa_action')
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '1. Penerimaan dan Verifikasi Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '1. Penerimaan dan Verifikasi Laporan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
+            sort: 4,
             step: 'Rapat Pleno/Rapat Perwakilan',
-            idx_t_lhpa_action: lhpa_02E.getDataValue('idx_t_lhpa_action')
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '1. Penerimaan dan Verifikasi Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '1. Penerimaan dan Verifikasi Laporan')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          // 2. Pemeriksaan Laporan
+          {
+            sort: 1,
+            step: 'Diterima oleh Keasistenan Pemeriksa',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          {
+            sort: 2,
+            step: 'Pemeriksaan Dokumen/LHPD',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          {
+            sort: 3,
+            step: 'Permintaan Klarifikasi Tertulis',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          {
+            sort: 4,
+            step: 'Permintaan Klarifikasi Langsung',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          {
+            sort: 5,
+            step: 'Permintaan Klarifikasi Lapangan',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          {
+            sort: 6,
+            step: 'Pemanggilan',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          {
+            sort: 7,
+            step: 'Konsiliasi',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          {
+            sort: 8,
+            step: 'Gelar Laporan',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          {
+            sort: 9,
+            step: 'Laporan Akhir Hasil Pemeriksaan',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          {
+            sort: 10,
+            step: 'Monitoring LAHP',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '2. Pemeriksaan Laporan')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+
+          //3. Resolusi dan Monitoring
+          {
+            sort: 1,
+            step: 'Penelaahan LAHP',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '3. Resolusi dan Monitoring').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '3. Resolusi dan Monitoring')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          {
+            sort: 2,
+            step: 'Pra Konsiliasi/Mediasi',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '3. Resolusi dan Monitoring').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '3. Resolusi dan Monitoring')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          {
+            sort: 3,
+            step: 'Konsiliasi/Mediasi',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '3. Resolusi dan Monitoring').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '3. Resolusi dan Monitoring')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          {
+            sort: 4,
+            step: 'Rekomendasi',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '3. Resolusi dan Monitoring').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '3. Resolusi dan Monitoring')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+
+          // 4. Penutupan Laporan
+          {
+            sort: 1,
+            step: 'Pemberitahuan Kepada Pelapor',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '4. Penutupan Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '4. Penutupan Laporan')[0].getDataValue('idx_t_lhpa_action') : null
+          },
+          {
+            sort: 2,
+            step: 'Berita Acara Penutupan Laporan',
+            idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '4. Penutupan Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '4. Penutupan Laporan')[0].getDataValue('idx_t_lhpa_action') : null
           },
         ]
         await models.lhpa_act_detail.bulkCreate(lhpa_02EDetail, { transaction: t });
-
-        // pemeriksaan aduan
-        // let lhpa_02F = await models.lhpa_actions.create(
-        //   {
-        //     type: 'F',
-        //     title: '1. Proses Pemeriksaan Aduan',
-        //     by: null
-        //   }, { transaction: t });
-
-        // let lhpa_02FDetail = [
-        //   {
-        //     step: 'Penetapan Tim Pemeriksa',
-        //     idx_t_lhpa_action: lhpa_02F.getDataValue('idx_t_lhpa_action')
-        //   },
-        // ]
-        // await models.lhpa_act_detail.bulkCreate(lhpa_02FDetail, { transaction: t });
       }
-
-      // await models.lhpa.bulkCreate([
-      //   {
-      //     idx_m_complaint: id, type: 'PENCEGAHAN',
-      //     tindak_lanjut_laporan: null,
-      //     pemeriksaan_kumm: null,
-      //     analisis_pemeriksaan: analisis_pemeriksaan,
-      //     pendapat_pemeriksa: pendapat_pemeriksa,
-      //     kesimpulan_pemeriksa: null,
-      //     tindak_lanjut: tindak_lanjut,
-      //   },
-      //   {
-      //     idx_m_complaint: id, type: 'PENYELESAIAN',
-      //     tindak_lanjut_laporan: null,
-      //     pemeriksaan_kumm: null,
-      //     analisis_pemeriksaan: null,
-      //     pendapat_pemeriksa: pendapat_pemeriksa,
-      //     kesimpulan_pemeriksa: null,
-      //     tindak_lanjut: tindak_lanjut,
-      //   }
-      // ], { transaction: t });
 
       // LOGS
       await models.clogs.create({
