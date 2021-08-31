@@ -334,7 +334,7 @@ module.exports = {
 
     try {
       let v = await models.users.findOne({
-        attributes: ['fullname', 'idx_m_user'],
+        attributes: ['fullname', 'idx_m_user', 'email'],
         where: {
           record_status: 'A',
           is_verify: false,
@@ -342,7 +342,12 @@ module.exports = {
         }
       });
 
-      if (!v) return response.success('Url verifikasi TIDAK valid atau akun Anda sudah ter-verifikasi.')
+      if (v instanceof models.users) {
+        let c = await models.users.count({ where: { email: v.getDataValue('email'), is_verify: true } });
+        if (c > 0) return response.failed('Email sudah digunakan silakan gunakan email lain.');
+      }
+
+      if (!v) return response.success('Url verifikasi TIDAK valid atau akun Anda sudah ter-verifikasi.');
       await models.users.update(
         {
           is_verify: true,
