@@ -258,30 +258,30 @@ module.exports = {
           {
             sort: 1,
             step: 'Penyusunan Rencana Tindak  Lanjut Perlakuan Pelaksanaan Saran',
-            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran')[0].getDataValue('idx_t_lhpa_action') : null
+            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Perlakuan Pelaksanaan Saran').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Perlakuan Pelaksanaan Saran')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
             sort: 2,
             step: 'Monitoring/Pendampingan',
-            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran')[0].getDataValue('idx_t_lhpa_action') : null
+            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Perlakuan Pelaksanaan Saran').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Perlakuan Pelaksanaan Saran')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
             sort: 3,
             step: 'Penyusunan Laporan Hasil Perlakuan Pelaksanaan Saran',
-            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran')[0].getDataValue('idx_t_lhpa_action') : null
+            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Perlakuan Pelaksanaan Saran').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Perlakuan Pelaksanaan Saran')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
             sort: 4,
             step: 'Rapat Pleno/Perwakilan',
-            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran')[0].getDataValue('idx_t_lhpa_action') : null
+            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Perlakuan Pelaksanaan Saran').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Perlakuan Pelaksanaan Saran')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
             sort: 5,
             step: 'Tindak Lanjut (Tanpa Publikasi/Publikasi/Laporan)',
-            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '4. Perlakuan Pelaksanaan Saran')[0].getDataValue('idx_t_lhpa_action') : null
+            idx_t_lhpa_action: lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Perlakuan Pelaksanaan Saran').length > 0 ? lhpa_01E.filter(e => e.type == 'E' && e.title == '3. Perlakuan Pelaksanaan Saran')[0].getDataValue('idx_t_lhpa_action') : null
           },
         ];
-        await models.lhpa_act_detail.bulkCreate(lhpa_01EDetail, { transaction: t });
+        await models.lhpa_act_detail.bulkCreate(lhpa_01EDetail.filter(e => e['idx_t_lhpa_action'] !== null), { transaction: t });
 
         // pemeriksaan aduan
         let lhpa_01F = await models.lhpa_actions.bulkCreate(
@@ -364,7 +364,7 @@ module.exports = {
             idx_t_lhpa_action: lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_01F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
         ]
-        await models.lhpa_act_detail.bulkCreate(lhpa_01FDetail, { transaction: t });
+        await models.lhpa_act_detail.bulkCreate(lhpa_01FDetail.filter(e => e['idx_t_lhpa_action'] !== null), { transaction: t });
       }
 
       // 1. LAPORAN PENYELESAIAN
@@ -511,7 +511,7 @@ module.exports = {
             idx_t_lhpa_action: lhpa_02E.filter(e => e.type == 'E' && e.title == '4. Penutupan Laporan').length > 0 ? lhpa_02E.filter(e => e.type == 'E' && e.title == '4. Penutupan Laporan')[0].getDataValue('idx_t_lhpa_action') : null
           },
         ]
-        await models.lhpa_act_detail.bulkCreate(lhpa_02EDetail, { transaction: t });
+        await models.lhpa_act_detail.bulkCreate(lhpa_02EDetail.filter(e => e['idx_t_lhpa_action'] !== null), { transaction: t });
       }
 
       // LOGS
