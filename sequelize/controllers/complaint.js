@@ -676,7 +676,7 @@ module.exports = {
               where: { record_status: 'A' }
             },
             {
-              required: false,
+              required: others && others.teradu.length > 0 ? true : false,
               attributes: [
                 'idx_t_complaint_study',
                 'form_status'
@@ -685,7 +685,7 @@ module.exports = {
               include: [
                 {
                   attributes: ['name'],
-                  required: false,
+                  required: others && others.teradu.length > 0 ? true : false,
                   model: models.complaint_study_reported,
                   where: { name: { [Op.in]: others && others.teradu ? others.teradu : [] } }
                 }
@@ -738,11 +738,12 @@ module.exports = {
             // },
             // confirmation
             {
-              required: false,
+              required: others && others.terperiksa.length > 0 ? true : false,
               attributes: ['idx_t_clarification'],
               model: models.clarification,
               include: [
                 {
+                  required: others && others.terperiksa.length > 0 ? true : false,
                   attributes: ['name'],
                   model: models.clarification_detail,
                   where: { name: { [Op.in]: others && others.terperiksa ? others.terperiksa : [] } }
