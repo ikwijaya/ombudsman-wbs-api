@@ -550,6 +550,8 @@ module.exports = {
               then true 
               else false 
             end`), 'is_kku'],
+            [Sequelize.literal(`concat('Inspektorat/', complaints.idx_m_complaint)`), 'url_inspektorat'],
+            [Sequelize.literal(`concat('KeasistenanUtama/', complaints.idx_m_complaint)`), 'url_kku'],
             [Sequelize.literal(`case when 
                 1=${[1, 2].includes(typeId) ? 1 : 0}
                 and cast(status.code AS integer) BETWEEN 6 AND 12
