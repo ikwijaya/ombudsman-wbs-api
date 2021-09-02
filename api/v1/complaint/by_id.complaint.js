@@ -8,7 +8,7 @@ router.post('/', async (req, res, next) => {
   let sid = req.body.sid || null;
 
   try {
-    let o = await complaint.load(sid, null, [], id).catch(e => { throw (e) })
+    let o = await complaint.load(sid, null, [], null, id).catch(e => { throw (e) })
     res.send(o).status(200)
   } catch (err) {
     res.status(401).send(response.failed(err, []))

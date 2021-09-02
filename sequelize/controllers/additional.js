@@ -1,5 +1,6 @@
 const { models } = require('..');
 const { Sequelize, Op } = require('sequelize')
+const core = require('./core')
 
 module.exports = {
   /**
@@ -54,7 +55,7 @@ module.exports = {
    * 
    * @returns 
    */
-  async complaintFilterAdditional(r = []) {
+  async complaintFilterAdditional(r = [], sid = null) {
     try {
       let where = {}
       let status = await models.status.findAll(
@@ -90,10 +91,33 @@ module.exports = {
         ]
       }).catch(e => { throw (e) })
 
+      let sessions = await core.checkSession(sid);
+      let isPublic = false;
+      if (sessions.length === 0 && sessions[0].user_type == 'PUBLIC')
+        isPublic = true;
+
+      // teradu
+      let teradu = await models.complaint_study_reported.findAll(
+        {
+          attributes: ['name'],
+          group: ['name']
+        }
+      );
+
+      // terperiksa
+      let terperiksa = await models.clarification_detail.findAll(
+        {
+          attributes: ['name'],
+          group: ['name']
+        }
+      );
+
       return {
         status: status,
         regional: regional,
-        region: region
+        region: region,
+        teradu: !isPublic ? teradu : [],
+        terperiksa: !isPublic ? terperiksa : []
       }
     } catch (err) {
       console.log(err)

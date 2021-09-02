@@ -429,7 +429,7 @@ module.exports = {
    * @param {*} id 
    * @returns 
    */
-  async load(sid = null, keyword = null, status_code = [], id = null) {
+  async load(sid = null, keyword = null, status_code = [], others = null, id = null) {
     try {
       let where = {}; let whereCode = {};
       let sessions = await core.checkSession(sid)
@@ -682,6 +682,14 @@ module.exports = {
                 'form_status'
               ],
               model: models.complaint_studies,
+              include: [
+                {
+                  attributes: ['name'],
+                  required: false,
+                  model: models.complaint_study_reported,
+                  where: { name: { [Op.in]: others && others.teradu ? others.teradu : [] } }
+                }
+              ],
               where: { record_status: 'A' }
             },
             {
@@ -728,6 +736,19 @@ module.exports = {
             //   model: models.lhpa,
             //   where: { record_status: 'A' }
             // },
+            // confirmation
+            {
+              required: false,
+              attributes: ['idx_t_clarification'],
+              model: models.clarification,
+              include: [
+                {
+                  attributes: ['name'],
+                  model: models.clarification_detail,
+                  where: { name: { [Op.in]: others && others.terperiksa ? others.terperiksa : [] } }
+                }
+              ]
+            },
             {
               required: false,
               attributes: ['idx_t_closing', 'form_status'],

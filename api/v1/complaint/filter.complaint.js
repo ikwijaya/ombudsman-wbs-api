@@ -5,8 +5,10 @@ const { additional } = require('../../../sequelize/controllers')
 
 router.post('/', async (req, res, next) => {
   let reg = req.body.regional || []
+  let sid = req.body.sid || null;
+
   try {
-    let o = await additional.complaintFilterAdditional(reg).catch(e => { throw (e) })
+    let o = await additional.complaintFilterAdditional(reg, sid).catch(e => { throw (e) })
     res.send(o).status(200)
   } catch (err) {
     res.status(401).send(response.failed(err, []))
