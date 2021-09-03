@@ -103,11 +103,9 @@ module.exports = {
       //     group: ['name']
       //   }
       // );
-      let teradu = await models.work_units.findAll(
-        {
-          attributes: ['idx_m_work', 'name']
-        }
-      );
+      let teradu = await models.work_units.findAll({
+        attributes: ['idx_m_work_unit', 'name']
+      })
 
       // terperiksa
       let terperiksa = await models.clarification_detail.findAll(
