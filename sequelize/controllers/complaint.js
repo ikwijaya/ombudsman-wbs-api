@@ -685,11 +685,17 @@ module.exports = {
               ],
               model: models.complaint_studies,
               include: [
+                // {
+                //   attributes: ['name'],
+                //   required: others && others.teradu.length > 0 ? true : false,
+                //   model: models.complaint_study_reported,
+                //   where: { name: { [Op.in]: others && others.teradu ? others.teradu : [] } }
+                // },
                 {
-                  attributes: ['name'],
+                  attributes: ['office_name'],
                   required: others && others.teradu.length > 0 ? true : false,
-                  model: models.complaint_study_reported,
-                  where: { name: { [Op.in]: others && others.teradu ? others.teradu : [] } }
+                  model: models.complaint_study_incidents,
+                  where: { idx_m_work_unit: { [Op.in]: others && others.teradu ? others.teradu : [] } }
                 }
               ],
               where: { record_status: 'A' }

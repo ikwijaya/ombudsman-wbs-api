@@ -97,10 +97,15 @@ module.exports = {
         isPublic = true;
 
       // teradu
-      let teradu = await models.complaint_study_reported.findAll(
+      // let teradu = await models.complaint_study_reported.findAll(
+      //   {
+      //     attributes: ['name'],
+      //     group: ['name']
+      //   }
+      // );
+      let teradu = await models.work_units.findAll(
         {
-          attributes: ['name'],
-          group: ['name']
+          attributes: ['idx_m_work', 'name']
         }
       );
 
