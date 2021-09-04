@@ -243,5 +243,13 @@ fs.readdir(`api/v1/clogs`, async function (err, files) {
   });
 });
 
+fs.readdir(`api/v1/user_region`, async function (err, files) {
+  if (err) { return console.log(`Unable to scan directory (api/v1/user_region) : ` + err); }
+  files.forEach(async function (file) {
+    let name = await helper.createRouteName(file).catch(e => { throw (e) })
+    router.use(`/user_region/${name}`, receive.rules(), receive.validate, require(`./user_region/${file}`))
+    console.log({ route: `/user_region/${name}`, status: 'ready' })
+  });
+});
 
 module.exports = router

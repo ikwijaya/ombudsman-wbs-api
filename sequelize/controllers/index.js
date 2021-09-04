@@ -23,6 +23,9 @@ const delivery = require('./delivery')
 const users = require('./users')
 const letters = require('./letter')
 const clogs = require('./clogs')
+const userregion = require('./userregion')
+const region = require('./region')
+const usertypes = require('./usertypes')
 
 module.exports = {
   additional, core, security,
@@ -32,5 +35,6 @@ module.exports = {
   closing, download_letter,
   request, clarification, confirmation,
   study_lys, lhpa, surgery, pleno, delivery,
-  users, letters, clogs
+  users, letters, clogs, userregion, region,
+  usertypes
 }

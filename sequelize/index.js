@@ -79,7 +79,8 @@ const modelDefiners = [
   require('./models/complaint_delivery.models'),
   require('./models/complaint_letter.models'),
   require('./models/complaint_logs.models'),
-  require('./models/complaint_pleno.models')
+  require('./models/complaint_pleno.models'),
+  require('./models/form_types.model')
 ];
 
 for (let m of modelDefiners) { m(sequelize); }

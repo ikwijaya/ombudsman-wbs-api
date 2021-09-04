@@ -3,9 +3,12 @@ const { NODE_ENV, DEFAULT_PASSWD, APP_LOGO } = require('../../config')
 const opt = require('../connection')[NODE_ENV]
 const knex = require('knex')
 const { gen } = require('n-digit-token')
+const moment = require('moment');
+const { v4: uuidv4 } = require('uuid');
 const { response } = require('../../models/index')
 const { helper } = require('../../helper')
 const core = require('../core')
+const sq_users = require('../../sequelize/controllers/users')
 const form_id = 200;
 
 class Users {
@@ -24,6 +27,7 @@ class Users {
     let is_insert = false;
     let is_update = false;
     let is_role_action = false;
+    let output = [];
 
     return new Promise(async (resolve, reject) => {
       await core.checkRoles(sid, form_id)
@@ -37,8 +41,6 @@ class Users {
         .then((rs) => is_role_action = rs.length === 0 ? false : rs[0].is_action)
         .catch(e => { reject(e) })
 
-      console.log('ract => ', is_role_action)
-
       await core.checkSession(sid)
         .then(async (r) => {
           if (r.status) {
@@ -46,9 +48,9 @@ class Users {
             user_type = r.user_type;
 
             if (user_type === 'PUBLIC') {
-              resolve([])
+              resolve(null)
             } else {
-              db('m_user AS mu')
+              await db('m_user AS mu')
                 .select(
                   'mu.idx_m_user',
                   'mu.fullname',
@@ -61,6 +63,8 @@ class Users {
                   'mu.is_login',
                   'mu.is_verify',
                   'mu.verify_date',
+                  db.raw(`case when ut.idx_m_user_type=? AND true=? AND mu.is_verify = ? then true else false end AS is_resend`, [-1, is_update, false]),
+                  db.raw(`case when ut.idx_m_user_type=? AND true=? then true else false end AS is_add_regional`, [4, is_insert]),
                   db.raw(`case when mu.record_status='A' AND true=? AND mu.idx_m_user_type <> ? then true else false end AS is_disable`, [is_update, -1]),
                   db.raw(`case when mu.record_status='N' AND true=? AND mu.idx_m_user_type <> ? then true else false end AS is_enable`, [is_update, -1]),
                   db.raw(`case when mu.record_status='A' AND true=? AND mu.idx_m_user_type <> ? then true else false end AS is_update`, [is_update, -1]),
@@ -76,16 +80,31 @@ class Users {
                       .orWhereRaw("mu.email LIKE CONCAT('%',COALESCE(?,''),'%')", [keyword])
                       .orWhereRaw("mu.remarks LIKE CONCAT('%',COALESCE(?,''),'%')", [keyword])
                   }
-                }).then((r) => resolve([
-                  {
-                    items: JSON.parse(JSON.stringify(r)),
-                    is_insert: is_insert
-                  }
-                ]))
-                .catch(e => { reject(e) })
+                })
+                .then((r) => output = JSON.parse(JSON.stringify(r)))
+                .catch(e => { reject(e) });
+
+              let userregion = await db('m_user_regions AS a')
+                .select(
+                  'a.idx_m_user_region',
+                  'a.idx_m_user',
+                  'a.regional',
+                  db.raw(`case when true=? then true else false end AS is_delete`, [is_update]),
+                  db.raw(`concat('Regional ', a.regional) AS regional_name`)
+                )
+                .catch(e => { reject(e) });
+
+              output.map(e => {
+                e['regional'] = userregion.filter(a => a['idx_m_user'] == e['idx_m_user']);
+              });
+
+              resolve({
+                items: output,
+                is_insert: is_insert
+              })
             }
           } else {
-            resolve([])
+            resolve(null)
           }
         })
         .catch(e => reject(e))
@@ -217,7 +236,10 @@ class Users {
           .leftJoin('m_form AS a3', 'a2.idx_m_form_parent', 'a3.idx_m_form')
           .whereRaw(`a.record_status = ?`, ['A'])
           .orderBy('a.form_sort', 'asc')
-          .catch(e => { reject(e) })
+          .catch(e => { reject(e) }),
+        db('m_region')
+          .select('regional as value', db.raw(`concat('Regional ', regional) AS text`))
+          .groupBy('regional')
       ]).then(rows => rows)
     } catch (error) {
       throw error
@@ -676,6 +698,52 @@ class Users {
             .catch(t.rollback)
         })
           .then(() => resolve(response.success('User berhasil di edit.')))
+          .catch(e => { reject(e) })
+      } else {
+        resolve(response.failed('Session expires, please relogin.', true))
+      }
+    })
+      .catch(e => console.log(e))
+  }
+
+  /**
+   * 
+   * @param {*} sid 
+   * @param {*} id 
+   * @returns 
+   */
+  resendVerifikasi(sid, id) {
+    let db = knex(opt);
+    let user_id = null;
+    const url_verify = uuidv4() + '-' + moment().format('YYMMDDTHHmmss');
+
+    return new Promise(async (resolve, reject) => {
+      await core.checkSession(sid)
+        .then(r => user_id = r.status ? r.user_id : null)
+        .catch(e => { reject(e) })
+
+      if (user_id) {
+        let get = await db('m_user AS a')
+          .select('email', 'fullname')
+          .whereRaw(`a.idx_m_user=?`, [id])
+          .catch(e => { reject(e) })
+
+        let email = get.length > 0 ? get[0].email : null;
+        let fullname = get.length > 0 ? get[0].fullname : null;
+
+        db.transaction(t => {
+          return db('m_user AS a')
+            .transacting(t)
+            .update({
+              url_verify: url_verify,
+              dmodified: new Date(),
+              umodified: user_id
+            })
+            .then(async (r) => sq_users.sendMail(email, url_verify, fullname))
+            .then(t.commit)
+            .catch(t.rollback)
+        })
+          .then(() => resolve(response.success('Verifikasi baru berhasil dikirim')))
           .catch(e => { reject(e) })
       } else {
         resolve(response.failed('Session expires, please relogin.', true))

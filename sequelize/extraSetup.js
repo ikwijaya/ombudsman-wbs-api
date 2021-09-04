@@ -26,8 +26,34 @@ function applyExtraSetup(sq) {
     study_lys, study_lys_violation, study_lys_event,
     lhpa, lhpa_events, lhpa_actions, lhpa_act_detail,
     surgery, surgery_user,
-    delivery, letters, clogs
+    delivery, letters, clogs, formtypes
   } = sq.models;
+
+  // form -> type (grouping roles)
+  formtypes.belongsTo(forms, {
+    foreignKey: {
+      name: 'idx_m_form',
+      allowNull: false
+    }
+  });
+  formtypes.belongsTo(usertypes, {
+    foreignKey: {
+      name: 'idx_m_user_type',
+      allowNull: false
+    }
+  });
+  forms.hasMany(formtypes, {
+    foreignKey: {
+      name: 'idx_m_form',
+      allowNull: false
+    }
+  });
+  usertypes.hasMany(formtypes, {
+    foreignKey: {
+      name: 'idx_m_user_type',
+      allowNull: false
+    }
+  })
 
   // security relations
   forms.hasMany(roles, {
