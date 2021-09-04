@@ -93,6 +93,7 @@ class Users {
                       .orWhereRaw("mu.remarks LIKE CONCAT('%',COALESCE(?,''),'%')", [keyword])
                   }
                 })
+                .orderBy('mu.email', 'asc')
                 .then((r) => output = JSON.parse(JSON.stringify(r)))
                 .catch(e => { reject(e) });
 
