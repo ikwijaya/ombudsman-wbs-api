@@ -561,6 +561,7 @@ module.exports = {
             end`), 'is_cancel'],
             [Sequelize.literal(`case when 
                 cast(status.code AS integer) IN (13,14)
+                and 1=${[0, 2, 3, 4, 5].includes(typeId) ? 1 : 0}
                 and complaint_decision.idx_m_violation = 10
               then false 
               else true 
