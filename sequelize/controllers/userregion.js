@@ -65,7 +65,7 @@ module.exports = {
         return response.failed('Session expires')
 
       if (!obj.regional) return response.failed(`Kolom regional TIDAK boleh kosong`)
-      let count = await models.userregion.count({ where: { regional: obj.regional } })
+      let count = await models.userregion.count({ where: { regional: obj.regional, idx_m_user: obj.idx_m_user } })
       if (count > 0) return response.failed(`Regional ${obj.regional} sudah tersedia`)
 
       await models.userregion.create(obj, { transaction: t });
