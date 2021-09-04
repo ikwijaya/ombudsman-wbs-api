@@ -44,7 +44,7 @@ class Users {
       await core.checkSession(sid)
         .then(async (r) => {
           if (r.status) {
-            user_type = r.user_id;
+            idx_m_user = r.user_id;
             user_type = r.user_type;
 
             if (user_type === 'PUBLIC') {
@@ -65,10 +65,22 @@ class Users {
                   'mu.verify_date',
                   db.raw(`case when ut.idx_m_user_type=? AND true=? AND mu.is_verify = ? then true else false end AS is_resend`, [-1, is_update, false]),
                   db.raw(`case when ut.idx_m_user_type=? AND true=? then true else false end AS is_add_regional`, [4, is_insert]),
-                  db.raw(`case when mu.record_status='A' AND true=? AND mu.idx_m_user_type <> ? then true else false end AS is_disable`, [is_update, -1]),
-                  db.raw(`case when mu.record_status='N' AND true=? AND mu.idx_m_user_type <> ? then true else false end AS is_enable`, [is_update, -1]),
-                  db.raw(`case when mu.record_status='A' AND true=? AND mu.idx_m_user_type <> ? then true else false end AS is_update`, [is_update, -1]),
-                  db.raw(`case when mu.record_status='A' AND true=? AND mu.idx_m_user_type <> ? then true else false end AS is_role_action`, [is_role_action, -1])
+                  db.raw(`case when mu.record_status='A' AND true=? 
+                        AND true=case when mu.idx_m_user=? then true else
+                        case when mu.idx_m_user_type NOT IN (-1) then true else false end end
+                  then true else false end AS is_disable`, [is_update, idx_m_user]),
+                  db.raw(`case when mu.record_status='N' AND true=? 
+                        AND true=case when mu.idx_m_user=? then true else
+                        case when mu.idx_m_user_type NOT IN (-1) then true else false end end 
+                  then true else false end AS is_enable`, [is_update, idx_m_user]),
+                  db.raw(`case when mu.record_status='A' AND true=? 
+                        AND true=case when mu.idx_m_user=? then true else
+                        case when mu.idx_m_user_type NOT IN (-1) then true else false end end 
+                  then true else false end AS is_update`, [is_update, idx_m_user]),
+                  db.raw(`case when mu.record_status='A' AND true=? 
+                        AND true=case when mu.idx_m_user=? then true else
+                        case when mu.idx_m_user_type NOT IN (-1) then true else false end end 
+                  then true else false end AS is_role_action`, [is_role_action, idx_m_user])
                 )
                 .leftJoin(`m_user_type AS ut`, `mu.idx_m_user_type`, `ut.idx_m_user_type`)
                 .where((builder) => {
