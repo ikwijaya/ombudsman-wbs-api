@@ -19,7 +19,29 @@ module.exports = (sq) => {
     flag: {
       type: DataTypes.TEXT,
       allowNull: false,
-      defaultValue: '1'
+      defaultValue: '1',
+    },
+    flag_name: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        let o = 'unused'
+        switch (this.flag) {
+          case 1:
+            o = 'default'
+            break;
+          case 2:
+            o = 'form pengampu wbs'
+            break;
+          case 3:
+            o = 'form telaah pengaduan'
+            break;
+          default:
+            o = 'unused'
+            break;
+        }
+
+        return o;
+      }
     },
     dcreate: {
       type: DataTypes.DATE,

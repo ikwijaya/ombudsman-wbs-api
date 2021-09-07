@@ -790,4 +790,22 @@ module.exports = {
       console.log(err)
     }
   },
+
+  /**
+   * 
+   * @returns 
+   */
+  async citiesAdditional() {
+    try {
+      let region = await models.regions.findAll({
+        attributes: ['idx_m_region', 'name']
+      })
+
+      return {
+        region: region
+      }
+    } catch (error) {
+      console.log(err)
+    }
+  }
 }
