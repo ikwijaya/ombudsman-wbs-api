@@ -33,37 +33,13 @@ module.exports = {
         where: where
       });
 
+      // sampe sini dlu
+
       return {
         items: items,
         is_insert: false
       }
     } catch (error) {
-      console.log(error)
-      throw (error)
-    }
-  },
-
-  /**
-   * 
-   * @param {*} sid 
-   * @param {*} obj 
-   * @returns 
-   */
-  async save(sid, obj = {}) {
-    const t = await sequelize.transaction();
-
-    try {
-      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
-      if (sessions.length === 0)
-        return response.failed('Session expires')
-
-      if (!obj.name) return response.failed(`Kolom Nama TIDAK boleh kosong`)
-
-      await models.violations.create(obj, { transaction: t });
-      await t.commit()
-      return response.success('Berhasil menambahkan Violation')
-    } catch (error) {
-      await t.rollback()
       console.log(error)
       throw (error)
     }
@@ -89,30 +65,6 @@ module.exports = {
       })
       await t.commit()
       return response.success('Berhasil mengubah Violation')
-    } catch (error) {
-      await t.rollback()
-      console.log(error)
-      throw (error)
-    }
-  },
-
-  /**
-   * 
-   * @param {*} sid 
-   * @param {*} obj 
-   * @returns 
-   */
-  async delete(sid, id = null) {
-    const t = await sequelize.transaction();
-
-    try {
-      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
-      if (sessions.length === 0)
-        return response.failed('Session expires')
-
-      await models.violations.destroy({ transaction: t, where: { idx_m_violation: id } })
-      await t.commit()
-      return response.success('Berhasil menghapus Violation')
     } catch (error) {
       await t.rollback()
       console.log(error)

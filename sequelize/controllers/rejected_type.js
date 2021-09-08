@@ -75,11 +75,11 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
-      if (!obj.name) return response.failed(`Kolom Nama Legal Standing TIDAK boleh kosong`)
+      if (!obj.name) return response.failed(`Kolom Nama Rejected Type TIDAK boleh kosong`)
 
-      await models.legal_standing.create(obj, { transaction: t });
+      await models.complaint_rejected_types.create(obj, { transaction: t });
       await t.commit()
-      return response.success('Berhasil menambahkan Legal Standing')
+      return response.success('Berhasil menambahkan Rejected Type')
     } catch (error) {
       await t.rollback()
       console.log(error)
@@ -101,12 +101,12 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
-      await models.legal_standing.update(obj, {
+      await models.complaint_rejected_types.update(obj, {
         transaction: t,
-        where: { idx_m_legal_standing: obj.idx_m_legal_standing }
+        where: { idx_m_complaint_rejected_type: obj.idx_m_complaint_rejected_type }
       })
       await t.commit()
-      return response.success('Berhasil mengubah Legal Standing')
+      return response.success('Berhasil mengubah Rejected Type')
     } catch (error) {
       await t.rollback()
       console.log(error)
@@ -128,9 +128,9 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
-      await models.legal_standing.destroy({ transaction: t, where: { idx_m_legal_standing: id } })
+      await models.complaint_rejected_types.destroy({ transaction: t, where: { idx_m_complaint_rejected_type: id } })
       await t.commit()
-      return response.success('Berhasil menghapus Legal Standing')
+      return response.success('Berhasil menghapus Rejected Type')
     } catch (error) {
       await t.rollback()
       console.log(error)

@@ -95,7 +95,7 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
-      if (!obj.name) return response.failed(`Kolom Nama Unit Kerja TIDAK boleh kosong`)
+      if (!obj.name) return response.failed(`Kolom Nama Kota TIDAK boleh kosong`)
 
       await models.cities.create(obj, { transaction: t });
       await t.commit()
@@ -148,7 +148,7 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
-      await models.dispositions.destroy({ transaction: t, where: { idx_m_city: id } })
+      await models.cities.destroy({ transaction: t, where: { idx_m_city: id } })
       await t.commit()
       return response.success('Berhasil menghapus Kota')
     } catch (error) {
