@@ -31,7 +31,11 @@ module.exports = {
           'idx_m_work_unit', 'name', 'record_status',
           [Sequelize.literal(`${roles.length && roles[0].is_update}`), 'is_update']
         ],
-        where: where
+        where: where,
+        order: [
+          ['name', 'ASC'],
+          ['dcreate', 'ASC'],
+        ]
       });
 
       let a = await models.complaint_incidents.findAll(
