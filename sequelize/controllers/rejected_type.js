@@ -47,8 +47,8 @@ module.exports = {
         let count = a.filter(x => e['idx_m_complaint_rejected_type'] == x['idx_m_complaint_rejected_type'])
         count = count.length ? count_1[0].count : 0
 
-        e['count'] = count_1
-        e['is_delete'] = count == 0 && roles.length && roles[0].is_delete ? true : false
+        e.setDataValue('count', count)
+        e.setDataValue('is_delete', count == 0 && roles.length && roles[0].is_delete ? true : false)
       })
 
       return {

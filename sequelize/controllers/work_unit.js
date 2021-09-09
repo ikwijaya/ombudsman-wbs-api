@@ -59,9 +59,9 @@ module.exports = {
         count_1 = count_1.length ? count_1[0].count : 0
         count_2 = count_2.length ? count_2[0].count : 0
 
-        e['count_1'] = count_1
-        e['count_2'] = count_2
-        e['is_delete'] = count_1 == 0 && count_2 == 0 && roles.length && roles[0].is_delete ? true : false
+        e.setDataValue('count_1', count_1)
+        e.setDataValue('count_2', count_2)
+        e.setDataValue('is_delete', count_1 == 0 && count_2 == 0 && roles.length && roles[0].is_delete ? true : false)
       })
 
       return {

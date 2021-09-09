@@ -37,31 +37,18 @@ module.exports = {
         {
           attributes: [
             'idx_m_legal_standing',
-            [Sequelize.literal(`count(idx_m_legal_standing)`), 'count']
-          ],
-          group: ['idx_m_legal_standing']
-        }
-      );
-
-      let b = await models.complaint_studies.findAll(
-        {
-          attributes: [
-            'idx_m_legal_standing',
-            [Sequelize.literal(`count(idx_m_legal_standing)`), 'count']
+            [Sequelize.literal(`count(1)`), 'count']
           ],
           group: ['idx_m_legal_standing']
         }
       );
 
       items.map(e => {
-        let count_1 = a.filter(x => e['idx_m_legal_standing'] == x['idx_m_legal_standing'])
-        let count_2 = b.filter(x => e['idx_m_legal_standing'] == x['idx_m_legal_standing'])
-        count_1 = count_1.length ? count_1[0].count : 0
-        count_2 = count_2.length ? count_2[0].count : 0
+        let count = a.filter(x => e['idx_m_legal_standing'] == x['idx_m_legal_standing'])
+        count = count.length ? count[0].count : 0
 
-        e['count_1'] = count_1
-        e['count_2'] = count_2
-        e['is_delete'] = count_1 == 0 && count_2 == 0 && roles.length && roles[0].is_delete ? true : false
+        e.setDataValue('count', count)
+        e.setDataValue('is_delete', count == 0 && roles.length && roles[0].is_delete ? true : false)
       })
 
       return {
