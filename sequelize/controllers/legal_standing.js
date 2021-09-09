@@ -26,6 +26,7 @@ module.exports = {
 
       let roles = await core.checkRoles(sessions[0].user_id, [form_id]).catch(e => { throw (e) })
       let items = await models.legal_standing.findAll({
+        raw: true,
         attributes: [
           'idx_m_legal_standing', 'name',
           [Sequelize.literal(`${roles.length && roles[0].is_update}`), 'is_update']
@@ -35,6 +36,7 @@ module.exports = {
 
       let a = await models.complaints.findAll(
         {
+          raw: true,
           attributes: [
             'idx_m_legal_standing',
             [Sequelize.literal(`count(1)`), 'count']
@@ -47,8 +49,8 @@ module.exports = {
         let count = a.filter(x => e['idx_m_legal_standing'] == x['idx_m_legal_standing'])
         count = count.length ? count[0].count : 0
 
-        e.setDataValue('count', count)
-        e.setDataValue('is_delete', count == 0 && roles.length && roles[0].is_delete ? true : false)
+        e['count'] = count
+        e['is_delete'] = count == 0 && roles.length && roles[0].is_delete ? true : false
       })
 
       return {
