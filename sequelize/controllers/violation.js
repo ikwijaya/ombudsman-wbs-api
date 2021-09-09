@@ -27,7 +27,7 @@ module.exports = {
       let roles = await core.checkRoles(sessions[0].user_id, [form_id]).catch(e => { throw (e) })
       let items = await models.violations.findAll({
         attributes: [
-          'idx_m_violation', [Sequelize.literal(`concat('(',cast(violation.idx_m_violation AS VARCHAR),') ',name)`), `name`], [Sequelize.literal(`${roles.length && roles[0].is_update}`), 'is_update']
+          'idx_m_violation', 'name', [Sequelize.literal(`${roles.length && roles[0].is_update}`), 'is_update']
         ],
         where: where
       });
