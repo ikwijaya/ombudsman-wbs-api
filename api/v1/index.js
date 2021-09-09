@@ -252,4 +252,40 @@ fs.readdir(`api/v1/user_region`, async function (err, files) {
   });
 });
 
+fs.readdir(`api/v1/master_violation`, async function (err, files) {
+  if (err) { return console.log(`Unable to scan directory (api/v1/master_violation) : ` + err); }
+  files.forEach(async function (file) {
+    let name = await helper.createRouteName(file).catch(e => { throw (e) })
+    router.use(`/master_violation/${name}`, receive.rules(), receive.validate, require(`./master_violation/${file}`))
+    console.log({ route: `/master_violation/${name}`, status: 'ready' })
+  });
+});
+
+fs.readdir(`api/v1/master_work_unit`, async function (err, files) {
+  if (err) { return console.log(`Unable to scan directory (api/v1/master_work_unit) : ` + err); }
+  files.forEach(async function (file) {
+    let name = await helper.createRouteName(file).catch(e => { throw (e) })
+    router.use(`/master_work_unit/${name}`, receive.rules(), receive.validate, require(`./master_work_unit/${file}`))
+    console.log({ route: `/master_work_unit/${name}`, status: 'ready' })
+  });
+});
+
+fs.readdir(`api/v1/master_legal_standing`, async function (err, files) {
+  if (err) { return console.log(`Unable to scan directory (api/v1/master_legal_standing) : ` + err); }
+  files.forEach(async function (file) {
+    let name = await helper.createRouteName(file).catch(e => { throw (e) })
+    router.use(`/master_legal_standing/${name}`, receive.rules(), receive.validate, require(`./master_legal_standing/${file}`))
+    console.log({ route: `/master_legal_standing/${name}`, status: 'ready' })
+  });
+});
+
+fs.readdir(`api/v1/master_rejected_type`, async function (err, files) {
+  if (err) { return console.log(`Unable to scan directory (api/v1/master_rejected_type) : ` + err); }
+  files.forEach(async function (file) {
+    let name = await helper.createRouteName(file).catch(e => { throw (e) })
+    router.use(`/master_rejected_type/${name}`, receive.rules(), receive.validate, require(`./master_rejected_type/${file}`))
+    console.log({ route: `/master_rejected_type/${name}`, status: 'ready' })
+  });
+});
+
 module.exports = router

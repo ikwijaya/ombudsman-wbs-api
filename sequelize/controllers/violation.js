@@ -33,8 +33,6 @@ module.exports = {
         where: where
       });
 
-      // sampe sini dlu
-
       return {
         items: items,
         is_insert: false
