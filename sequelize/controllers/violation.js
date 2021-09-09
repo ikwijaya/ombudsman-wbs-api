@@ -3,7 +3,7 @@ const { Sequelize, Op, DataTypes } = require('sequelize');
 const core = require('./core');
 const { response } = require('../../models/index');
 const sequelize = require('..');
-const form_id = null
+const form_id = 205
 
 module.exports = {
   /**
@@ -27,8 +27,7 @@ module.exports = {
       let roles = await core.checkRoles(sessions[0].user_id, [form_id]).catch(e => { throw (e) })
       let items = await models.violations.findAll({
         attributes: [
-          'idx_m_violation', 'name',
-          [Sequelize.literal(`${roles.length && roles[0].is_update}`), 'is_update']
+          'idx_m_violation', [Sequelize.literal(`concat(cast('(',idx_m_violation AS VARCHAR),') ',name)`), `name`], [Sequelize.literal(`${roles.length && roles[0].is_update}`), 'is_update']
         ],
         where: where
       });
