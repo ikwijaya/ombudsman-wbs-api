@@ -26,6 +26,7 @@ module.exports = {
 
       let roles = await core.checkRoles(sessions[0].user_id, [form_id]).catch(e => { throw (e) })
       let items = await models.work_units.findAll({
+        raw: true,
         attributes: [
           'idx_m_work_unit', 'name', 'record_status',
           [Sequelize.literal(`${roles.length && roles[0].is_update}`), 'is_update']
@@ -35,6 +36,7 @@ module.exports = {
 
       let a = await models.complaint_incidents.findAll(
         {
+          raw: true,
           attributes: [
             'idx_m_work_unit',
             [Sequelize.literal(`count(idx_m_work_unit)`), 'count']
@@ -45,6 +47,7 @@ module.exports = {
 
       let b = await models.complaint_study_incidents.findAll(
         {
+          raw: true,
           attributes: [
             'idx_m_work_unit',
             [Sequelize.literal(`count(idx_m_work_unit)`), 'count']
@@ -59,9 +62,9 @@ module.exports = {
         count_1 = count_1.length ? count_1[0].count : 0
         count_2 = count_2.length ? count_2[0].count : 0
 
-        e.setDataValue('count_1', count_1)
-        e.setDataValue('count_2', count_2)
-        e.setDataValue('is_delete', count_1 == 0 && count_2 == 0 && roles.length && roles[0].is_delete ? true : false)
+        e['count_1'] = count_1
+        e['count_2'] = count_2
+        e['is_delete'] = count_1 == 0 && count_2 == 0 && roles.length && roles[0].is_delete ? true : false
       })
 
       return {
