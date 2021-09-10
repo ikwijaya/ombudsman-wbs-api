@@ -3,7 +3,7 @@ const { Sequelize, Op, DataTypes } = require('sequelize');
 const core = require('./core');
 const { response } = require('../../models/index');
 const sequelize = require('..');
-const form_id = null
+const form_id = 207
 
 module.exports = {
   /**
@@ -27,6 +27,7 @@ module.exports = {
 
       let roles = await core.checkRoles(sessions[0].user_id, [form_id]).catch(e => { throw (e) })
       let items = await models.cities.findAll({
+        raw: true,
         attributes: [
           'idx_m_city', 'name',
           [Sequelize.literal(`${roles.length && roles[0].is_update}`), 'is_update']
@@ -34,7 +35,7 @@ module.exports = {
         include: [
           {
             attributes: ['name'],
-            model: models.region
+            model: models.regions
           }
         ],
         where: where
@@ -42,6 +43,7 @@ module.exports = {
 
       let a = await models.complaint_incidents.findAll(
         {
+          raw: true,
           attributes: [
             'idx_m_city',
             [Sequelize.literal(`count(idx_m_city)`), 'count']
@@ -52,6 +54,7 @@ module.exports = {
 
       let b = await models.complaint_study_incidents.findAll(
         {
+          raw: true,
           attributes: [
             'idx_m_city',
             [Sequelize.literal(`count(idx_m_city)`), 'count']
