@@ -288,4 +288,22 @@ fs.readdir(`api/v1/master_rejected_type`, async function (err, files) {
   });
 });
 
+fs.readdir(`api/v1/master_city`, async function (err, files) {
+  if (err) { return console.log(`Unable to scan directory (api/v1/master_city) : ` + err); }
+  files.forEach(async function (file) {
+    let name = await helper.createRouteName(file).catch(e => { throw (e) })
+    router.use(`/master_city/${name}`, receive.rules(), receive.validate, require(`./master_city/${file}`))
+    console.log({ route: `/master_city/${name}`, status: 'ready' })
+  });
+});
+
+fs.readdir(`api/v1/master_region`, async function (err, files) {
+  if (err) { return console.log(`Unable to scan directory (api/v1/master_region) : ` + err); }
+  files.forEach(async function (file) {
+    let name = await helper.createRouteName(file).catch(e => { throw (e) })
+    router.use(`/master_region/${name}`, receive.rules(), receive.validate, require(`./master_region/${file}`))
+    console.log({ route: `/master_region/${name}`, status: 'ready' })
+  });
+});
+
 module.exports = router

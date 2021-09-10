@@ -5,15 +5,14 @@ const region = require('../../../sequelize/controllers/region')
 
 router.post('/', async (req, res, next) => {
   let sid = req.body.sid || null;
-  let regional = req.body.regional || null;
+  let id = req.body.id || null;
 
   try {
-    let o = await region.load_by_region(sid, regional).catch(e => { throw (e) })
+    let o = await region.delete(sid, id).catch(e => { throw (e) });
     res.send(o)
   } catch (err) {
     res.status(401).send(response.failed(err, []))
   }
 });
-
 
 module.exports = router
