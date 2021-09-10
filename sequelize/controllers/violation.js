@@ -29,6 +29,8 @@ module.exports = {
         attributes: [
           'idx_m_violation',
           [Sequelize.literal(`concat('(',cast(idx_m_violation AS varchar),') ', name)`), 'name'],
+          [Sequelize.literal(`case when record_status='A' and ${roles.length && roles[0].is_update} then true else false end`), 'is_disable'],
+          [Sequelize.literal(`case when record_status='N' and ${roles.length && roles[0].is_update} then true else false end`), 'is_enable'],
           [Sequelize.literal(`${roles.length && roles[0].is_update}`), 'is_update']
         ],
         where: where
