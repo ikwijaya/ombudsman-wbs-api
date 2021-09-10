@@ -28,7 +28,9 @@ module.exports = {
       let items = await models.work_units.findAll({
         raw: true,
         attributes: [
-          'idx_m_work_unit', 'name', 'record_status',
+          'idx_m_work_unit', 'name',
+          [Sequelize.literal(`case when record_status='A' and ${roles.length && roles[0].is_update} then true else false end`), 'is_disable'],
+          [Sequelize.literal(`case when record_status='N' and ${roles.length && roles[0].is_update} then true else false end`), 'is_enable'],
           [Sequelize.literal(`${roles.length && roles[0].is_update}`), 'is_update']
         ],
         where: where,
