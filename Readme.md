@@ -15,3 +15,6 @@ _Dugaan Pelanggaran di Pengampu WBS (5,9,10)_
 > } else {
 > s = await status.load([`6`, `7`, `8`, `9`, `10`, `11`, `12`, `13`, `14`, `15`, `16`, `17`])
 > }
+
+Error:
+https://bobcares.com/blog/postgresql-error-code-23505/
