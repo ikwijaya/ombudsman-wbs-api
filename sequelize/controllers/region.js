@@ -84,23 +84,24 @@ module.exports = {
         group: ['idx_m_region']
       })
 
+      items = JSON.parse(JSON.stringify(items))
       items.map(e => {
-        let count = a.filter(a => a['idx_m_region'] == e.getDataValue('idx_m_region'))
+        let count = a.filter(a => a['idx_m_region'] == e['idx_m_region'])
         count = count.length ? count[0]['count'] : 0;
 
-        e.setDataValue('count', count)
-        e.setDataValue('is_delete', count == 0 && roles.length && roles[0].is_delete ? true : false)
-      })
+        e['count'] = count
+        e['is_delete'] = count == 0 && roles.length && roles[0].is_delete ? true : false)
+    })
 
-      return {
-        items: items,
-        is_insert: roles.length && roles[0].is_insert
-      }
-    } catch (error) {
-      console.log(error)
-      throw (error)
+    return {
+      items: items,
+      is_insert: roles.length && roles[0].is_insert
     }
-  },
+  } catch(error) {
+    console.log(error)
+    throw (error)
+  }
+},
 
   /**
    * 
@@ -109,24 +110,24 @@ module.exports = {
    * @returns 
    */
   async save(sid, obj = {}) {
-    const t = await sequelize.transaction();
+  const t = await sequelize.transaction();
 
-    try {
-      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
-      if (sessions.length === 0)
-        return response.failed('Session expires')
+  try {
+    let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+    if (sessions.length === 0)
+      return response.failed('Session expires')
 
-      if (!obj.name) return response.failed(`Kolom Nama Provinsi TIDAK boleh kosong`)
+    if (!obj.name) return response.failed(`Kolom Nama Provinsi TIDAK boleh kosong`)
 
-      await models.regions.create(obj, { transaction: t });
-      await t.commit()
-      return response.success('Berhasil menambahkan Provinsi')
-    } catch (error) {
-      await t.rollback()
-      console.log(error)
-      throw (error)
-    }
-  },
+    await models.regions.create(obj, { transaction: t });
+    await t.commit()
+    return response.success('Berhasil menambahkan Provinsi')
+  } catch (error) {
+    await t.rollback()
+    console.log(error)
+    throw (error)
+  }
+},
 
   /**
    * 
@@ -135,25 +136,25 @@ module.exports = {
    * @returns 
    */
   async update(sid, obj = {}) {
-    const t = await sequelize.transaction();
+  const t = await sequelize.transaction();
 
-    try {
-      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
-      if (sessions.length === 0)
-        return response.failed('Session expires')
+  try {
+    let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+    if (sessions.length === 0)
+      return response.failed('Session expires')
 
-      await models.regions.update(obj, {
-        transaction: t,
-        where: { idx_m_region: obj.idx_m_region }
-      })
-      await t.commit()
-      return response.success('Berhasil mengubah Provinsi')
-    } catch (error) {
-      await t.rollback()
-      console.log(error)
-      throw (error)
-    }
-  },
+    await models.regions.update(obj, {
+      transaction: t,
+      where: { idx_m_region: obj.idx_m_region }
+    })
+    await t.commit()
+    return response.success('Berhasil mengubah Provinsi')
+  } catch (error) {
+    await t.rollback()
+    console.log(error)
+    throw (error)
+  }
+},
 
   /**
    * 
@@ -161,21 +162,21 @@ module.exports = {
    * @param {*} obj 
    * @returns 
    */
-  async delete(sid, id = null) {
-    const t = await sequelize.transaction();
+  async delete (sid, id = null) {
+  const t = await sequelize.transaction();
 
-    try {
-      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
-      if (sessions.length === 0)
-        return response.failed('Session expires')
+  try {
+    let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+    if (sessions.length === 0)
+      return response.failed('Session expires')
 
-      await models.regions.destroy({ transaction: t, where: { idx_m_region: id } })
-      await t.commit()
-      return response.success('Berhasil menghapus Provinsi')
-    } catch (error) {
-      await t.rollback()
-      console.log(error)
-      throw (error)
-    }
-  },
+    await models.regions.destroy({ transaction: t, where: { idx_m_region: id } })
+    await t.commit()
+    return response.success('Berhasil menghapus Provinsi')
+  } catch (error) {
+    await t.rollback()
+    console.log(error)
+    throw (error)
+  }
+},
 }
