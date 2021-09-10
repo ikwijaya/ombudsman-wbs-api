@@ -84,7 +84,7 @@ module.exports = {
         group: ['idx_m_region']
       })
 
-      items = JSON.stringify(JSON.parse(items))
+      items = JSON.parse(JSON.stringify(items))
       console.log('items', items)
       items.map(e => {
         let count = a.filter(a => a['idx_m_region'] == e['idx_m_region'])
