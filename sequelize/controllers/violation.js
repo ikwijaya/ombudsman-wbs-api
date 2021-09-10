@@ -28,7 +28,7 @@ module.exports = {
       let items = await models.violations.findAll({
         attributes: [
           'idx_m_violation',
-          [Sequelize.literal(`concat('(',cast(violations.idx_m_violation AS varchar),') ', name)`), 'name'],
+          [Sequelize.literal(`concat('(',cast(idx_m_violation AS varchar),') ', name)`), 'name'],
           [Sequelize.literal(`${roles.length && roles[0].is_update}`), 'is_update']
         ],
         where: where
