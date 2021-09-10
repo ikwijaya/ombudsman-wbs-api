@@ -64,6 +64,8 @@ module.exports = {
       let roles = await core.checkRoles(sessions[0].user_id, [form_id]).catch(e => { throw (e) })
       let items = await models.regions.findAll(
         {
+          raw: true,
+          nested: true,
           attributes: [
             'idx_m_region', 'name', 'regional',
             [Sequelize.literal(`${roles.length && roles[0].is_update}`), 'is_update']
@@ -84,7 +86,6 @@ module.exports = {
         group: ['idx_m_region']
       })
 
-      items = JSON.parse(JSON.stringify(items))
       items.map(e => {
         let count = a.filter(a => a['idx_m_region'] == e['idx_m_region'])
         count = count.length ? count[0]['count'] : 0;
