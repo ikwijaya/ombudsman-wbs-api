@@ -668,7 +668,7 @@ module.exports = {
         `
         html += `
         <p>
-          <div class="title">A. DASAR PEMIKIRAN</div>
+          <div class="title">A. DASAR PEMERIKSAAN</div>
           <ol>
             <li>Undang-Undang No. 37 Tahun 2008 tentang Ombudsman Republik Indonesia</li>
             <li>Undang-Undang No. 25 Tahun 2009 tentang Pelayanan Publik</li>
@@ -1526,7 +1526,7 @@ module.exports = {
         `
         html += `
         <p>
-          <div class="title">A. DASAR PEMIKIRAN</div>
+          <div class="title">A. DASAR PEMERIKSAAN</div>
           <ol>
             <li>Undang-Undang No. 37 Tahun 2008 tentang Ombudsman Republik Indonesia</li>
             <li>Undang-Undang No. 25 Tahun 2009 tentang Pelayanan Publik</li>
@@ -4741,7 +4741,7 @@ module.exports = {
           e.source_complaint = complaint instanceof models.complaints ? complaint.getDataValue('source_complaint') : null
           e.dasar_pemeriksaan = `
           <p>
-            <div class="title">A. DASAR PEMIKIRAN</div>
+            <div class="title">A. DASAR PEMERIKSAAN</div>
             <ol>
               <li>Undang-Undang No. 37 Tahun 2008 tentang Ombudsman Republik Indonesia</li>
               <li>Undang-Undang No. 25 Tahun 2009 tentang Pelayanan Publik</li>
@@ -5197,7 +5197,7 @@ module.exports = {
         `
         html += `
         <p>
-          <div class="title">A. DASAR PEMIKIRAN</div>
+          <div class="title">A. DASAR PEMERIKSAAN</div>
           <ol>
             <li>Undang-Undang No. 37 Tahun 2008 tentang Ombudsman Republik Indonesia</li>
             <li>Undang-Undang No. 25 Tahun 2009 tentang Pelayanan Publik</li>
