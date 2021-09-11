@@ -21,20 +21,18 @@ module.exports = {
       let where = {}
       if (keyword)
         where[Op.or] = [
-          { 'city.name': { [Op.like]: `%${keyword}%` } },
-          { 'region.name': { [Op.like]: `%${keyword}%` } }
+          { 'name': { [Op.like]: `%${keyword.toUpperCase()}%` } }
         ]
 
       let roles = await core.checkRoles(sessions[0].user_id, [form_id]).catch(e => { throw (e) })
       let items = await models.cities.findAll({
-        raw: true,
         attributes: [
           'idx_m_city', 'name',
           [Sequelize.literal(`${roles.length && roles[0].is_update}`), 'is_update']
         ],
         include: [
           {
-            attributes: ['name'],
+            attributes: ['name', 'idx_m_region'],
             model: models.regions
           }
         ],
@@ -64,14 +62,15 @@ module.exports = {
       );
 
       items.map(e => {
-        let count_1 = a.filter(x => e['idx_m_city'] == x['idx_m_city'])
-        let count_2 = b.filter(x => e['idx_m_city'] == x['idx_m_city'])
+        let idx_m_city = e.getDataValue('idx_m_city');
+        let count_1 = a.filter(x => idx_m_city == x['idx_m_city'])
+        let count_2 = b.filter(x => idx_m_city == x['idx_m_city'])
         count_1 = count_1.length ? count_1[0].count : 0
         count_2 = count_2.length ? count_2[0].count : 0
 
-        e['count_1'] = count_1
-        e['count_2'] = count_2
-        e['is_delete'] = count_1 == 0 && count_2 == 0 && roles.length && roles[0].is_delete ? true : false
+        e.setDataValue('count_1', count_1)
+        e.setDataValue('count_2', count_2)
+        e.setDataValue('is_delete', count_1 == 0 && count_2 == 0 && roles.length && roles[0].is_delete ? true : false)
       })
 
       return {
@@ -99,6 +98,8 @@ module.exports = {
         return response.failed('Session expires')
 
       if (!obj.name) return response.failed(`Kolom Nama Kota TIDAK boleh kosong`)
+      if (!obj.idx_m_region) return response.failed(`Kolom Provinsi TIDAK boleh kosong`)
+      obj.name = obj.name.toUpperCase();
 
       await models.cities.create(obj, { transaction: t });
       await t.commit()
@@ -123,6 +124,10 @@ module.exports = {
       let sessions = await core.checkSession(sid).catch(e => { throw (e) })
       if (sessions.length === 0)
         return response.failed('Session expires')
+
+      if (!obj.name) return response.failed(`Kolom Nama Kota TIDAK boleh kosong`)
+      if (!obj.idx_m_region) return response.failed(`Kolom Provinsi TIDAK boleh kosong`)
+      obj.name = obj.name.toUpperCase();
 
       await models.cities.update(obj, {
         transaction: t,
