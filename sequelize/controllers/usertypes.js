@@ -3,6 +3,7 @@ const { Sequelize, Op, DataTypes } = require('sequelize');
 const core = require('./core');
 const { response } = require('../../models/index');
 const sequelize = require('..');
+const form_id = 206
 
 module.exports = {
   /**
@@ -23,16 +24,24 @@ module.exports = {
           { 'name': { [Op.like]: `%${keyword}%` } }
         ]
 
+      let roles = await core.checkRoles(sessions[0].user_id, [form_id]).catch(e => { throw (e) })
       let items = await models.usertypes.findAll(
         {
-          attributes: ['idx_m_user_type', 'name', 'roles'],
+          attributes: [
+            'idx_m_user_type', 'name', 'roles',
+            [Sequelize.literal(`case when usertypes.idx_m_user_type not in (-1,0) and ${roles.length && roles[0].is_update} then true else false end`), 'is_update']
+          ],
           include: [
             {
-              attributes: ['idx_m_user_type', 'email'],
+              required: false,
+              attributes: ['email'],
               model: models.users
             }
           ],
-          where: where
+          where: where,
+          order: [
+            ['name', 'asc']
+          ]
         }
       );
 
