@@ -58,6 +58,8 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
+      obj['dmodified'] = new Date()
+      obj['umodified'] = sessions[0].user_id;
       await models.violations.update(obj, {
         transaction: t,
         where: { idx_m_violation: obj.idx_m_violation }

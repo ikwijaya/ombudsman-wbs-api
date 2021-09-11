@@ -81,6 +81,8 @@ module.exports = {
 
       if (!obj.name) return response.failed(`Kolom Nama Legal Standing TIDAK boleh kosong`)
 
+      obj['dcreate'] = new Date()
+      obj['ucreate'] = sessions[0].user_id;
       await models.legal_standing.create(obj, { transaction: t });
       await t.commit()
       return response.success('Berhasil menambahkan Legal Standing')
@@ -105,6 +107,8 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
+      obj['dmodified'] = new Date()
+      obj['umodified'] = sessions[0].user_id;
       await models.legal_standing.update(obj, {
         transaction: t,
         where: { idx_m_legal_standing: obj.idx_m_legal_standing }

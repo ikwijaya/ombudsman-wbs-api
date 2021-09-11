@@ -99,6 +99,8 @@ module.exports = {
 
       if (!obj.name) return response.failed(`Kolom Nama Unit Kerja TIDAK boleh kosong`)
 
+      obj['dcreate'] = new Date()
+      obj['ucreate'] = sessions[0].user_id;
       await models.work_units.create(obj, { transaction: t });
       await t.commit()
       return response.success('Berhasil menambahkan Unit Kerja')
@@ -123,6 +125,8 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
+      obj['dmodified'] = new Date()
+      obj['umodified'] = sessions[0].user_id;
       await models.work_units.update(obj, {
         transaction: t,
         where: { idx_m_work_unit: obj.idx_m_work_unit }

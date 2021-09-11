@@ -81,6 +81,8 @@ module.exports = {
 
       if (!obj.name) return response.failed(`Kolom Nama Rejected Type TIDAK boleh kosong`)
 
+      obj['dcreate'] = new Date()
+      obj['ucreate'] = sessions[0].user_id;
       await models.complaint_rejected_types.create(obj, { transaction: t });
       await t.commit()
       return response.success('Berhasil menambahkan Rejected Type')
@@ -105,6 +107,8 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
+      obj['dmodified'] = new Date()
+      obj['umodified'] = sessions[0].user_id;
       await models.complaint_rejected_types.update(obj, {
         transaction: t,
         where: { idx_m_complaint_rejected_type: obj.idx_m_complaint_rejected_type }

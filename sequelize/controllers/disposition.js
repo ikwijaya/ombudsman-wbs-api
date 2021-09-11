@@ -91,6 +91,8 @@ module.exports = {
       if (!obj.name) return response.failed(`Kolom Nama Unit Kerja TIDAK boleh kosong`)
       if (!obj.flag) return response.failed(`Kolom Form Flag TIDAK boleh kosong`)
 
+      obj['dcreate'] = new Date()
+      obj['ucreate'] = sessions[0].user_id;
       await models.dispositions.create(obj, { transaction: t });
       await t.commit()
       return response.success('Berhasil menambahkan Disposisi')
@@ -115,6 +117,8 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
+      obj['dmodified'] = new Date()
+      obj['umodified'] = sessions[0].user_id;
       await models.dispositions.update(obj, {
         transaction: t,
         where: { idx_m_disposition: obj.idx_m_disposition }

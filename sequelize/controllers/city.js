@@ -101,6 +101,8 @@ module.exports = {
       if (!obj.idx_m_region) return response.failed(`Kolom Provinsi TIDAK boleh kosong`)
       obj.name = obj.name.toUpperCase();
 
+      obj['dcreate'] = new Date()
+      obj['ucreate'] = sessions[0].user_id;
       await models.cities.create(obj, { transaction: t });
       await t.commit()
       return response.success('Berhasil menambahkan Kota')
@@ -129,6 +131,8 @@ module.exports = {
       if (!obj.idx_m_region) return response.failed(`Kolom Provinsi TIDAK boleh kosong`)
       obj.name = obj.name.toUpperCase();
 
+      obj['dmodified'] = new Date()
+      obj['umodified'] = sessions[0].user_id;
       await models.cities.update(obj, {
         transaction: t,
         where: { idx_m_city: obj.idx_m_city }

@@ -68,6 +68,8 @@ module.exports = {
       let count = await models.userregion.count({ where: { regional: obj.regional, idx_m_user: obj.idx_m_user } })
       if (count > 0) return response.failed(`Regional ${obj.regional} sudah tersedia`)
 
+      obj['dcreate'] = new Date()
+      obj['ucreate'] = sessions[0].user_id;
       await models.userregion.create(obj, { transaction: t });
       await t.commit()
       return response.success('Berhasil menambahkan regional')

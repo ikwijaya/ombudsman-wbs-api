@@ -306,4 +306,13 @@ fs.readdir(`api/v1/master_region`, async function (err, files) {
   });
 });
 
+fs.readdir(`api/v1/master_usertype`, async function (err, files) {
+  if (err) { return console.log(`Unable to scan directory (api/v1/master_usertype) : ` + err); }
+  files.forEach(async function (file) {
+    let name = await helper.createRouteName(file).catch(e => { throw (e) })
+    router.use(`/master_usertype/${name}`, receive.rules(), receive.validate, require(`./master_usertype/${file}`))
+    console.log({ route: `/master_usertype/${name}`, status: 'ready' })
+  });
+});
+
 module.exports = router
