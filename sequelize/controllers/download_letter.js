@@ -4523,23 +4523,23 @@ module.exports = {
           <tr>
             <td colspan="4">
               <div>Yth.</div>
-              <div> //to </div>
-              <div> di //address </div>
+              <div> ${c.getDataValue('to')} </div>
+              <div> di ${c.getDataValue('address')} </div>
             </td>
           </tr>
           <tr>
             <td colspan="4">
               <p>
-                Dengan ini diberitahukan bahwa Keasistenan Utama Manajemen Mutu telah menerima Aduan Saudara mengenai //object oleh //by
+                Dengan ini diberitahukan bahwa Keasistenan Utama Manajemen Mutu telah menerima Aduan Saudara mengenai ${c.getDataValue('object')} oleh ${c.getDataValue('by')}
               </p>
               <p>
                 Sehubungan dengan hal tersebut, Kami telah melakukan
                 klarifikasi kepada
                 <span v-html="terperiksa"></span> yang pada intinya
-                disampaikan bahwa: // desc
+                disampaikan bahwa: ${c.getDataValue('desc')}
               </p>
               <p>
-                Terkait hal tersebut, Kami perlu meminta konfirmasi kepada Saudara atas hasil klarifikasi kepada //by. Kami harap konfirmasi dimaksud, agar disampaikan kepada Kepala Keasistenan Management Mutu
+                Terkait hal tersebut, Kami perlu meminta konfirmasi kepada Saudara atas hasil klarifikasi kepada ${c.getDataValue('by')}. Kami harap konfirmasi dimaksud, agar disampaikan kepada Kepala Keasistenan Management Mutu
                 selambat-lambatnya 14 (empat belas) hari sejak surat ini
                 diterima.
               </p>
