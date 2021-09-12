@@ -15,15 +15,14 @@ const MCache = (d = 30) => {
     var key = JSON.stringify(Object.assign(req.body, req.originalUrl || req.url));
     var cacheContent = mcache.get(key);
 
+    console.log('cacheContent', cacheContent)
     if (cacheContent) {
       res.status(200).send(JSON.parse(cacheContent))
       return
     } else {
       res.sendResponse = res.send
       res.send = (body) => {
-        mcache.put(key, body, duration * d, (k, v) => {
-          let l = JSON.parse(v).data.length;
-        })
+        mcache.put(key, body, duration * d)
         res.sendResponse(body)
       }
       next()
