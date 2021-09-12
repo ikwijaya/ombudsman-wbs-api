@@ -4,7 +4,7 @@ const { response } = require('../../../models')
 const { cache } = require('../../../helper')
 const { complaint } = require('../../../sequelize/controllers')
 
-router.post('/', cache.MCache(30), async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   let keyword = req.body.keyword || null;
   let status_code = req.body.status_code || [];
   let sid = req.body.sid || null;
