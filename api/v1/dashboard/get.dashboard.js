@@ -1,9 +1,10 @@
 
 const router = require('express').Router()
 const { response } = require('../../../models')
+const { cache } = require('../../../helper')
 const WBS = require('../../../database/model/dashboard')
 
-router.post('/', async (req, res, next) => {
+router.post('/', cache.MCache(30), async (req, res, next) => {
   let sid = req.body.sid || null;
 
   try {
