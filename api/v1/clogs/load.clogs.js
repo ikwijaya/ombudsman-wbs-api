@@ -8,7 +8,6 @@ router.post('/', async (req, res, next) => {
   let id = req.body.idx_m_complaint || null;
 
   try {
-    console.log(req.body)
     let o = await clogs.load(sid, id).catch(e => { throw (e) });
     res.send(o)
   } catch (err) {

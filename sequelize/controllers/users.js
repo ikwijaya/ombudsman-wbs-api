@@ -43,7 +43,7 @@ module.exports = {
       return response.success('Register berhasil, silakan cek email Anda untuk melakukan verifikasi terhadap akun Anda.')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -399,7 +399,7 @@ module.exports = {
       return response.success('Verifikasi Anda berhasil, silakan login melakukan login.')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -446,7 +446,7 @@ module.exports = {
       return response.success(`Permintaan perubahan password sudah Kami kirimkan ke ${email}.`)
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -756,7 +756,7 @@ module.exports = {
       return response.success('Perubahan password Anda telah dilakukan, silakan login kembali')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -793,7 +793,7 @@ module.exports = {
       return response.success('Password berhasil dirubah')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },

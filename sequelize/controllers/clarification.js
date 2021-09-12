@@ -74,7 +74,6 @@ module.exports = {
         item2: det
       }
     } catch (error) {
-      console.log(error)
       throw (error)
     }
   },
@@ -113,7 +112,6 @@ module.exports = {
       return response.success('Klarifikasi terperiksa berhasil disimpan')
     } catch (error) {
       await t.rollback()
-      console.log(error)
       throw (error)
     }
   },
@@ -175,7 +173,6 @@ module.exports = {
         where: { idx_m_complaint: id }
       })
 
-      console.log('compa', complaint)
       if (complaint instanceof models.complaints) {
         teradu = complaint.getDataValue('complaint_study')['complaint_study_reporteds'].map(e => e.name) || [];
         pengadu = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: complaint.getDataValue('ucreate') } })
@@ -205,7 +202,6 @@ module.exports = {
       return response.success('Berhasil ke proses selanjutnya')
     } catch (error) {
       await t.rollback()
-      console.log(error)
       throw (error)
     }
   },
@@ -243,7 +239,6 @@ module.exports = {
       return response.success('Update berhasi disimpan')
     } catch (error) {
       await t.rollback()
-      console.log(error)
       throw (error)
     }
   },
@@ -270,7 +265,6 @@ module.exports = {
       return response.success('Terperiksa berhasi disimpan')
     } catch (error) {
       await t.rollback()
-      console.log(error)
       throw (error)
     }
   },
@@ -294,7 +288,6 @@ module.exports = {
       return response.success('Terperiksa berhasi disimpan')
     } catch (error) {
       await t.rollback()
-      console.log(error)
       throw (error)
     }
   },

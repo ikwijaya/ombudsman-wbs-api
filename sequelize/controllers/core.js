@@ -174,7 +174,7 @@ module.exports = {
 
       return menus;
     } catch (err) {
-      console.log(err)
+      throw (err)
     }
   },
 

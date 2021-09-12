@@ -59,7 +59,6 @@ module.exports = {
 
       return v
     } catch (error) {
-      console.log(error)
       throw (error)
     }
   },
@@ -105,7 +104,6 @@ module.exports = {
       await t.commit()
       return response.success('Pengampu WBS berhasil disimpan')
     } catch (error) {
-      console.log('err', error)
       await t.rollback()
       throw (error)
     }
@@ -159,7 +157,6 @@ module.exports = {
       await t.commit()
       return response.success(`Edit data pengampu wbs berhasil ${is_submit ? 'di submit' : 'di simpan'}.`)
     } catch (error) {
-      console.log(error)
       await t.rollback()
       throw (error)
     }
@@ -232,7 +229,6 @@ module.exports = {
       await t.commit();
       return response.success('Penyetujuan telah dilakukan')
     } catch (error) {
-      console.log(error)
       await t.rollback()
       throw (error)
     }

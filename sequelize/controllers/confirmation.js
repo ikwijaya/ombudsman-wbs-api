@@ -52,7 +52,6 @@ module.exports = {
         item2: cla
       }
     } catch (error) {
-      console.log(error)
       throw (error)
     }
   },
@@ -83,7 +82,6 @@ module.exports = {
       return response.success('Konfirmasi pengadu berhasi disimpan')
     } catch (error) {
       await t.rollback()
-      console.log(error)
       throw (error)
     }
   },
@@ -121,7 +119,6 @@ module.exports = {
       return response.success('Update berhasi disimpan')
     } catch (error) {
       await t.rollback()
-      console.log(error)
       throw (error)
     }
   },
@@ -167,7 +164,6 @@ module.exports = {
         tindak_lanjut: tindak_lanjut,
       }, { transaction: t });
 
-      console.log('lhpa_01', lhpa_01);
       if (lhpa_01 instanceof models.lhpa) {
         // tindak lanjut
         let lhpa_01E = await models.lhpa_actions.bulkCreate([
@@ -190,7 +186,6 @@ module.exports = {
             idx_t_lhpa: lhpa_01.getDataValue('idx_t_lhpa')
           },
         ], { transaction: t });
-        console.log('lhpa_01E', lhpa_01E);
 
         let lhpa_01EDetail = [
           {
@@ -528,7 +523,6 @@ module.exports = {
       return response.success('Berhasil ke proses selanjutnya')
     } catch (error) {
       await t.rollback()
-      console.log(error)
       throw (error)
     }
   },

@@ -42,7 +42,6 @@ module.exports = {
         items: actions
       }
     } catch (error) {
-      console.log(error)
       throw (error)
     }
   },
@@ -74,7 +73,6 @@ module.exports = {
       return response.success()
     } catch (error) {
       await t.rollback()
-      console.log(error)
       throw (error)
     }
   }

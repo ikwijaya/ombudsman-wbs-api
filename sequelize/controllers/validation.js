@@ -163,7 +163,7 @@ module.exports = {
         item3: complaint
       }
     } catch (err) {
-      console.log(err)
+
     }
   },
 
@@ -216,7 +216,7 @@ module.exports = {
       await t.commit();
       return response.success('Validasi berhasi di simpan', []);
     } catch (err) {
-      console.log(err)
+
       await t.rollback();
     }
   },
@@ -273,7 +273,7 @@ module.exports = {
       await t.commit();
       return response.success('Sukses meng-update validasi', [])
     } catch (err) {
-      console.log(err)
+
       await t.rollback()
     }
   },
@@ -328,7 +328,7 @@ module.exports = {
       await t.commit();
       return response.success('Pemeriksaan validasi berhasil disimpan', [])
     } catch (err) {
-      console.log(err)
+
       await t.rollback()
     }
   },
@@ -457,7 +457,7 @@ module.exports = {
       await t.commit();
       return response.success('Penyetujuan validasi berhasil disimpan', [])
     } catch (err) {
-      console.log(err)
+
       await t.rollback()
     }
   }

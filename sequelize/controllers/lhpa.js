@@ -192,7 +192,7 @@ module.exports = {
         item2: studies      // studies
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -234,7 +234,7 @@ module.exports = {
       return response.success('LHPA berhasil disimpan')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -272,7 +272,7 @@ module.exports = {
       return response.success('Update berhasi disimpan')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -314,7 +314,7 @@ module.exports = {
       return response.success('Berhasil ke proses selanjutnya')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -350,7 +350,7 @@ module.exports = {
       return response.success(`Berhasil menambahkan ${obj.action.type}`)
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -383,7 +383,7 @@ module.exports = {
       return response.success(`Berhasil menghapus data`)
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -418,7 +418,7 @@ module.exports = {
       return response.success(`Berhasil menghapus data`)
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -454,7 +454,7 @@ module.exports = {
       return response.success(`Berhasil menambahkan tahapan`)
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -490,7 +490,7 @@ module.exports = {
       return response.success(`Berhasil menghapus tahapan`)
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -527,7 +527,7 @@ module.exports = {
       return response.success(`Berhasil menghapus tahapan`)
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },

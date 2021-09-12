@@ -19,7 +19,6 @@ router.post('/', async (req, res, next) => {
       }, null).catch(e => { throw (e) })
     res.send(o).status(200)
   } catch (err) {
-    console.log('route complaint/search', err)
     res.status(401).send(response.failed(err, []))
   }
 });

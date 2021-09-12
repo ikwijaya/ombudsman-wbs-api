@@ -31,7 +31,6 @@ router.post('/', cache.MCache(30), async (req, res, next) => {
       complaint_by_process: complaint_by_process.rows
     })
   } catch (err) {
-    console.log('error', err)
     res.status(401).send(response.failed(err, []))
   }
 });

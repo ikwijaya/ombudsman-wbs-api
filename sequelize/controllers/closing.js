@@ -60,7 +60,6 @@ module.exports = {
         item: m
       }
     } catch (error) {
-      console.log(error)
       throw (error)
     }
   },
@@ -111,7 +110,6 @@ module.exports = {
       return response.success('Pengaduan berhasil ditutup')
     } catch (error) {
       await t.rollback()
-      console.log(error)
       throw (error)
     }
   },
@@ -149,7 +147,6 @@ module.exports = {
       return response.success('Update berhasi disimpan')
     } catch (error) {
       await t.rollback()
-      console.log(error)
       throw (error)
     }
   },

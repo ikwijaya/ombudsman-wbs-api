@@ -32,7 +32,7 @@ module.exports = {
 
       return m
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -64,7 +64,7 @@ module.exports = {
       return response.success('Permintaan data dan dokumen berhasi disimpan')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -101,7 +101,7 @@ module.exports = {
       return response.success('Update berhasi disimpan')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -148,7 +148,7 @@ module.exports = {
       return response.success('Berhasil ke proses selanjutnya')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -180,7 +180,7 @@ module.exports = {
       return response.success('Permintaan data dan dokumen berhasi dihapus')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   }

@@ -33,7 +33,6 @@ router.post('/', async (req, res, next) => {
     let o = await complaint.save(req.body, true).catch(e => { throw (e) })
     res.status(200).send(o)
   } catch (err) {
-    console.log(err)
     res.status(401).send(response.failed(err, []))
   }
 });

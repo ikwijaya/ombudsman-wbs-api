@@ -14,7 +14,6 @@ module.exports = {
       if (code.length > 0)
         where['code'] = { [Op.in]: code }
 
-      console.log('where => ', where)
       let status = await models.status.findAll(
         {
           raw: true,
@@ -33,7 +32,7 @@ module.exports = {
 
       return status;
     } catch (err) {
-      console.log(err)
+
       throw (err)
     }
   }

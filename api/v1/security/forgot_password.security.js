@@ -10,7 +10,6 @@ router.post('/', async (req, res, next) => {
     let o = await users.forget(email).catch(e => { throw (e) });
     res.send(o);
   } catch (err) {
-    console.log(err)
     res.status(401).send(response.failed(err, []))
   }
 });

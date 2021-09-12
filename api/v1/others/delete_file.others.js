@@ -10,7 +10,7 @@ router.post('/', async (req, res, next) => {
 
     await helper.deleteFile(`${UPLOAD_PATH}${name}`)
       .then(async (r) => res.status(200).send(r))
-      .catch(e => console.log(e))
+      .catch(e => { throw (e) })
   } catch (err) {
     res.status(401).send(response.failed(err, []))
   }

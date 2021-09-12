@@ -21,7 +21,7 @@ router.get('/:filename', cache.MCache(30), async (req, res, next) => {
           if (r) { res.contentType(mime_type).send(r) }
           else { res.status(200).send(response.failed(err)) }
         })
-        .catch(e => console.log(e))
+        .catch(e => { throw (e) })
     }
   } catch (err) {
     res.status(401).send(response.failed(err, []))

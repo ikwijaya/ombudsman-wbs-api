@@ -31,7 +31,7 @@ class Dashboard {
         .andWhereRaw(`true=CASE WHEN 'PUBLIC'=? THEN c.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
         .groupBy('s.name');
     } catch (error) {
-      console.log('getCountByStatus', error)
+      throw (error)
     }
   }
 
@@ -70,7 +70,7 @@ class Dashboard {
         .whereRaw(`true=CASE WHEN 'PUBLIC'=? THEN mc.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
         .groupByRaw(`mo.text, mo.value`)
     } catch (error) {
-      console.log('getCountByType', error)
+      throw (error)
     }
   }
 
@@ -123,7 +123,7 @@ class Dashboard {
         .leftJoin('m_status AS s', 'c.idx_m_status', 's.idx_m_status')
         .whereRaw(`s.code IN ('7','9')`)
     } catch (error) {
-      console.log('getCountByType', error)
+      throw (error)
     }
   }
 
@@ -144,7 +144,7 @@ class Dashboard {
         .andWhereRaw(`true=CASE WHEN 'PUBLIC'=? THEN c.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
         .groupBy('c.idx_m_complaint');
     } catch (error) {
-      console.log('getCountByType', error)
+      throw (error)
     }
   }
 
@@ -175,7 +175,7 @@ class Dashboard {
         .andWhereRaw(`true=CASE WHEN 'PUBLIC'=? THEN c.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
         .andWhereRaw(`c.form_status = '1'`)
     } catch (error) {
-      console.log('getComplaintByRegion', error)
+      throw (error)
     }
   }
 
@@ -204,7 +204,7 @@ class Dashboard {
         .andWhereRaw(`c.form_status = '1'`)
         .groupByRaw(`mr.regional`)
     } catch (error) {
-      console.log('getCountByRegion', error)
+      throw (error)
     }
   }
 
@@ -233,7 +233,7 @@ class Dashboard {
         .andWhereRaw(`c.form_status = '1'`)
         .groupByRaw(`mr.regional, mr.name`)
     } catch (error) {
-      console.log('getCountByRegion', error)
+      throw (error)
     }
   }
 
@@ -278,7 +278,7 @@ class Dashboard {
           where 	mv.idx_m_violation in (10) and cast(ms.code as integer) >= 6
         `)
     } catch (error) {
-      console.log('getComplaintByViolation', error)
+      throw (error)
     }
   }
 
@@ -319,7 +319,7 @@ class Dashboard {
           where mc.form_status = '0'
         `)
     } catch (error) {
-      console.log('getComplaintByProcess', error)
+      throw (error)
     }
   }
 

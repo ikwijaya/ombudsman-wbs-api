@@ -131,7 +131,6 @@ module.exports = {
 
       let head_of_kumm, head_of_reg, arranged_by;
       let is_check = false; let is_approve = false;
-      console.log('mm => ', m)
       if (m instanceof models.study_lys) {
         is_approve = m.getDataValue('head_of_kumm') == sessions[0].user_id;
         is_check = m.getDataValue('head_of_reg') == sessions[0].user_id;
@@ -161,7 +160,7 @@ module.exports = {
         item3: complaint
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -213,7 +212,7 @@ module.exports = {
       return response.success('Telaah dan analisis berhasil disimpan')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -260,7 +259,7 @@ module.exports = {
       await t.commit();
       return response.success('Sukses meng-update kertas kerja klarifikasi', [])
     } catch (error) {
-      console.log(err)
+
       await t.rollback()
     }
   },
@@ -279,7 +278,6 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session TIDAK ditemukan');
 
-      console.log('st', obj)
       obj.study['umodified'] = sessions[0].user_id;
       obj.study['dmodified'] = new Date();
       obj.study['head_of_reg'] = sessions[0].user_id;
@@ -311,7 +309,7 @@ module.exports = {
       await t.commit();
       return response.success('Sukses memeriksa kertas kerja klarifikasi', [])
     } catch (error) {
-      console.log(err)
+
       await t.rollback()
     }
   },
@@ -453,7 +451,7 @@ module.exports = {
       await t.commit();
       return response.success('Sukses menyetujui kertas kerja klarifikasi', [])
     } catch (error) {
-      console.log(error)
+
       await t.rollback()
     }
   }

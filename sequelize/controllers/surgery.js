@@ -49,7 +49,7 @@ module.exports = {
         item: m
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -67,7 +67,6 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
-      console.log('obj', obj);
       if (!obj.surgery['result']) return response.failed('Silakan pilih Apakah akan dilanjutkan ke Tahapan Pleno atau Belum dilanjutkan')
 
       let form_status = 0;
@@ -98,7 +97,7 @@ module.exports = {
       return response.success('LHPA berhasil disimpan')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -121,7 +120,6 @@ module.exports = {
       if (!obj.users || obj.users.length == 0) return response.failed('Silakan pilih Tim Pemeriksa')
       if (!obj.surgery['pengampu_kumm']) return response.failed('Silakan pilih Pengampu Keasistenan Manajemen Mutu')
 
-      console.log('obj', obj);
       let id = obj.surgery['idx_t_surgery']
       let form_status = 0;
       let res = obj.surgery['result']
@@ -155,7 +153,7 @@ module.exports = {
       return response.success('Bedah Aduan berhasil disimpan')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   }

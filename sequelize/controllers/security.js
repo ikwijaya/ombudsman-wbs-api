@@ -95,7 +95,7 @@ module.exports = {
         hour: h * 1000
       }]);
     } catch (err) {
-      console.log(err);
+      ;
       await t.rollback();
     }
   },
@@ -142,7 +142,7 @@ module.exports = {
       await t.commit;
       return response.success('Logout berhasil.', []);
     } catch (err) {
-      console.log(err)
+
       await t.rollback();
     }
   },

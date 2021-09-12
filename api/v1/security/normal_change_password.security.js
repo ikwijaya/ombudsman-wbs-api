@@ -9,7 +9,6 @@ router.post('/', async (req, res, next) => {
   let old_password = req.body.old_password || null;
   let new_password = req.body.new_password || null;
 
-  console.log(' = >', req.body)
   let decryptOldPass = hmac.decryptText(old_password);
   let decryptNewPass = hmac.decryptText(new_password);
 

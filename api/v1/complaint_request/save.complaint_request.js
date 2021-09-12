@@ -10,7 +10,6 @@ router.post('/', async (req, res, next) => {
   try {
     let msg = []
     let o = null;
-    console.log(obj)
 
     if (!obj.request.date)
       msg.push('<li>Kolom Tanggal Permintaan TIDAK boleh kosong</li>')
@@ -26,7 +25,6 @@ router.post('/', async (req, res, next) => {
 
     res.send(o)
   } catch (err) {
-    console.log(err)
     res.status(401).send(response.failed(err, []))
   }
 });

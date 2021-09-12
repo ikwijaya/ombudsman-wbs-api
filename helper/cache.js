@@ -15,7 +15,6 @@ const MCache = (d = 30) => {
     var key = JSON.stringify(Object.assign(req.body, req.originalUrl || req.url));
     var cacheContent = mcache.get(key);
 
-    console.log('cacheContent', cacheContent)
     if (cacheContent) {
       res.status(200).send(JSON.parse(cacheContent))
       return

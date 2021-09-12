@@ -232,7 +232,6 @@ module.exports = {
         let vv = c.toJSON()['complaint_violations'] || []
         for (let i = 0; i < vv.length; i++) {
           violations += `<li>${vv[i].violation.name}</li>`
-          console.log('muter => ' + i, violations)
         }
         violations += `</ul>`
 
@@ -334,7 +333,7 @@ module.exports = {
         c: c
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -550,7 +549,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -1408,7 +1407,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -2117,7 +2116,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -2233,7 +2232,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -2581,7 +2580,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -2712,7 +2711,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -2839,7 +2838,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -2955,7 +2954,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -3085,7 +3084,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -3208,7 +3207,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -3328,7 +3327,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -3478,7 +3477,7 @@ module.exports = {
   //       html: html
   //     }
   //   } catch (error) {
-  //     console.log(error)
+  //     
   //     throw (error)
   //   }
   // },
@@ -3613,7 +3612,7 @@ module.exports = {
 
       return { html: html }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -3751,7 +3750,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -4108,7 +4107,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -4229,7 +4228,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -4439,7 +4438,7 @@ module.exports = {
 
       return { html: html }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -4573,7 +4572,7 @@ module.exports = {
 
       return { html: html }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -4754,8 +4753,6 @@ module.exports = {
           `;
           e.kronologi_aduan = studies instanceof models.complaint_studies ? studies.getDataValue('complaint_study_events') : []
           e.head_of_kumm_name = users.filter(a => a['idx_m_user'] == e['head_of_kumm']).length > 0 ? users.filter(a => a['idx_m_user'] == e['head_of_kumm'])[0]['fullname'] : '';
-
-          console.log('teradu', e.teradu);
         })
 
         m.sort(function (a, b) { return a['dcreate'] - b['dcreate'] });
@@ -5080,7 +5077,7 @@ module.exports = {
 
       return { html: html }
     } catch (error) {
-      console.log('error letter_18', error)
+      throw (error)
     }
   },
 
@@ -5283,7 +5280,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -5487,7 +5484,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -5619,7 +5616,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -5737,7 +5734,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -5853,7 +5850,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -5988,7 +5985,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -6111,7 +6108,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -6237,7 +6234,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -6359,7 +6356,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -6487,7 +6484,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -6609,7 +6606,7 @@ module.exports = {
         html: html
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },

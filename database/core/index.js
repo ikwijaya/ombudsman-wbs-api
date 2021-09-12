@@ -43,7 +43,6 @@ module.exports = {
           resolve(o)
         })
         .catch((e) => {
-          console.log('checkSession', e)
           reject(e)
         })
         .finally(() => { db.destroy() })
@@ -143,7 +142,6 @@ module.exports = {
                   .as('a')
               )
               .then((rows) => {
-                console.log(rows)
                 resolve(parsed(rows))
               })
               .catch((e) => { reject(e) })
@@ -243,7 +241,6 @@ module.exports = {
               .orderBy('mf.form_sort', 'asc')
               .then((rows) => resolve(parsed(rows)))
               .catch((e) => {
-                console.log(e)
                 reject(e);
               })
           } else {

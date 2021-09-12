@@ -23,7 +23,6 @@ router.post('/', async (req, res, next) => {
       await x.saveUser(sid, users, roles)
         .then((r) => res.status(200).send(r))
         .catch(e => {
-          console.log(e)
           throw (e)
         });
     }

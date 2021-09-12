@@ -94,7 +94,7 @@ module.exports = {
       await t.commit()
       return response.success(`Laporan pengaduan berhasil ${obj['verification_type'] == 1 ? 'diterima' : 'ditolak'}`)
     } catch (error) {
-      console.log(error)
+
       await t.rollback()
       throw (error)
     }

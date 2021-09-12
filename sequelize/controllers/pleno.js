@@ -130,7 +130,7 @@ module.exports = {
       return response.success('Berhasil menyimpan data hasil Rapat Pleno')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -297,7 +297,7 @@ module.exports = {
 
       return { items: complaint };
     } catch (err) {
-      console.log(err)
+
       throw (err)
     }
   },

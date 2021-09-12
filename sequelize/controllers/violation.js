@@ -39,7 +39,7 @@ module.exports = {
         is_insert: false
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -68,7 +68,7 @@ module.exports = {
       return response.success('Berhasil mengubah Violation')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },

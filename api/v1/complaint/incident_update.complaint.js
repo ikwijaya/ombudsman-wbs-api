@@ -11,7 +11,6 @@ router.post('/', async (req, res, next) => {
     let o = await complaint.updateIncident(sid, obj).catch(e => { throw (e) });
     res.send(o)
   } catch (err) {
-    console.log(err)
     res.status(401).send(response.failed(err, []))
   }
 });

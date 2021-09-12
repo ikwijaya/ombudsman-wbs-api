@@ -37,7 +37,7 @@ module.exports = {
         items: items
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -103,7 +103,7 @@ module.exports = {
         is_insert: roles.length && roles[0].is_insert
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -132,7 +132,7 @@ module.exports = {
       return response.success('Berhasil menambahkan Provinsi')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -164,7 +164,7 @@ module.exports = {
       return response.success('Berhasil mengubah Provinsi')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -188,7 +188,7 @@ module.exports = {
       return response.success('Berhasil menghapus Provinsi')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },

@@ -47,7 +47,7 @@ module.exports = {
 
       return { items: m, }
     } catch (err) {
-      console.log(err)
+
       throw (err)
     }
   },
@@ -88,7 +88,7 @@ module.exports = {
       await t.commit();
       return response.success('Monitoring berhasi di simpan', []);
     } catch (err) {
-      console.log(err)
+
       await t.rollback();
       throw (err)
     }
@@ -111,7 +111,7 @@ module.exports = {
       await t.commit();
       return response.success('Monitoring berhasi di simpan', []);
     } catch (err) {
-      console.log(err)
+
       await t.rollback();
       throw (err)
     }
@@ -135,7 +135,7 @@ module.exports = {
       await t.commit();
       return response.success('Detail monitoring berhasil di simpan', []);
     } catch (err) {
-      console.log(err)
+
       await t.rollback();
       throw (err)
     }
@@ -159,7 +159,7 @@ module.exports = {
       await t.commit();
       return response.success('Detail monitoring berhasil di ubah', []);
     } catch (err) {
-      console.log(err)
+
       await t.rollback();
       throw (err)
     }
@@ -182,7 +182,7 @@ module.exports = {
       await t.commit();
       return response.success('Detail monitoring berhasil di ubah', []);
     } catch (err) {
-      console.log(err)
+
       await t.rollback();
       throw (err)
     }
@@ -221,7 +221,7 @@ module.exports = {
       return response.success('Update berhasi disimpan')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -349,7 +349,7 @@ module.exports = {
       return response.success('Berhasil ke proses selanjutnya')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },

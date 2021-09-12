@@ -47,7 +47,7 @@ module.exports = {
         options: options
       }
     } catch (err) {
-      console.log(err)
+      throw (error)
     }
   },
 
@@ -123,7 +123,7 @@ module.exports = {
         terperiksa: !isPublic ? terperiksa : []
       }
     } catch (err) {
-      console.log(err)
+      throw (error)
     }
   },
 
@@ -174,7 +174,7 @@ module.exports = {
         region_cities: region_cities
       }
     } catch (err) {
-      console.log(err)
+      throw (error)
     }
   },
 
@@ -207,7 +207,7 @@ module.exports = {
         violations: violations
       }
     } catch (err) {
-      console.log(err)
+      throw (error)
     }
   },
 
@@ -239,7 +239,7 @@ module.exports = {
         wbs: wbs
       }
     } catch (err) {
-      console.log(err)
+      throw (error)
     }
   },
 
@@ -266,7 +266,7 @@ module.exports = {
         roles: roles
       }
     } catch (err) {
-      console.log(err)
+      throw (error)
     }
   },
 
@@ -382,7 +382,7 @@ module.exports = {
         product: product
       }
     } catch (err) {
-      console.log(err)
+      throw (error)
     }
   },
 
@@ -601,7 +601,7 @@ module.exports = {
         approvers: approvers
       }
     } catch (err) {
-      console.log(err)
+      throw (err)
     }
   },
 
@@ -643,13 +643,12 @@ module.exports = {
         where: { record_status: 'A', idx_m_user_type: 3 }
       });
 
-      console.log('users => ', users)
       return {
         users: users,
         head_kumm: head_kumm
       }
     } catch (err) {
-      console.log(err)
+      throw (err)
     }
   },
 
@@ -724,7 +723,7 @@ module.exports = {
         conclusions: conclusions,
       }
     } catch (err) {
-      console.log(err)
+      throw (err)
     }
   },
 
@@ -787,7 +786,7 @@ module.exports = {
         wbs: wbs
       }
     } catch (err) {
-      console.log(err)
+      throw (err)
     }
   },
 
@@ -805,7 +804,7 @@ module.exports = {
         region: region
       }
     } catch (error) {
-      console.log(err)
+      throw (error)
     }
   }
 }

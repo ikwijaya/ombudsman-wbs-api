@@ -49,7 +49,7 @@ module.exports = {
         items: items
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -80,7 +80,7 @@ module.exports = {
       return response.success('Berhasil mengubah Tipe User')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },

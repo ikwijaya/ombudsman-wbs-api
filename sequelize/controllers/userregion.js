@@ -27,7 +27,7 @@ module.exports = {
         items: items
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -45,7 +45,7 @@ module.exports = {
         regional: regional
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -75,7 +75,7 @@ module.exports = {
       return response.success('Berhasil menambahkan regional')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -102,7 +102,7 @@ module.exports = {
       return response.success('Berhasil mengubah data regional')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -130,7 +130,7 @@ module.exports = {
       return response.success('Berhasil meng-hapus data regional')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   }

@@ -32,7 +32,7 @@ module.exports = {
         items: letters
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },

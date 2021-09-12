@@ -93,7 +93,6 @@ module.exports = {
         item2: d
       };
     } catch (error) {
-      console.log(error)
       throw (error)
     }
   },
@@ -141,7 +140,6 @@ module.exports = {
       await t.commit()
       return response.success('Form penetapan berhasil disimpan')
     } catch (error) {
-      console.log(error)
       await t.rollback()
       throw (error)
     }
@@ -195,7 +193,6 @@ module.exports = {
       await t.commit()
       return response.success('Form penetapan berhasil di ubah')
     } catch (error) {
-      console.log(error)
       await t.rollback()
       throw (error)
     }

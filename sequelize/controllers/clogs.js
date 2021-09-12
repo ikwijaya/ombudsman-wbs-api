@@ -71,7 +71,6 @@ module.exports = {
 
       return m
     } catch (error) {
-      console.log(error)
       throw (error)
     }
   },

@@ -12,7 +12,6 @@ router.post('/', async (req, res, next) => {
     await x.getAdditionalUpdate(sid, idx_m_user)
       .then((r) => res.status(200).send(r))
       .catch(e => {
-        console.log(e)
         throw (e)
       });
   } catch (err) {

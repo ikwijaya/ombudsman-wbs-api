@@ -287,7 +287,7 @@ module.exports = {
       await t.commit()
       return response.success('Telaah pengaduan berhasil disimpan')
     } catch (error) {
-      console.log(error)
+
       await t.rollback()
       throw (error)
     }
@@ -302,7 +302,6 @@ module.exports = {
    */
   async update(sid, obj = {}, is_submit = false) {
     const t = await sequelize.transaction();
-    console.log('obj => ', obj)
 
     try {
       let sessions = await core.checkSession(sid).catch(e => { throw (e) })
@@ -327,7 +326,6 @@ module.exports = {
         }
       })
 
-      console.log('violation => ', violations)
       await models.complaint_study_violations.bulkCreate(violations, { transaction: t, })
 
       if (is_submit) {
@@ -368,7 +366,6 @@ module.exports = {
         }
       })
 
-      console.log('sampe sini')
       let studies = await models.complaint_studies.findOne(
         {
           attributes: ['idx_m_complaint'],
@@ -399,7 +396,7 @@ module.exports = {
       await t.commit()
       return response.success(`Edit data telaah pengaduan berhasil ${is_submit ? 'di submit' : 'di simpan'}.`)
     } catch (error) {
-      console.log(error)
+
       await t.rollback()
       throw (error)
     }
@@ -502,7 +499,6 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expired, please relogin.')
 
-      console.log('obj', obj)
       obj['ucreate'] = sessions[0].user_id
       await models.complaint_study_incidents.create(obj, { transaction: t, });
 
@@ -538,7 +534,7 @@ module.exports = {
       await t.commit()
       return response.success('Tempat kejadian berhasil diubah')
     } catch (error) {
-      console.log(error)
+
       await t.rollback()
       throw (error)
     }
@@ -566,7 +562,7 @@ module.exports = {
       await t.commit()
       return response.success('Tempat kejadian berhasil dihapus')
     } catch (error) {
-      console.log(error)
+
       await t.rollback()
       throw (error)
     }
@@ -622,7 +618,7 @@ module.exports = {
       return response.success('Tempat kejadian berhasil diubah')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -701,7 +697,7 @@ module.exports = {
       await t.commit()
       return response.success('Lampiran berhasil dihapus')
     } catch (error) {
-      console.log(error)
+
       await t.rollback()
       throw (error)
     }

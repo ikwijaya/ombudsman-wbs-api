@@ -60,7 +60,7 @@ module.exports = {
         is_insert: roles.length && roles[0].is_insert
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -88,7 +88,7 @@ module.exports = {
       return response.success('Berhasil menambahkan Rejected Type')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -117,7 +117,7 @@ module.exports = {
       return response.success('Berhasil mengubah Rejected Type')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -141,7 +141,7 @@ module.exports = {
       return response.success('Berhasil menghapus Rejected Type')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },

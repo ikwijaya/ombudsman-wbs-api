@@ -416,7 +416,6 @@ module.exports = {
         status_color: c instanceof models.complaints ? 'green' : 'red',
       }
     } catch (error) {
-      console.log(error)
       throw (error)
     }
   },
@@ -798,7 +797,6 @@ module.exports = {
         is_insert: roles.filter(e => e.idx_m_form == 1 && e.is_insert == true).length > 0 ? true : false
       };
     } catch (err) {
-      console.log(err)
       throw (err)
     }
   },
@@ -831,7 +829,6 @@ module.exports = {
         obj.complaints['source_complaint'] = 'WEB'
 
       let v = await models.complaints.create(obj.complaints, { transaction: t })
-      console.log('v => ', v.getDataValue('idx_m_complaint'))
       if (v instanceof models.complaints) {
         if (obj.violations.length > 0)
           await models.complaint_violations.bulkCreate(obj.violations.map(e => {
@@ -905,7 +902,6 @@ module.exports = {
       await t.commit()
       return response.success('Pengaduan Anda berhasil disimpan')
     } catch (error) {
-      console.log(error)
       await t.rollback()
       throw (error)
     }
@@ -944,7 +940,6 @@ module.exports = {
 
       return regNo;
     } catch (error) {
-      console.log(error)
       throw (error)
     }
   },
@@ -996,7 +991,6 @@ module.exports = {
       await t.commit()
       return response.success(`Berhasil menghapus pengaduan dengan nomor: ${form_no ? form_no : '<b>TIDAK ADA </b>'}`)
     } catch (error) {
-      console.log(error)
       await t.rollback()
       throw (error)
     }
@@ -1047,7 +1041,6 @@ module.exports = {
       await t.commit()
       return response.success(`Berhasil mencabut aduan nomor: ${form_no ? form_no : '<b>TIDAK ADA </b>'}`)
     } catch (error) {
-      console.log(error)
       await t.rollback()
       throw (error)
     }
@@ -1143,7 +1136,6 @@ module.exports = {
       await t.commit()
       return response.success(`Edit data pengaduan berhasil ${is_submit ? 'di submit' : 'di simpan'}.`)
     } catch (error) {
-      console.log(error)
       await t.rollback()
       throw (error)
     }
@@ -1169,7 +1161,6 @@ module.exports = {
       await t.commit()
       return response.success('Kronologi aduan berhasil ditambah')
     } catch (error) {
-      console.log(error)
       await t.rollback()
       throw (error)
     }
@@ -1309,7 +1300,6 @@ module.exports = {
       await t.commit()
       return response.success('Tempat kejadian berhasil dihapus')
     } catch (error) {
-      console.log(error)
       await t.rollback()
       throw (error)
     }
@@ -1365,7 +1355,6 @@ module.exports = {
       return response.success('Tempat kejadian berhasil diubah')
     } catch (error) {
       await t.rollback()
-      console.log(error)
       throw (error)
     }
   },
@@ -1444,7 +1433,6 @@ module.exports = {
       await t.commit()
       return response.success('Lampiran berhasil dihapus')
     } catch (error) {
-      console.log(error)
       await t.rollback()
       throw (error)
     }

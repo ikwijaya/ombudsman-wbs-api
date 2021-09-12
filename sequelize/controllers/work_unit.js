@@ -78,7 +78,7 @@ module.exports = {
         is_insert: roles.length && roles[0].is_insert
       }
     } catch (error) {
-      console.log(error)
+
       throw (error)
     }
   },
@@ -106,7 +106,7 @@ module.exports = {
       return response.success('Berhasil menambahkan Unit Kerja')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -135,7 +135,7 @@ module.exports = {
       return response.success('Berhasil mengubah Unit Kerja')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
@@ -159,7 +159,7 @@ module.exports = {
       return response.success('Berhasil menghapus Unit Kerja')
     } catch (error) {
       await t.rollback()
-      console.log(error)
+
       throw (error)
     }
   },
