@@ -16,7 +16,7 @@ module.exports = {
   API_URL: "https://app-ombudsman.herokuapp.com/v1",
   DB_SCHEMA: 'public',//cfg.DB_SCHEMA,
   DB_URL: cfg.DATABASE_URL,
-  // DB_URL: "postgres://postgres:7654321Aa@localhost:5432/postgres",
+  // DB_URL: "postgres://postgres:g3n@dm!n@192.168.8.10:5432/wbs2_db",
   DB_CLIENT: "postgres",
   DB_SSL: "1",
   SQ_SYNC: "0",
