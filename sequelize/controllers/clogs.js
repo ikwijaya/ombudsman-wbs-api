@@ -17,6 +17,7 @@ module.exports = {
       if (sessions.length === 0)
         return null;
 
+      let user_type = sessions[0].user_type;
       let ucreate = null; let flow;
       let m = await models.clogs.findAll({
         attributes: [
@@ -54,7 +55,7 @@ module.exports = {
         let getUsers = await models.users.findAll({
           attributes: [
             'idx_m_user',
-            [Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']
+            [Sequelize.literal(`concat(' oleh ', users.fullname,' - ', users.email)`), 'name']
           ],
           where: { idx_m_user: { [Op.in]: ucreate } }
         })
@@ -65,7 +66,7 @@ module.exports = {
           where: { idx_m_status: { [Op.in]: flow } }
         })
 
-        m.map(e => { e.ucreate = getUsers.filter(a => a.idx_m_user == e.ucreate) })
+        m.map(e => { e.ucreate = user_type == 'PUBLIC' ? [{ name: '' }] : getUsers.filter(a => a.idx_m_user == e.ucreate) })
         m.map(e => { e.flow = getFlow.filter(a => a.code == e.flow) })
       }
 

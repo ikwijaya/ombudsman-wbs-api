@@ -10,6 +10,7 @@ router.post('/', async (req, res, next) => {
   let incident = req.body.incidents || []
   let reported = req.body.reported || []
   let violation = req.body.violations || []
+  let attachment = req.body.attachments || []
 
   try {
     let msg = [];
@@ -23,11 +24,15 @@ router.post('/', async (req, res, next) => {
       msg.push('<li>Tempat Kejadian Kolom Unit Kerja, Kota dan Waktu Kejadian TIDAK boleh kosong.</li>')
     if (await helper.validateArrayVal(reported, ['name']) || reported.length === 0)
       msg.push('<li>Terlapor Kolom Nama Terlapor TIDAK boleh kosong.</li>')
-    if (msg.length > 0)
-      res.send(response.failed('<ul>' + msg.join('') + '</ul>'))
+    if (attachment.length == 0)
+      msg.push('<li>Lampiran TIDAK boleh kosong</li>')
 
-    let o = await study.save(req.body, true).catch(e => { throw (e) })
-    res.status(200).send(o)
+    if (msg.length > 0) {
+      res.send(response.failed('<ul>' + msg.join('') + '</ul>'))
+    } else {
+      let o = await study.save(req.body, true).catch(e => { throw (e) })
+      res.status(200).send(o)
+    }
   } catch (err) {
     res.status(401).send(response.failed(err, []))
   }

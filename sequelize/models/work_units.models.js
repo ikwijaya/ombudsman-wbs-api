@@ -10,6 +10,7 @@ module.exports = (sq) => {
       autoIncrement: true
     },
     name: DataTypes.STRING,
+    regional: DataTypes.TEXT,
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,

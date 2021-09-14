@@ -29,6 +29,10 @@ module.exports = (sq) => {
     cancel_reason: DataTypes.TEXT,
     cancel_date: DataTypes.DATE,
     cancel_by: DataTypes.BIGINT,
+    is_secure: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,

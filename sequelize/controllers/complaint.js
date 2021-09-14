@@ -144,8 +144,8 @@ module.exports = {
             e.data = {
               // items: decisions,
               is_read: r.filter(a => a.idx_m_form == 5 && a.is_read).length > 0 ? true : false,
-              is_update: r.filter(a => a.idx_m_form == 5 && a.is_update).length > 0 ? true : false,
-              is_delete: r.filter(a => a.idx_m_form == 5 && a.is_delete).length > 0 ? true : false,
+              is_update: false,
+              is_delete: false,
               is_insert: r.filter(a => a.idx_m_form == 5 && a.is_read).length > 0 ? true : false,
               is_determination: is_kumm
             };
@@ -501,7 +501,10 @@ module.exports = {
             'hopes',
             'cancel_reason',
             'cancel_by',
+            'is_secure',
             ['source_complaint', 'source_name'],
+            [Sequelize.literal(`case when complaints.is_secure=true then 'RAHASIA' else NULL end`), 'secure_status'],
+            [Sequelize.literal(`case when complaints.is_secure=true then 'red' else 'grey' end`), 'secure_color'],
             [Sequelize.literal(`true`), 'is_view'],
             [Sequelize.literal(`status.code`), 'status_code'],
             [Sequelize.literal(`case 
@@ -558,6 +561,13 @@ module.exports = {
               then true 
               else false 
             end`), 'is_cancel'],
+            [Sequelize.literal(`case when 
+                1=${[1, 2].includes(typeId) ? 1 : 0}
+                and cast(status.code AS integer) BETWEEN 6 AND 12
+                and complaints.form_status NOT IN ('99', '100')
+              then true 
+              else false 
+            end`), 'is_close'],
             [Sequelize.literal(`case when 
                 cast(status.code AS integer) IN (13,14)
                 and 1=${[0, 2, 3, 4, 5].includes(typeId) ? 1 : 0}

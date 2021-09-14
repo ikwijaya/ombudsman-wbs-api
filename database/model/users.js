@@ -314,6 +314,8 @@ class Users {
         .then(r => user_id = r.status ? r.user_id : null)
         .catch(e => { reject(e) })
 
+      if (users.email) users.email = users.email.trim()
+
       if (user_id) {
         await db('m_user')
           .where({ email: users.email })

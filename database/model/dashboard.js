@@ -28,6 +28,7 @@ class Dashboard {
           db.raw(`s.name AS text`),
         )
         .innerJoin(`m_status AS s`, `c.idx_m_status`, `s.idx_m_status`)
+        .whereRaw(`c.form_status='1'`)
         .andWhereRaw(`true=CASE WHEN 'PUBLIC'=? THEN c.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
         .groupBy('s.name');
     } catch (error) {
@@ -63,11 +64,12 @@ class Dashboard {
             end as color
           `)
         )
-        .leftJoin('m_option AS mo', function () {
+        .innerJoin('m_option AS mo', function () {
           this.on('mo.value', '=', 'mc.source_complaint')
             .andOn('mo.option_id', '=', db.raw(`?`, ['1']))
         })
         .whereRaw(`true=CASE WHEN 'PUBLIC'=? THEN mc.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
+        .andWhereRaw(`mc.form_status='1'`)
         .groupByRaw(`mo.text, mo.value`)
     } catch (error) {
       throw (error)
@@ -223,7 +225,7 @@ class Dashboard {
       return await db('m_complaint AS c')
         .select(
           db.raw(`count(mr.regional) AS value`),
-          db.raw(`concat('Regional ',mr.regional, ' - ', mr.name) AS text`),
+          db.raw(`concat(mr.name) AS text`),
         )
         .innerJoin('t_complaint_study AS s', 'c.idx_m_complaint', 's.idx_m_complaint')
         .leftJoin('t_complaint_study_incident AS sr', 'sr.idx_t_complaint_study', 's.idx_t_complaint_study')
@@ -300,7 +302,8 @@ class Dashboard {
               , 'Telah dilakukan Penutupan' as text
           from 	m_complaint mc 
           inner join m_status ms on mc.idx_m_status=ms.idx_m_status 
-          where 	cast(ms.code as integer)=17 and mc.form_status = '1'
+          inner join t_closing tc on mc.idx_m_complaint=tc.idx_m_complaint
+          where 	cast(ms.code as integer)=17 and mc.form_status = '1' and tc.form_status='1'
           union all
           select 	count(1) as value
               , concat('Masih dalam Pengerjaan') as text
@@ -314,18 +317,68 @@ class Dashboard {
           where mc.form_status = '99'
           union all
           select 	count(1) as value
-              , concat('[draft] Pengaduan') as text
+              , concat('Penutupan (kembali ke Inspektorat)') as text
           from 	m_complaint mc
-          where mc.form_status = '0'
+          where mc.form_status = '100'
         `)
     } catch (error) {
       throw (error)
     }
   }
 
+  /**
+   * 
+   * @param {*} sid 
+   * @returns 
+   */
+  async getCountByWorkUnit(sid) {
+    try {
+      let db = knex(opt);
+      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      if (sessions.length === 0)
+        return []
 
+      return await db('m_complaint AS a')
+        .select(
+          'd.name AS text',
+          db.raw(`COUNT(d.idx_m_work_unit) AS value`, [])
+        )
+        .innerJoin(`t_complaint_study AS b`, 'a.idx_m_complaint', 'b.idx_m_complaint')
+        .innerJoin(`t_complaint_study_reported AS c`, 'b.idx_t_complaint_study', 'c.idx_t_complaint_study')
+        .innerJoin(`m_work_unit AS d`, `c.idx_m_work_unit`, `d.idx_m_work_unit`)
+        .andWhereRaw(`true=CASE WHEN 'PUBLIC'=? THEN a.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
+        .groupBy('d.idx_m_work_unit');
+    } catch (error) {
+      throw (error)
+    }
+  }
 
+  /**
+   * 
+   * @param {*} sid 
+   * @returns 
+   */
+  async getCountByPerson(sid) {
+    try {
+      let db = knex(opt);
+      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      if (sessions.length === 0)
+        return []
 
+      return await db('m_complaint AS a')
+        .select(
+          'd.fullname AS text',
+          db.raw(`COUNT(d.idx_m_user) AS value`, [])
+        )
+        .innerJoin(`t_complaint_determination AS b`, 'a.idx_m_complaint', 'b.idx_m_complaint')
+        .innerJoin(`t_complaint_determination_user AS c`, 'b.idx_t_complaint_determination', 'c.idx_t_complaint_determination')
+        .innerJoin(`m_user AS d`, `c.idx_m_user`, `d.idx_m_user`)
+        .whereRaw(`true=CASE WHEN 'PUBLIC'=? THEN a.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
+        .groupBy('d.idx_m_user');
+    } catch (error) {
+      throw (error)
+    }
+  }
 }
 
 module.exports = Dashboard

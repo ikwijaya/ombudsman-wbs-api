@@ -18,6 +18,8 @@ router.post('/', cache.MCache(30), async (req, res, next) => {
     let complaint_by_region = await x.getComplaintByRegion(sid).catch(e => { throw (e) })
     let complaint_by_violation = await x.getComplaintByViolation(sid).catch(e => { throw (e) })
     let complaint_by_process = await x.getComplaintByProcess(sid).catch(e => { throw (e) })
+    let complaint_by_work_unit = await x.getCountByWorkUnit(sid).catch(e => { throw (e) })
+    let complaint_by_person = await x.getCountByPerson(sid).catch(e => { throw (e) })
 
     res.send({
       count_by_type: count_by_type,
@@ -28,7 +30,9 @@ router.post('/', cache.MCache(30), async (req, res, next) => {
       complaint_by_region: complaint_by_region,
       count_by_region_name: count_by_region_name,
       complaint_by_violation: complaint_by_violation.rows,
-      complaint_by_process: complaint_by_process.rows
+      complaint_by_process: complaint_by_process.rows,
+      complaint_by_work_unit: complaint_by_work_unit,
+      complaint_by_person: complaint_by_person
     })
   } catch (err) {
     res.status(401).send(response.failed(err, []))
