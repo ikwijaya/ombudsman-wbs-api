@@ -78,7 +78,8 @@ module.exports = {
           ],
           where: where,
           order: [
-            ['name', 'asc']
+            ['name', 'asc'],
+            ['dcreate', 'desc']
           ]
         }
       );
@@ -123,8 +124,10 @@ module.exports = {
         return response.failed('Session expires')
 
       if (!obj.name) return response.failed(`Kolom Nama Provinsi TIDAK boleh kosong`)
-      obj.name = obj.name.toUpperCase();
 
+      let count = await models.regions.count({ where: { name: obj.name } });
+      if (count > 0) return response.failed(`${obj.name} sudah tersedia !`)
+      obj.name = obj.name.toUpperCase();
       obj['dcreate'] = new Date()
       obj['ucreate'] = sessions[0].user_id;
       await models.regions.create(obj, { transaction: t });

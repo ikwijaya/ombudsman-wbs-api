@@ -372,6 +372,13 @@ module.exports = {
         }
       )
 
+      let violations = await models.violations.findAll(
+        {
+          attributes: ['idx_m_violation', 'name'],
+          where: { record_status: 'A', idx_m_violation: { [Op.in]: [5, 9, 10] } }
+        }
+      )
+
       return {
         steps: steps,
         checklists: checklists,
@@ -379,7 +386,8 @@ module.exports = {
         by: ['TERADU', 'PENGADU'],
         head_regional: head_regional,
         head_kumm: head_kumm,
-        product: product
+        product: product,
+        violations: violations
       }
     } catch (err) {
       throw (error)
@@ -595,10 +603,16 @@ module.exports = {
         where: { record_status: 'A', idx_m_user_type: 3 }
       });
 
+      let violations = await models.violations.findAll({
+        attributes: ['idx_m_violation', 'name'],
+        where: { record_status: 'A' }
+      })
+
       return {
         media: media,
         by: ['TERADU', 'PENGADU'],
-        approvers: approvers
+        approvers: approvers,
+        violations: violations
       }
     } catch (err) {
       throw (err)

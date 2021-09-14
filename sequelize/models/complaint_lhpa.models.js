@@ -23,6 +23,12 @@ module.exports = (sq) => {
     pendapat_pemeriksa: DataTypes.TEXT(),
     kesimpulan_pemeriksa: DataTypes.TEXT(),
     tindak_lanjut: DataTypes.TEXT(),
+    checked_date: DataTypes.DATE,
+    checked_by: DataTypes.BIGINT,
+    approved_date: DataTypes.DATE,
+    approved_by: DataTypes.BIGINT,
+    arranged_date: DataTypes.DATE,
+    arranged_by: DataTypes.BIGINT,
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,

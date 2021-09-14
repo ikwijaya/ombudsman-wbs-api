@@ -117,7 +117,6 @@ module.exports = {
       return response.success('Berhasil mengubah Rejected Type')
     } catch (error) {
       await t.rollback()
-
       throw (error)
     }
   },
