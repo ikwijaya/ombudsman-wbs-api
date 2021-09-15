@@ -123,14 +123,14 @@ module.exports = {
         }
       )
 
-      let decision = await models.complaint_decisions.findOne(
-        {
-          attributes: [
-            'idx_m_complaint', [Sequelize.literal(`cast(idx_m_violation as integer)`), 'idx_m_violation']
-          ],
-          where: { record_status: 'A', idx_m_complaint: complaintId }
-        }
-      );
+      // let decision = await models.complaint_decisions.findOne(
+      //   {
+      //     attributes: [
+      //       'idx_m_complaint', [Sequelize.literal(`cast(idx_m_violation as integer)`), 'idx_m_violation']
+      //     ],
+      //     where: { record_status: 'A', idx_m_complaint: complaintId }
+      //   }
+      // );
 
       let ucreate;
       let complaint = await models.complaints.findOne({
@@ -151,9 +151,9 @@ module.exports = {
         ucreate = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: complaint.getDataValue('ucreate') } })
 
         complaint['ucreate'] = ucreate instanceof models.users ? ucreate.getDataValue('name') : null
-        if (decision instanceof models.complaint_decisions) {
-          complaint.setDataValue('idx_m_violation', complaint.getDataValue('idx_m_violation'))
-        }
+        // if (decision instanceof models.complaint_decisions) {
+        //   complaint.setDataValue('idx_m_violation', complaint.getDataValue('idx_m_violation'))
+        // }
       }
 
       let is_check = false;
