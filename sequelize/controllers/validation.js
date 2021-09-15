@@ -99,7 +99,7 @@ module.exports = {
               include: [
                 {
                   required: false,
-                  attributes: ['name', [Sequelize.literal(`case when work_units.regional is null then '' else concat('Regional ', work_units.regional) end`), 'regional']],
+                  attributes: ['name', 'regional'],
                   model: models.work_units
                 }
               ],
@@ -123,14 +123,17 @@ module.exports = {
         }
       )
 
-      // let decision = await models.complaint_decisions.findOne(
-      //   {
-      //     attributes: [
-      //       'idx_m_complaint', [Sequelize.literal(`cast(idx_m_violation as integer)`), 'idx_m_violation']
-      //     ],
-      //     where: { record_status: 'A', idx_m_complaint: complaintId }
-      //   }
-      // );
+      console.log('============================================>>>> here')
+      let decision = await models.complaint_decisions.findOne(
+        {
+          attributes: [
+            'idx_m_complaint', [Sequelize.literal(`cast(idx_m_violation as integer)`), 'idx_m_violation']
+          ],
+          where: { record_status: 'A', idx_m_complaint: complaintId }
+        }
+      );
+
+      console.log('============================================>>>> here', decision)
 
       let ucreate;
       let complaint = await models.complaints.findOne({
@@ -151,9 +154,10 @@ module.exports = {
         ucreate = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: complaint.getDataValue('ucreate') } })
 
         complaint['ucreate'] = ucreate instanceof models.users ? ucreate.getDataValue('name') : null
-        // if (decision instanceof models.complaint_decisions) {
-        //   complaint.setDataValue('idx_m_violation', complaint.getDataValue('idx_m_violation'))
-        // }
+        if (decision instanceof models.complaint_decisions) {
+          let idx_m_violation = decision.getDataValue('idx_m_violation')
+          complaint.setDataValue('idx_m_violation', idx_m_violation)
+        }
       }
 
       let is_check = false;
@@ -182,7 +186,7 @@ module.exports = {
         item3: complaint
       }
     } catch (err) {
-
+      throw (err)
     }
   },
 
