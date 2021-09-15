@@ -385,7 +385,7 @@ module.exports = {
         steps: steps,
         checklists: checklists,
         media: media,
-        by: ['TERADU', 'PENGADU'],
+        by: ['TERADU', 'PENGADU', 'PIHAK LAIN'],
         head_regional: head_regional,
         head_kumm: head_kumm,
         product: product,

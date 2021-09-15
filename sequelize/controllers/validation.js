@@ -123,17 +123,14 @@ module.exports = {
         }
       )
 
-      console.log('============================================>>>> here')
       let decision = await models.complaint_decisions.findOne(
         {
           attributes: [
-            'idx_m_complaint', [Sequelize.literal(`cast(idx_m_violation as integer)`), 'idx_m_violation']
+            'idx_m_complaint', 'idx_m_violation'
           ],
           where: { record_status: 'A', idx_m_complaint: complaintId }
         }
       );
-
-      console.log('============================================>>>> here', decision)
 
       let ucreate;
       let complaint = await models.complaints.findOne({
