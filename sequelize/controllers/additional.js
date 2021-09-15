@@ -225,7 +225,7 @@ module.exports = {
           'idx_m_user',
           [Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']
         ],
-        where: { record_status: 'A', idx_m_user_type: 2 }
+        where: { record_status: 'A', idx_m_user_type: { [Op.in]: [2, 1] } }
       });
 
       let wbs = await models.users.findAll({
