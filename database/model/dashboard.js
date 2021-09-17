@@ -2,11 +2,7 @@
 const { NODE_ENV } = require('../../config')
 const opt = require('../connection')[NODE_ENV]
 const knex = require('knex')
-const { response } = require('../../models/index')
-// const core = require('../core')
 const { core } = require('../../sequelize/controllers')
-const { helper } = require('../../helper')
-const moment = require('moment')
 
 class Dashboard {
 
@@ -164,18 +160,39 @@ class Dashboard {
 
       return await db('m_complaint AS c')
         .select(
+          'c.idx_m_complaint',
           'c.form_no',
-          db.raw(`concat('Regional ',mr.regional) AS regional`),
-          'mr.name AS region_name',
-          'ct.name AS city_name',
-          'sr.address'
+          db.raw(`concat('Regional ', CAST(wk.regional AS VARCHAR)) AS regional`),
+          'str.name AS teradu',
+          'wk.name AS unit_kerja',
+          'st.name AS tahapan'
         )
         .innerJoin('t_complaint_study AS s', 'c.idx_m_complaint', 's.idx_m_complaint')
-        .leftJoin('t_complaint_study_incident AS sr', 'sr.idx_t_complaint_study', 's.idx_t_complaint_study')
-        .leftJoin('m_city AS ct', 'sr.idx_m_city', 'ct.idx_m_city')
-        .leftJoin('m_region AS mr', 'mr.idx_m_region', 'ct.idx_m_region')
+        .innerJoin('t_complaint_study_reported AS str', 's.idx_t_complaint_study', 'str.idx_t_complaint_study')
+        .innerJoin('m_work_unit AS wk', 'str.idx_m_work_unit', 'wk.idx_m_work_unit')
+        .leftJoin('m_status AS st', 'st.idx_m_status', 'c.idx_m_status')
         .andWhereRaw(`true=CASE WHEN 'PUBLIC'=? THEN c.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
         .andWhereRaw(`c.form_status = '1'`)
+        .then(async r => {
+          return await db('t_complaint_determination AS td')
+            .select(
+              'td.idx_m_complaint',
+              db.raw(`concat(u.fullname, ' - ', u.email) AS name`)
+            )
+            .innerJoin('t_complaint_determination_user AS tds', 'td.idx_t_complaint_determination', 'tds.idx_t_complaint_determination')
+            .innerJoin('m_user AS u', 'u.idx_m_user', 'tds.idx_m_user')
+            .whereRaw('td.idx_m_complaint is not null')
+            .then((r2 => {
+              r.map(e => {
+                e['penugasan'] = r2.filter(a => a['idx_m_complaint'] == e['idx_m_complaint'])
+              })
+
+              console.log('r', r)
+              console.log('r2', r2)
+
+              return r
+            }))
+        })
     } catch (error) {
       throw (error)
     }

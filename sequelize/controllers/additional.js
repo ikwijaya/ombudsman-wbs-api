@@ -20,14 +20,18 @@ module.exports = {
       });
 
       let work_units = await models.work_units.findAll({
-        attributes: ['idx_m_work_unit',
+        attributes: [
+          [Sequelize.literal(`cast(work_units.idx_m_work_unit AS VARCHAR)`),'idx_m_work_unit'],
           [Sequelize.literal(`concat(case when work_units.regional is null then '' else concat('Regional ', work_units.regional) end,' - ', work_units.name)`), 'name'],
         ],
         where: { record_status: 'A' }
       })
 
       let region_cities = await models.cities.findAll({
-        attributes: ['idx_m_city', 'name'],
+        attributes: [
+          [Sequelize.literal(`cast(cities.idx_m_city AS VARCHAR)`), 'idx_m_city'], 
+          'name'
+        ],
         include: [{
           required: false,
           model: models.regions,

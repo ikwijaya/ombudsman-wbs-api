@@ -6,7 +6,7 @@
  */
 
 const {
-  EMAIL_SERVICE, EMAIL_AUTH, EMAIL_PASS, EMAIL_HOST,
+  EMAIL_AUTH, EMAIL_PASS, EMAIL_HOST,
   EMAIL_PORT, EMAIL_SECURE, EMAIL_DEBUG, EMAIL_LOGGER
 } = require('../config')
 const moment = require('moment')
@@ -14,7 +14,6 @@ const { response, ext } = require('../models')
 const mailer = require('nodemailer')
 const fs = require('fs')
 const mv = require('mv')
-const email_service = EMAIL_SERVICE
 const email_auth = EMAIL_AUTH
 const email_pass = EMAIL_PASS
 const email_host = EMAIL_HOST

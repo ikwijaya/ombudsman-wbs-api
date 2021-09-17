@@ -6,7 +6,7 @@ const status = require('./status');
 const { response } = require('../../models/index');
 const { helper } = require('../../helper')
 const sequelize = require('..');
-const { APP_CODE, PRODUCT_MODE, API_URL } = require('../../config')
+const { APP_CODE, PRODUCT_MODE, API_URL, PERIODE } = require('../../config')
 const appCode = APP_CODE
 
 module.exports = {
@@ -507,6 +507,7 @@ module.exports = {
             [Sequelize.literal(`case when complaints.is_secure=true then 'red' else 'grey' end`), 'secure_color'],
             [Sequelize.literal(`true`), 'is_view'],
             [Sequelize.literal(`status.code`), 'status_code'],
+            [Sequelize.literal(`case when status.code='17' and closing.form_status='1' then true else false end`), 'has_close'],
             [Sequelize.literal(`case 
               when complaints.form_status='99' then 'Pengaduan - Telah dicabut'
               when status.code='1' and complaints.form_status='0' then concat('edit - ', status.name)
@@ -772,6 +773,10 @@ module.exports = {
               required: false,
               attributes: ['idx_t_closing', 'form_status'],
               model: models.closing
+            },
+            {
+              attributes: ['dcreate', [Sequelize.literal(PERIODE), 'periode']],
+              model: models.complaint_determinations,
             }
           ],
           order: [

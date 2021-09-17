@@ -9,7 +9,7 @@ const pg = parse(DB_URL);
 const _DB_SSL = DB_SSL == '1' ? true : false
 if (_DB_SSL) pg.ssl = { rejectUnauthorized: false }
 
-const uat = {
+const development = {
   client: DB_CLIENT,
   connection: pg,
   searchPath: ['knex', DB_SCHEMA],
@@ -36,6 +36,6 @@ const production = {
 }
 
 module.exports = {
-  uat,
+  development,
   production
 }
