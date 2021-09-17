@@ -202,8 +202,11 @@ module.exports = {
       });
 
       let violations = await models.violations.findAll({
-        attributes: ['idx_m_violation',
-          [Sequelize.literal(`concat('(',cast(idx_m_violation as varchar),') ',name)`), 'name']],
+        attributes: [
+          'idx_m_violation',
+          [Sequelize.literal(`concat('(',cast(idx_m_violation as varchar),') ',name)`), 'name'],
+          [Sequelize.literal(`case when idx_m_violation IN (5,9) then 'purple lighten-1' when idx_m_violation IN (10) then 'red lighten-1' else 'grey ligten-1' end`), 'color'],
+        ],
         where: { record_status: 'A' },
         order: [['idx_m_violation', 'ASC']]
       });

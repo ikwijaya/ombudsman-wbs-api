@@ -17,6 +17,10 @@ module.exports = (sq) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    filename: DataTypes.STRING,
+    path: DataTypes.STRING,
+    mime_type: DataTypes.STRING,
+    filesize: DataTypes.STRING,
     remarks: DataTypes.TEXT,
     occupation: DataTypes.TEXT,
     is_login: {

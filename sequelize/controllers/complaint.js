@@ -102,7 +102,9 @@ module.exports = {
 
         e.value = parseInt(value)
         e.next_color = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'blue' : 'red';
+        e.next_color = r.filter(a => a.idx_m_form == 5 && (a.is_read)).length > 0 ? 'blue' : 'red';
         e.next_status = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'SELANJUTNYA' : 'TIDAK DI IZINKAN'
+        e.next_status = r.filter(a => a.idx_m_form == 5 && (a.is_read)).length > 0 ? 'SELANJUTNYA' : 'TIDAK DI IZINKAN'
 
         switch (parseInt(value)) {
           case 1: // pengaduan
@@ -718,11 +720,18 @@ module.exports = {
                 [Sequelize.literal(`complaint_decision.idx_m_violation`), 'idx_m_violation'],
                 [Sequelize.literal(`
                   case 
-                    when complaint_decision.idx_m_violation = '9' then 'mdi-letter-9' 
-                    when complaint_decision.idx_m_violation = '10' then 'mdi-letter-10' 
-                    else 'mdi-letter-0' 
+                    when complaint_decision.idx_m_violation IN ('5','9') then 'MDP' 
+                    when complaint_decision.idx_m_violation IN ('10') then 'TPA' 
+                    else NULL
                   end
                 `), 'violation_icon'],
+                [Sequelize.literal(`
+                  case 
+                    when complaint_decision.idx_m_violation IN ('5','9') then 'purple lighten-2' 
+                    when complaint_decision.idx_m_violation IN ('10') then 'red lighten-1' 
+                    else NULL
+                  end
+                `), 'violation_color'],
                 'form_status'
               ],
               model: models.complaint_decisions,
@@ -775,11 +784,12 @@ module.exports = {
               model: models.closing
             },
             {
-              attributes: ['dcreate', [Sequelize.literal(PERIODE), 'periode']],
+              attributes: ['date', [Sequelize.literal(PERIODE), 'periode']],
               model: models.complaint_determinations,
             }
           ],
           order: [
+            ['dmodified', 'DESC'],
             ['dcreate', 'DESC']
           ]
         }
