@@ -40,7 +40,7 @@ module.exports = {
       let c = await models.complaints.findOne(
         {
           where: {
-            form_status: { [Op.in]: ['1', '99'] },
+            form_status: { [Op.in]: ['1', '99', '100'] },
             idx_m_complaint: id,
             record_status: 'A'
           },
@@ -50,7 +50,7 @@ module.exports = {
             'date',
             [Sequelize.literal(`status.code`), 'status_code'],
             [Sequelize.literal(`status.name`), 'status_name'],
-            [Sequelize.literal(`case when complaints.form_status = '99' then true else false end`), 'has_cancel']
+            [Sequelize.literal(`case when complaints.form_status IN('99','100') then true else false end`), 'has_cancel']
           ],
           include: [
             {
@@ -62,13 +62,14 @@ module.exports = {
         }
       );
 
+      let dcode = null
       let is_verify = await models.complaint_verifications.count({ where: { idx_m_complaint: id, verification_type: '1', record_status: 'A' } })
       let is_studies = await models.complaint_studies.count({ where: { record_status: 'A', idx_m_complaint: id, form_status: '0' } })
       let is_decision = await models.complaint_decisions.count({ where: { record_status: 'A', idx_m_complaint: id, form_status: '0' } })
       let is_determination = await models.complaint_determinations.count({ where: { record_status: 'A', idx_m_complaint: id } })
       let violationNo = await models.complaint_decisions.findOne(
         {
-          attributes: ['idx_m_complaint'],
+          attributes: ['idx_m_complaint', ['idx_m_violation', 'violation']],
           where: {
             record_status: 'A',
             idx_m_complaint: id,
@@ -76,6 +77,21 @@ module.exports = {
           }
         }
       )
+
+      if (
+        violationNo instanceof models.complaint_decisions
+        && [5,9].includes(parseInt(violationNo.getDataValue('violation')))
+      ) {
+        dcode = {
+          name: 'MDP',
+          color: 'purple lighten-2'
+        }
+      } else {
+        dcode = {
+          name: 'TPA',
+          color: 'red lighten-1'
+        }
+      }
 
       // masuk ke penetapan tim pemeriksa apa kga?
       // violation 1 - 8 => tindak lanjut
@@ -177,6 +193,7 @@ module.exports = {
         has_cancel: has_cancel,
         status_name: c.getDataValue('status_name'),
         status_color: c instanceof models.complaints ? 'green' : 'red',
+        dcode: dcode
       };
     } catch (err) {
       throw (err)
@@ -212,7 +229,7 @@ module.exports = {
             'date',
             [Sequelize.literal(`status.code`), 'status_code'],
             [Sequelize.literal(`status.name`), 'status_name'],
-            [Sequelize.literal(`case when complaints.form_status = '99' then true else false end`), 'has_cancel']
+            [Sequelize.literal(`case when complaints.form_status IN('99','100') then true else false end`), 'has_cancel']
           ],
           include: [
             {
@@ -222,7 +239,7 @@ module.exports = {
             },
           ],
           where: {
-            form_status: { [Op.in]: ['1', '99'] },
+            form_status: { [Op.in]: ['1', '99', '100'] },
             idx_m_status: { [Op.gte]: 6 }, // 7 -> validasi, dll
             idx_m_complaint: id,
             record_status: 'A'
@@ -238,6 +255,12 @@ module.exports = {
 
       let dtr = await models.complaint_determinations.findOne({
         attributes: ['date'],
+        include: [
+          {
+            model: models.complaints,
+            where: { form_status: { [Op.notIn]: ['99','100'] } }
+          }
+        ],
         where: { record_status: 'A', idx_m_complaint: id }
       })
 
@@ -503,6 +526,40 @@ module.exports = {
         ]
 
       /**
+       * others.custom_filter
+       * 0. ALL (skip where)
+       * 1. TODAY
+       * 2. THIS MONTH
+       * 3. MINE
+       * 4. LAST EDITED
+       */
+       if(others.custom_filter == 1) where[Op.and] = [Sequelize.literal(`DATE(complaints.dcreate)=CURRENT_DATE`)]
+       if(others.custom_filter == 2) where[Op.and] = [Sequelize.literal(`date_part('month', DATE(complaints.dcreate))=date_part('month', (SELECT current_timestamp))`)]
+       if(others.custom_filter == 3) where['ucreate'] = sessions[0].user_id.toString()
+       if(others.custom_filter == 4) {
+        let clogs = await models.clogs.findAll({
+          attributes: ['idx_m_complaint'],
+          where: {[Op.and]: [Sequelize.literal(`DATE(dcreate)=CURRENT_DATE`)]},
+          group: ['idx_m_complaint']
+        })
+
+        where['idx_m_complaint'] = { [Op.in]: clogs.map(e => e['idx_m_complaint']) }
+       }
+
+       if(others.custom_filter == 5) {
+        let clogs = await models.clogs.findAll({
+          attributes: ['idx_m_complaint'],
+          where: {
+            [Op.and]: [Sequelize.literal(`DATE(dcreate)=CURRENT_DATE`)],
+            'ucreate': sessions[0].user_id
+          },
+          group: ['idx_m_complaint']
+        })
+
+        where['idx_m_complaint'] = { [Op.in]: clogs.map(e => e['idx_m_complaint']) }
+       }
+
+      /**
        * RoleId     Name
        *   1     [Pengaduan]
        *   2     [Verifikasi Pengaduan]
@@ -531,14 +588,15 @@ module.exports = {
               when complaints.form_status IN('99','100') then true
             else false end`), 'has_close'],
             [Sequelize.literal(`case 
-              when complaints.form_status='99' then 'Pengaduan - Telah dicabut'
+              when complaints.form_status='99' then 'Telah dicabut'
+              when complaints.form_status='100' then 'Tidak dilanjutkan pemeriksaan'
               when status.code='1' and complaints.form_status='0' then concat('edit - ', status.name)
               when status.code='3' and complaint_study.form_status='0' then concat('edit - ', status.name)
               when status.code='4' and complaint_decision.form_status='0' then concat('edit - ', status.name)
               when status.code='4' and complaint_actions.idx_t_complaint_action is not null then 'Tindak Lanjut oleh Inspektorat'
             else status.name end`), 'status_name'],
             [Sequelize.literal(`case 
-              when complaints.form_status='99' then 'grey lighten-2'
+              when complaints.form_status IN ('99','100') then 'grey lighten-2'
               when status.code='1' and complaints.form_status='0' then 'yellow lighten-3'
               when status.code='3' and complaint_study.form_status='0' then 'yellow lighten-3'
               when status.code='4' and complaint_decision.form_status='0' then 'yellow lighten-3'
@@ -555,20 +613,20 @@ module.exports = {
               then true else false 
             end`), 'is_update'],
             [Sequelize.literal(`case when 
-                complaints.form_status IN ('1','99')
+                complaints.form_status IN ('1')
                 and complaint_verification.idx_m_complaint is null 
                 and 1=${roles.filter(e => e.idx_m_form == 2 && e.is_read == true).length > 0 ? 1 : 0}
               then true else false 
             end`), 'is_verification'],
             [Sequelize.literal(`case when 
-                complaints.form_status IN ('1','99') 
+                complaints.form_status IN ('1','99', '100') 
                 and complaint_verification.idx_m_complaint is not null 
                 and 1=${[0, 1, 3, 4, 5].includes(typeId) ? 1 : 0}
               then true 
               else false 
             end`), 'is_inspektorat'],
             [Sequelize.literal(`case when 
-                complaints.form_status IN ('1','99')
+                complaints.form_status IN ('1','99', '100')
                 and complaint_verification.idx_m_complaint is not null 
                 and 1=${[0, 2, 3, 4, 5].includes(typeId) ? 1 : 0}
                 and complaint_decision.idx_m_violation IN (5,9,10)
@@ -842,6 +900,7 @@ module.exports = {
         is_insert: roles.filter(e => e.idx_m_form == 1 && e.is_insert == true).length > 0 ? true : false
       };
     } catch (err) {
+      console.log('err', err)
       throw (err)
     }
   },

@@ -120,6 +120,7 @@ class Dashboard {
         .leftJoin('t_study_lys AS l', 'l.idx_m_complaint', 'c.idx_m_complaint')
         .leftJoin('m_status AS s', 'c.idx_m_status', 's.idx_m_status')
         .whereRaw(`s.code IN ('7','9')`)
+        .andWhereRaw(`c.form_status NOT IN ('99', '100')`)
     } catch (error) {
       throw (error)
     }

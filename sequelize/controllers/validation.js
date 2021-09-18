@@ -210,6 +210,41 @@ module.exports = {
       let checklists = obj.checklists;
       let communication = obj.communication;
 
+      let dcs = await models.complaint_decisions.findOne({
+        attributes: ['idx_m_violation', 'idx_t_complaint_decision'],
+        where: { idx_m_complaint: obj.validation.idx_m_complaint }
+      })
+
+      if(dcs instanceof models.complaint_decisions){
+        if(obj.idx_m_violation && obj.idx_m_violation != dcs.getDataValue('idx_m_violation')){
+          await models.complaint_decisions.update({
+            idx_m_violation: obj.idx_m_violation,
+            dmodified: new Date(),
+            umodified: sessions[0].user_id
+          }, {
+            transaction: t,
+            where: { 
+              idx_m_complaint: obj.validation.idx_m_complaint,
+              idx_t_complaint_decision: dcs.getDataValue('idx_t_complaint_decision')
+            }
+          })
+
+          let changes = ``;
+          if([5,9].includes(obj.idx_m_violation)) changes = `Merubah dari TPA ke MDP`
+          else changes = `Merubah dari MDP ke TPA`
+          
+          // ===============> LOGS
+          await models.clogs.create({
+            idx_m_complaint: obj.validation.idx_m_complaint,
+            action: 'I',
+            flow: '7',
+            changes: JSON.stringify(obj),
+            notes: changes,
+            ucreate: sessions[0].user_id
+          }, { transaction: t, });
+        }
+      }
+
       if (v instanceof models.validation) {
         checklists.map(e => { e.idx_t_validation = v.idx_t_validation })
         communication.map(e => { e.idx_t_validation = v.idx_t_validation })
@@ -236,8 +271,8 @@ module.exports = {
       await t.commit();
       return response.success('Validasi berhasi di simpan', []);
     } catch (err) {
-
       await t.rollback();
+      throw err
     }
   },
 
@@ -279,6 +314,41 @@ module.exports = {
       await models.validation.update(obj.validation, { transaction: t, where: { idx_t_validation: obj.validation.id } })
 
       let v = await models.validation.findOne({ attributes: ['idx_m_complaint'], where: { idx_t_validation: obj.validation.id } })
+      let dcs = await models.complaint_decisions.findOne({
+        attributes: ['idx_m_violation', 'idx_t_complaint_decision'],
+        where: { idx_m_complaint: v.getDataValue('idx_m_complaint') }
+      })
+
+      if(dcs instanceof models.complaint_decisions){
+        if(obj.idx_m_violation && obj.idx_m_violation != dcs.getDataValue('idx_m_violation')){
+          await models.complaint_decisions.update({
+            idx_m_violation: obj.idx_m_violation,
+            dmodified: new Date(),
+            umodified: sessions[0].user_id
+          }, {
+            transaction: t,
+            where: { 
+              idx_m_complaint: v.getDataValue('idx_m_complaint'),
+              idx_t_complaint_decision: dcs.getDataValue('idx_t_complaint_decision')
+            }
+          })
+
+          let changes = ``;
+          if([5,9].includes(obj.idx_m_violation)) changes = `Merubah dari TPA ke MDP`
+          else changes = `Merubah dari MDP ke TPA`
+          
+          // ===============> LOGS
+          await models.clogs.create({
+            idx_m_complaint: v.getDataValue('idx_m_complaint'),
+            action: 'I',
+            flow: '7',
+            changes: JSON.stringify(obj),
+            notes: changes,
+            ucreate: sessions[0].user_id
+          }, { transaction: t, });
+        }
+      }
+
       if (v instanceof models.validation) {
         // ===============> LOGS
         await models.clogs.create({
@@ -293,8 +363,9 @@ module.exports = {
       await t.commit();
       return response.success('Sukses meng-update validasi', [])
     } catch (err) {
-
       await t.rollback()
+      console.log(err)
+      throw new Error(err)
     }
   },
 
@@ -331,8 +402,43 @@ module.exports = {
 
       // update
       await models.validation.update(obj.validation, { transaction: t, where: { idx_t_validation: obj.validation.id } })
-
       let v = await models.validation.findOne({ attributes: ['idx_m_complaint'], where: { idx_t_validation: obj.validation.id } })
+
+      let dcs = await models.complaint_decisions.findOne({
+        attributes: ['idx_m_violation', 'idx_t_complaint_decision'],
+        where: { idx_m_complaint: v.getDataValue('idx_m_complaint') }
+      })
+
+      if(dcs instanceof models.complaint_decisions){
+        if(obj.idx_m_violation && obj.idx_m_violation != dcs.getDataValue('idx_m_violation')){
+          await models.complaint_decisions.update({
+            idx_m_violation: obj.idx_m_violation,
+            dmodified: new Date(),
+            umodified: sessions[0].user_id
+          }, {
+            transaction: t,
+            where: { 
+              idx_m_complaint: v.getDataValue('idx_m_complaint'),
+              idx_t_complaint_decision: dcs.getDataValue('idx_t_complaint_decision')
+            }
+          })
+
+          let changes = ``;
+          if([5,9].includes(obj.idx_m_violation)) changes = `Merubah dari TPA ke MDP`
+          else changes = `Merubah dari MDP ke TPA`
+          
+          // ===============> LOGS
+          await models.clogs.create({
+            idx_m_complaint: v.getDataValue('idx_m_complaint'),
+            action: 'I',
+            flow: '7',
+            changes: JSON.stringify(obj),
+            notes: changes,
+            ucreate: sessions[0].user_id
+          }, { transaction: t, });
+        }
+      }
+
       if (v instanceof models.validation) {
         // ===============> LOGS
         await models.clogs.create({
@@ -348,8 +454,8 @@ module.exports = {
       await t.commit();
       return response.success('Pemeriksaan validasi berhasil disimpan', [])
     } catch (err) {
-
       await t.rollback()
+      throw new Error(err)
     }
   },
 
@@ -390,95 +496,153 @@ module.exports = {
 
       // get validation
       let v = await models.validation.findOne({ where: { idx_t_validation: obj.validation.id } })
-      let d = await models.complaint_decisions.findOne({ where: { idx_m_complaint: v.getDataValue('idx_m_complaint') } })
-
-      let next = null;
-      if (d instanceof models.complaint_decisions) {
-        let idx_m_violation = d.getDataValue('idx_m_violation') ? parseInt(d.getDataValue('idx_m_violation')) : null
-        next = [9].includes(idx_m_violation) ? 16 : 8
-
-        //// change complaint status
-        await models.complaints.update(
-          { idx_m_status: next },
-          { where: { idx_m_complaint: v.getDataValue('idx_m_complaint') } }
-        );
-      }
-
-      // surat request pengadu | to, address, by, object | get pengadu dari m_complaint
-      let pengadu; let teradu = [];
-      let complaint = await models.complaints.findOne({
-        attributes: ['manpower', 'description', 'ucreate', 'hopes', 'idx_m_legal_standing'],
-        include: [
-          {
-            attributes: [
-              'idx_t_complaint_study'
-            ],
-            model: models.complaint_studies,
-            include: [{
-              attributes: ['name', 'occupation'],
-              model: models.complaint_study_reported,
-              include: [
-                {
-                  attributes: ['name'],
-                  model: models.work_units
-                }
-              ]
-            }],
-            where: { record_status: 'A' }
-          },
-        ],
+      let dcs = await models.complaint_decisions.findOne({
+        attributes: ['idx_m_violation', 'idx_t_complaint_decision'],
         where: { idx_m_complaint: v.getDataValue('idx_m_complaint') }
       })
 
-      if (complaint instanceof models.complaints) {
-        teradu = complaint.getDataValue('complaint_study')['complaint_study_reporteds'].map(e => e.name) || [];
-        pengadu = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: complaint.getDataValue('ucreate') } })
-        let getPengadu = complaint.getDataValue('idx_m_legal_standing') == -1 ? complaint.getDataValue('manpower') :
-          complaint['ucreate'] = pengadu instanceof models.users ? pengadu.getDataValue('name') : null
+      if(dcs instanceof models.complaint_decisions){
+        if(obj.idx_m_violation && obj.idx_m_violation != dcs.getDataValue('idx_m_violation')){
+          await models.complaint_decisions.update({
+            idx_m_violation: obj.idx_m_violation,
+            dmodified: new Date(),
+            umodified: sessions[0].user_id
+          }, {
+            transaction: t,
+            where: { 
+              idx_m_complaint: v.getDataValue('idx_m_complaint'),
+              idx_t_complaint_decision: dcs.getDataValue('idx_t_complaint_decision')
+            }
+          })
 
-        await models.request.bulkCreate([
-          {
-            idx_m_complaint: v.getDataValue('idx_m_complaint'), mode: 'TERADU',
-            to: teradu.join(' , '),
-            by: getPengadu,
-            object: complaint.getDataValue('description'),
-            address: 'tempat'
-          },
-          {
-            idx_m_complaint: v.getDataValue('idx_m_complaint'), mode: 'PENGADU',
-            by: teradu.join(' , '),
-            to: getPengadu,
-            object: complaint.getDataValue('description'),
-            address: 'tempat'
-          }
-        ], { transaction: t });
+          let changes = ``;
+          if([5,9].includes(obj.idx_m_violation)) changes = `Merubah dari TPA ke MDP`
+          else changes = `Merubah dari MDP ke TPA`
+          
+          // ===============> LOGS
+          await models.clogs.create({
+            idx_m_complaint: v.getDataValue('idx_m_complaint'),
+            action: 'I',
+            flow: '7',
+            changes: JSON.stringify(obj),
+            notes: changes,
+            ucreate: sessions[0].user_id
+          }, { transaction: t, });
+        }
       }
 
-      // LOGS
-      await models.clogs.bulkCreate([
-        {
-          idx_m_complaint: v.getDataValue('idx_m_complaint'),
-          action: 'U',
-          flow: '7',
-          changes: JSON.stringify(obj),
-          ucreate: sessions[0].user_id,
-          notes: 'telah melakukan penyetujuan validasi'
-        },
-        {
-          idx_m_complaint: v.getDataValue('idx_m_complaint'),
-          action: 'I',
-          flow: '8',
-          changes: JSON.stringify({ idx_m_complaint: v.getDataValue('idx_m_complaint') }),
-          ucreate: sessions[0].user_id,
-          notes: 'system generated permintaan data dan dokumen flow'
+      // is_next = true adalah pengaduan dilanjutkan ke Pemeriksaan
+      // is_next = false adalah pengaduan dihentikan ke form_status = '100'
+      if(obj.is_next){
+        let d = await models.complaint_decisions.findOne({ where: { idx_m_complaint: v.getDataValue('idx_m_complaint') } })
+        let next = null;
+        if (d instanceof models.complaint_decisions) {
+          let idx_m_violation = d.getDataValue('idx_m_violation') ? parseInt(d.getDataValue('idx_m_violation')) : null
+          next = [9].includes(idx_m_violation) ? 16 : 8
+
+          //// change complaint status
+          await models.complaints.update(
+            { idx_m_status: next },
+            { where: { idx_m_complaint: v.getDataValue('idx_m_complaint') } }
+          );
         }
-      ], { transaction: t, });
+
+        // surat request pengadu | to, address, by, object | get pengadu dari m_complaint
+        let pengadu; let teradu = [];
+        let complaint = await models.complaints.findOne({
+          attributes: ['manpower', 'description', 'ucreate', 'hopes', 'idx_m_legal_standing'],
+          include: [
+            {
+              attributes: [
+                'idx_t_complaint_study'
+              ],
+              model: models.complaint_studies,
+              include: [{
+                attributes: ['name', 'occupation'],
+                model: models.complaint_study_reported,
+                include: [
+                  {
+                    attributes: ['name'],
+                    model: models.work_units
+                  }
+                ]
+              }],
+              where: { record_status: 'A' }
+            },
+          ],
+          where: { idx_m_complaint: v.getDataValue('idx_m_complaint') }
+        })
+
+        if (complaint instanceof models.complaints) {
+          teradu = complaint.getDataValue('complaint_study')['complaint_study_reporteds'].map(e => e.name) || [];
+          pengadu = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: complaint.getDataValue('ucreate') } })
+          let getPengadu = complaint.getDataValue('idx_m_legal_standing') == -1 ? complaint.getDataValue('manpower') :
+            complaint['ucreate'] = pengadu instanceof models.users ? pengadu.getDataValue('name') : null
+
+          await models.request.bulkCreate([
+            {
+              idx_m_complaint: v.getDataValue('idx_m_complaint'), mode: 'TERADU',
+              to: teradu.join(' , '),
+              by: getPengadu,
+              object: complaint.getDataValue('description'),
+              address: 'tempat'
+            },
+            {
+              idx_m_complaint: v.getDataValue('idx_m_complaint'), mode: 'PENGADU',
+              by: teradu.join(' , '),
+              to: getPengadu,
+              object: complaint.getDataValue('description'),
+              address: 'tempat'
+            }
+          ], { transaction: t });
+        }
+
+        // LOGS
+        await models.clogs.bulkCreate([
+          {
+            idx_m_complaint: v.getDataValue('idx_m_complaint'),
+            action: 'U',
+            flow: '7',
+            changes: JSON.stringify(obj),
+            ucreate: sessions[0].user_id,
+            notes: 'telah melakukan penyetujuan validasi'
+          },
+          {
+            idx_m_complaint: v.getDataValue('idx_m_complaint'),
+            action: 'I',
+            flow: '8',
+            changes: JSON.stringify({ idx_m_complaint: v.getDataValue('idx_m_complaint') }),
+            ucreate: sessions[0].user_id,
+            notes: 'system generated permintaan data dan dokumen flow'
+          }
+        ], { transaction: t, });
+      } else {
+        await models.complaints.update(
+          { 
+            form_status: '100',
+            cancel_by: sessions[0].user_id,
+            cancel_date: new Date()
+          },
+          { where: { idx_m_complaint: v.getDataValue('idx_m_complaint') } }
+        );
+
+        await models.clogs.bulkCreate([
+          {
+            idx_m_complaint: v.getDataValue('idx_m_complaint'),
+            action: 'U',
+            flow: '7',
+            changes: JSON.stringify(obj),
+            ucreate: sessions[0].user_id,
+            notes: 'tidak melanjutkan pemeriksaan pengaduan'
+          }
+        ], { transaction: t, });
+      }
 
       await t.commit();
-      return response.success('Penyetujuan validasi berhasil disimpan', [])
+      return response.success(`Penyetujuan validasi berhasil disimpan`, [])
     } catch (err) {
-
       await t.rollback()
+      throw new Error(err)
     }
   }
 }
