@@ -12,7 +12,10 @@ const _DB_SSL = DB_SSL == '1' ? true : false
 
 const sequelize = new Sequelize(DB_URL, {
   dialect: DB_CLIENT,
-  dialectOptions: { ssl: _DB_SSL ? { require: true, rejectUnauthorized: false } : null },
+  dialectOptions: { 
+    ssl: _DB_SSL ? { require: true, rejectUnauthorized: false } : null,
+    connectTimeout: 60000 
+  },
   pool: {
     max: 500,
     min: 0,

@@ -202,7 +202,7 @@ module.exports = {
         sessions[0].user_id,
         [91, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
       );
-      let s = [];
+      let s = []; let dcode = null; let durasi = null;
       let c = await models.complaints.findOne(
         {
           nest: true,
@@ -236,12 +236,27 @@ module.exports = {
         }
       );
 
+      let dtr = await models.complaint_determinations.findOne({
+        attributes: ['date'],
+        where: { record_status: 'A', idx_m_complaint: id }
+      })
+
+      if(dtr instanceof models.complaint_determinations) durasi = dtr.getDataValue('date')
+
       if (
         violationNo instanceof models.complaint_decisions
-        && [9].includes(parseInt(violationNo.getDataValue('violation')))
+        && [5,9].includes(parseInt(violationNo.getDataValue('violation')))
       ) {
+        dcode = {
+          name: 'MDP',
+          color: 'purple lighten-2'
+        }
         s = await status.load([`6`, `7`, `16`, `17`])
       } else {
+        dcode = {
+          name: 'TPA',
+          color: 'red lighten-1'
+        }
         s = await status.load([`6`, `7`, `8`, `9`, `10`, `11`, `12`, `13`, `14`, `15`, `16`, `17`])
       }
 
@@ -404,6 +419,8 @@ module.exports = {
         }
       })
 
+      dcode['durasi'] = durasi
+      dcode['periode'] = PERIODE
       return {
         items: c instanceof models.complaints ? s : [],
         e1: c.getDataValue('status_code') == '6' // penetapan tim pemeriksa
@@ -412,10 +429,10 @@ module.exports = {
         form_no: c.getDataValue('form_no'),
         date: c.getDataValue('date'),
         is_authorized: c instanceof models.complaints ? true : false,
-        // status_name: c instanceof models.complaints ? 'AUTHORIZED' : 'UNAUTHORIZED',
         has_cancel: has_cancel,
         status_name: c.getDataValue('status_name'),
         status_color: c instanceof models.complaints ? 'green' : 'red',
+        dcode: dcode
       }
     } catch (error) {
       throw (error)
@@ -509,7 +526,10 @@ module.exports = {
             [Sequelize.literal(`case when complaints.is_secure=true then 'red' else 'grey' end`), 'secure_color'],
             [Sequelize.literal(`true`), 'is_view'],
             [Sequelize.literal(`status.code`), 'status_code'],
-            [Sequelize.literal(`case when status.code='17' and closing.form_status='1' then true else false end`), 'has_close'],
+            [Sequelize.literal(`case 
+              when status.code='17' and closing.form_status='1' then true 
+              when complaints.form_status IN('99','100') then true
+            else false end`), 'has_close'],
             [Sequelize.literal(`case 
               when complaints.form_status='99' then 'Pengaduan - Telah dicabut'
               when status.code='1' and complaints.form_status='0' then concat('edit - ', status.name)
