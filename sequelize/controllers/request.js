@@ -24,7 +24,8 @@ module.exports = {
           'idx_t_request', 'by',
           'date', 'media', 'notes',
           'to', 'address', 'object', 'imagine', 'docs',
-          'approver', 'mode'
+          'approver', 'mode', 'letter_no', 'letter_date',
+          'filename', 'path', 'mime_type', 'filesize'
         ],
         where: { idx_m_complaint: id, record_status: 'A' },
         order: [['idx_t_request', 'asc']]
@@ -121,7 +122,7 @@ module.exports = {
 
       let where = {};
       where['idx_m_complaint'] = id;
-      where['approver'] = { [Op.eq]: null };
+      // where['approver'] = { [Op.eq]: null };
 
       let count = await models.request.count({ where: where, transaction: t });
       if (count > 0) return response.failed(`<ul><li>` + ['Kolom Keasistenan Utama Manajemen Mutu TIDAK boleh kosong.'].join('</li><li>') + `</li></ul>`)

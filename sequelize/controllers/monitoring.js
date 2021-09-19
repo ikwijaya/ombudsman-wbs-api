@@ -67,24 +67,8 @@ module.exports = {
         return response.failed('Session TIDAK ditemukan');
 
       obj.monitoring['ucreate'] = sessions[0].user_id;
-      // obj.monitoring['form_status'] = obj.detail.length >= 1 ? 1 : 0;
       await models.monitoring.create(obj.monitoring, { transaction: t });
-      // let detail = obj.detail;
-
-      // if (v instanceof models.monitoring) {
-      //   detail.map(e => { e.idx_t_monitoring = v.idx_t_monitoring })
-      //   await models.monitoring_detail.bulkCreate(detail, { transaction: t });
-
-      //   let next = null;
-      //   if (detail.length >= 1) { next = 17 } else { next = 16; }
-
-      //   //update complaint, jika monitoring detail sudah lengkap (3), maka step selanjutnya (17 - Penutupan) else bisa di edit
-      //   await models.complaints.update(
-      //     { idx_m_status: next },
-      //     { where: { idx_m_complaint: obj.monitoring.idx_m_complaint }, transaction: t }
-      //   )
-      // }
-
+      
       await t.commit();
       return response.success('Monitoring berhasi di simpan', []);
     } catch (err) {
@@ -297,22 +281,23 @@ module.exports = {
         if (decision instanceof models.complaint_decisions) {
           let violation = decision.getDataValue('idx_m_violation') || null
           if (['10'].includes(violation)) { // proses produk akhir
-            reason += `
-              <ol>
-                <li>
-                  Berdasarkan hasil validasi yang telah dilakukan, bahwa terhadap Laporan masyarakat/kajian dimaksud, sedang dalam proses tindak lanjut oleh Keasistenan .../Perwakilan ...
-                </li>
-                <li>
-                  Terhadap aduan dimaksud, melalui surat Ombudsman RI Nomor: ..... tanggal .... telah disampaikan kepada Teradu dan meminta Teradu untuk segera menyampaikan informasi perkembangan laporan kepada Pengadu dan ditembuskan kepada Keasistenan Utama Manajemen Mutu.
-                </li>
-                <li>
-                  Selanjutnya berdasarkan surat Teradu Nomor: ..... tanggal ..... diinformasikan bahwa terhadap poin Nomor 3 telah dilaksanakan tindaklanjut dimaksud.
-                </li>
-                <li>
-                  Mengingat Teradu telah menindaklanjuti surat Nomor ....., maka aduan Pengadu Nomor ditutup di Keasistenan Utama Manajemen Mutu.
-                </li>
-              </ol>
-            `
+            reason = ``
+            // reason += `
+            //   <ol>
+            //     <li>
+            //       Berdasarkan hasil validasi yang telah dilakukan, bahwa terhadap Laporan masyarakat/kajian dimaksud, sedang dalam proses tindak lanjut oleh Keasistenan .../Perwakilan ...
+            //     </li>
+            //     <li>
+            //       Terhadap aduan dimaksud, melalui surat Ombudsman RI Nomor: ..... tanggal .... telah disampaikan kepada Teradu dan meminta Teradu untuk segera menyampaikan informasi perkembangan laporan kepada Pengadu dan ditembuskan kepada Keasistenan Utama Manajemen Mutu.
+            //     </li>
+            //     <li>
+            //       Selanjutnya berdasarkan surat Teradu Nomor: ..... tanggal ..... diinformasikan bahwa terhadap poin Nomor 3 telah dilaksanakan tindaklanjut dimaksud.
+            //     </li>
+            //     <li>
+            //       Mengingat Teradu telah menindaklanjuti surat Nomor ....., maka aduan Pengadu Nomor ditutup di Keasistenan Utama Manajemen Mutu.
+            //     </li>
+            //   </ol>
+            // `
           }
         }
 
@@ -340,7 +325,7 @@ module.exports = {
           action: 'I',
           flow: '17',
           changes: JSON.stringify({}),
-          ucreate: sessions[0].user_id,
+          ucreate: 'auto-wbs',
           notes: 'penutupan flow auto generate by system'
         }
       ], { transaction: t, });

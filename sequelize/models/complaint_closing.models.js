@@ -22,6 +22,13 @@ module.exports = (sq) => {
     by: DataTypes.STRING,
     reason: DataTypes.TEXT(),
     object: DataTypes.TEXT(),
+
+    // request
+    ba_no: DataTypes.STRING(),
+    ba_date: DataTypes.DATE,
+    closing_no: DataTypes.STRING(),
+    closing_date: DataTypes.DATE,
+    
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,

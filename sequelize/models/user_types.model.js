@@ -13,7 +13,7 @@ module.exports = (sq) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    roles: { type: DataTypes.JSON },
+    roles: { type: DataTypes.TEXT() },
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,

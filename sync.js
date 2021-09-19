@@ -1,6 +1,4 @@
 const sequelize = require('./sequelize')
-const { SQ_ALTER, SQ_FORCE } = require('./config')
-
 const authenticate = async () => {
   try {
     await sequelize.authenticate();

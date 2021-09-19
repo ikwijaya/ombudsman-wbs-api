@@ -26,6 +26,14 @@ module.exports = (sq) => {
     object: DataTypes.TEXT(),
     meet_date: DataTypes.TEXT(),
     approver: DataTypes.BIGINT,
+
+    // as request2
+    letter_no: DataTypes.STRING(),
+    letter_date: DataTypes.DATE,
+    filename: DataTypes.STRING(),
+    path: DataTypes.STRING(),
+    mime_type: DataTypes.STRING(),
+    filesize: DataTypes.STRING(),
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,

@@ -4,6 +4,7 @@ const moment = require('moment');
 const core = require('./core');
 const { response } = require('../../models/index');
 const sequelize = require('..');
+const { API_URL } = require('../../config')
 
 module.exports = {
   /**
@@ -54,7 +55,8 @@ module.exports = {
         raw: true,
         attributes: [
           'idx_t_delivery', 'idx_m_complaint', 'action', 'type', 'isWithFact',
-          'to', 'address', 'by', 'object', 'desc'
+          'to', 'address', 'by', 'object', 'desc', 'letter_no', 'letter_date',
+          'filename', 'path', 'mime_type', 'filesize'
         ],
         where: { idx_m_complaint: id, record_status: 'A' },
         order: [['dcreate', 'asc']]
@@ -157,6 +159,20 @@ module.exports = {
       if (sessions.length === 0 && id)
         return response.failed('Session expires')
 
+      let where = {};
+      where['idx_m_complaint'] = id;
+      where[Op.or] = {
+        'letter_no': { [Op.eq]: null },
+        'letter_date': { [Op.eq]: null },
+        'filename': { [Op.eq]: null }
+      }
+
+      let count = await models.delivery.count({
+        where: where,
+        transaction: t
+      })
+
+      if(count > 0) return response.failed(`<ul><li>` + ['Kolom Nomor Surat, Tanggal Surat dan Upload Dokumen Surat TIDAK boleh kosong.'].join('</li><li>') + `</li></ul>`)
       await models.complaints.update(
         { idx_m_status: 16 }, // to Monitoring
         {
@@ -165,15 +181,33 @@ module.exports = {
         }
       )
 
-      // LOGS
-      await models.clogs.create({
+      await models.monitoring.create({
         idx_m_complaint: id,
-        action: 'U',
-        flow: '16',
-        changes: JSON.stringify({}),
-        ucreate: sessions[0].user_id,
-        notes: 'telah melanjutkan ke flow selanjutnya (monitoring)'
-      }, { transaction: t, });
+        title: 'Default',
+        by: '(auto) system wbs',
+        dcreate: new Date(),
+        ucreate: 'wbs-auto'
+      }, { transaction: t })
+
+      // LOGS
+      await models.clogs.bulkCreate([
+        {
+          idx_m_complaint: id,
+          action: 'U',
+          flow: '16',
+          changes: JSON.stringify({}),
+          ucreate: sessions[0].user_id,
+          notes: 'telah melanjutkan ke flow selanjutnya (monitoring)'
+        },
+        {
+          idx_m_complaint: id,
+          action: 'I',
+          flow: '17',
+          changes: JSON.stringify({}),
+          ucreate: sessions[0].user_id,
+          notes: 'system auto generate default monitoring'
+        }
+      ], { transaction: t, });
 
       await t.commit()
       return response.success('Berhasil ke proses selanjutnya')

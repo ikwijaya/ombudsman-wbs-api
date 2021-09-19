@@ -4,6 +4,7 @@ const moment = require('moment');
 const core = require('./core');
 const { response } = require('../../models/index');
 const sequelize = require('..');
+const { API_URL } = require('../../config')
 
 module.exports = {
   /**
@@ -23,7 +24,9 @@ module.exports = {
           'idx_t_clarification',
           'date', 'teams', 'result',
           'to', 'address', 'by',
-          'object', 'meet_date', 'approver'
+          'object', 'meet_date', 'approver',
+          'letter_no', 'letter_date', 'filename',
+          'path', 'mime_type', 'filesize'
         ],
         include: [
           {
@@ -131,10 +134,15 @@ module.exports = {
 
       let where = {};
       where['idx_m_complaint'] = id;
-      where['approver'] = { [Op.eq]: null };
+      where[Op.or] = {
+        'approver': { [Op.eq]: null },
+        'letter_no': { [Op.eq]: null },
+        'letter_date': { [Op.eq]: null },
+        'filename': { [Op.eq]: null }
+      }
 
       let count = await models.clarification.count({ where: where, transaction: t });
-      if (count > 0) return response.failed(`<ul><li>` + ['Kolom Keasistenan Utama Manajemen Mutu TIDAK boleh kosong.'].join('</li><li>') + `</li></ul>`)
+      if (count > 0) return response.failed(`<ul><li>` + ['Kolom Nomor Surat, Tanggal Surat dan Upload Dokumen Surat TIDAK boleh kosong.'].join('</li><li>') + `</li></ul>`)
 
       await models.complaints.update(
         { idx_m_status: 11 }, // to Konfirmasi pengadu

@@ -23,6 +23,8 @@ module.exports = (sq) => {
     pendapat_pemeriksa: DataTypes.TEXT(),
     kesimpulan_pemeriksa: DataTypes.TEXT(),
     tindak_lanjut: DataTypes.TEXT(),
+
+    // as request
     checked_date: DataTypes.DATE,
     checked_by: DataTypes.BIGINT,
     approved_date: DataTypes.DATE,
