@@ -5,6 +5,7 @@ const moment = require('moment');
 const sequelize = require('..');
 const core = require('./core')
 const { response } = require('../../models/index')
+const { helper } = require('../../helper')
 const { EXPIRES_IN } = require('../../config')
 const h = EXPIRES_IN || 12;
 
@@ -19,7 +20,7 @@ module.exports = {
     const t = await sequelize.transaction();
 
     try {
-      let sid = await helper.token(56);;
+      let sid = await helper.token();
       let expires = moment().add(h, 'h').format('YYYY-MM-DD HH:mm:ss');
       let md5 = crypto.createHash('md5').update(password).digest('hex');
 
@@ -94,8 +95,8 @@ module.exports = {
         hour: h * 1000
       }]);
     } catch (err) {
-      ;
-      await t.rollback();
+      console.log('err', err)
+      await t.rollback()
     }
   },
 
