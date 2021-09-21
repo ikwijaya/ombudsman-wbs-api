@@ -744,7 +744,7 @@ module.exports = {
                 'path',
                 'mime_type',
                 'filesize',
-                [Sequelize.literal(`concat('${API_URL}/others/open/',filename)`), 'url']
+                [Sequelize.literal(`concat('${API_URL}/others/open/',complaint_attachments.filename)`), 'url']
               ],
               model: models.complaint_attachments
             },

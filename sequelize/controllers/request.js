@@ -24,8 +24,10 @@ module.exports = {
           'idx_t_request', 'by',
           'date', 'media', 'notes',
           'to', 'address', 'object', 'imagine', 'docs',
-          'approver', 'mode', 'letter_no', 'letter_date',
-          'filename', 'path', 'mime_type', 'filesize'
+          'approver', 'mode', 'letter_no', 
+          [Sequelize.literal(`cast(letter_date AS DATE)`), 'letter_date'],
+          'filename', 'path', 'mime_type', 'filesize',
+          [Sequelize.literal(`concat('${API_URL}/others/open/',filename)`), 'url']
         ],
         where: { idx_m_complaint: id, record_status: 'A' },
         order: [['idx_t_request', 'asc']]
@@ -33,7 +35,6 @@ module.exports = {
 
       return m
     } catch (error) {
-
       throw (error)
     }
   },
@@ -65,7 +66,7 @@ module.exports = {
       return response.success('Permintaan data dan dokumen berhasi disimpan')
     } catch (error) {
       await t.rollback()
-
+      console.log('======> ', error)
       throw (error)
     }
   },
@@ -102,7 +103,7 @@ module.exports = {
       return response.success('Update berhasi disimpan')
     } catch (error) {
       await t.rollback()
-
+      console.log('======> ', error)
       throw (error)
     }
   },
@@ -122,10 +123,14 @@ module.exports = {
 
       let where = {};
       where['idx_m_complaint'] = id;
-      // where['approver'] = { [Op.eq]: null };
+      where[Op.or] = {
+        'letter_no': { [Op.eq]: null },
+        'letter_date': { [Op.eq]: null },
+        'filename': { [Op.eq]: null }
+      }
 
       let count = await models.request.count({ where: where, transaction: t });
-      if (count > 0) return response.failed(`<ul><li>` + ['Kolom Keasistenan Utama Manajemen Mutu TIDAK boleh kosong.'].join('</li><li>') + `</li></ul>`)
+      if (count > 0) return response.failed(`<ul><li>` + ['Kolom Nomor Surat, Tanggal Surat dan Upload Dokumen Surat TIDAK boleh kosong.'].join('</li><li>') + `</li></ul>`)
 
       await models.complaints.update(
         { idx_m_status: 9 }, // to Telaah dan Analysis

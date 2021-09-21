@@ -19,7 +19,7 @@ COPY . ${APPDIR}
 WORKDIR ${APPDIR}
 RUN rm -rf .git
 RUN npm install
-RUN source .env
+RUN source .env.prod
 
 ## LOOK A HEAD ENV
 RUN printenv
