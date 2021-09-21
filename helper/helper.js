@@ -14,6 +14,7 @@ const { response, ext } = require('../models')
 const mailer = require('nodemailer')
 const fs = require('fs')
 const mv = require('mv')
+const git = require('git-last-commit')
 const email_auth = EMAIL_AUTH
 const email_pass = EMAIL_PASS
 const email_host = EMAIL_HOST
@@ -23,6 +24,12 @@ const email_debug = EMAIL_DEBUG
 const email_logger = EMAIL_LOGGER
 
 module.exports = {
+  async getGitCommit(){
+    return new Promise(async (res) => {
+      git.getLastCommit(function(e,c) { res(c) })
+    })
+  },
+  
   /**
    * 
    * @param {*} n 

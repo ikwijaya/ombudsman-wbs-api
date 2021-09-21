@@ -1,5 +1,6 @@
 const express = require('express')
 const compression = require('compression')
+const path = require('path')
 const { PORT, APP_CODE } = require('./config')
 const api = require('./api/v1')
 const { response } = require('./models')
@@ -22,9 +23,25 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
     if (err instanceof SyntaxError) { res.status(400).send(response.failed("Bad Request")) } else { next() }
 })
+app.get('/', (req,res,next) => {
+    res.sendFile(path.join(__dirname+'/__templates/index.html'))
+})
+app.get('/version', async (req, res, next) => {
+    let gc = await helper.getGitCommit()
+    delete gc['author']
+    delete gc['committer']
+    
+    res.send({
+        version: require('./package.json').version,
+        description: require('./package.json').description,
+        author: require('./package.json').author,
+        git: gc
+    })
+})
 
 // authenticate
 const sequelize = require('./sequelize')
+const { helper } = require('./helper')
 const authenticate = async () => {
     try {
         await sequelize.authenticate();

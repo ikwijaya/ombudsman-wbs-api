@@ -36,6 +36,7 @@ ENV APPDIR="/app"
 
 # INSTALL FEATURE FOR CHECKING CONNECTION
 RUN apk --no-cache add curl
+RUN apk --no-cache add python3
 
 # SET WORK DIRECTORY
 RUN mkdir -p ${APPDIR}
