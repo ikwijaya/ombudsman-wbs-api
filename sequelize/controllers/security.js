@@ -2,7 +2,6 @@ const { models } = require('..');
 const { Sequelize, Op, DataTypes } = require('sequelize');
 const crypto = require('crypto');
 const moment = require('moment');
-const { v4: uuidv4 } = require('uuid');
 const sequelize = require('..');
 const core = require('./core')
 const { response } = require('../../models/index')
@@ -20,7 +19,7 @@ module.exports = {
     const t = await sequelize.transaction();
 
     try {
-      let sid = uuidv4() + '-' + moment().format('YYMMDDTHHmmss');
+      let sid = await helper.token(56);;
       let expires = moment().add(h, 'h').format('YYYY-MM-DD HH:mm:ss');
       let md5 = crypto.createHash('md5').update(password).digest('hex');
 

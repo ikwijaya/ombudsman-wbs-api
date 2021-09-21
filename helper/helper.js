@@ -24,6 +24,23 @@ const email_logger = EMAIL_LOGGER
 
 module.exports = {
   /**
+   * 
+   * @param {*} n 
+   * @returns 
+   */
+  token: (n=48) => {
+    return new Promise((o,x) => {
+      let format = 'MMmmYYHHDDmmss.SSS'
+      require('crypto').randomBytes(n, function(e, buff){
+        if(e) x(e)
+        let t = buff.toString('hex')
+        let m = moment().format(format);
+        o(`${t}${m}`)
+      })
+    })
+  },
+
+  /**
    * @url
    */
   getFilename: (url = '') => {

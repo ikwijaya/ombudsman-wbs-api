@@ -2,7 +2,6 @@ const { models } = require('..');
 const { Sequelize, Op, DataTypes } = require('sequelize');
 const moment = require('moment');
 const crypto = require('crypto');
-const { v4: uuidv4 } = require('uuid');
 const core = require('./core');
 const { response } = require('../../models/index');
 const { helper } = require('../../helper')
@@ -17,7 +16,7 @@ module.exports = {
    */
   async register(obj = {}) {
     const t = await sequelize.transaction();
-    const url_verify = uuidv4() + '-' + moment().format('YYMMDDTHHmmss');
+    const url_verify = await helper.token(56);
 
     try {
       let c = await models.users.count(
@@ -412,7 +411,7 @@ module.exports = {
   async forget(email = null) {
     const t = await sequelize.transaction();
     const forget_expires = moment().add(1, 'day');
-    const url_forget = uuidv4() + '-' + moment().format('YYMMDDTHHmmss');
+    const url_forget = await helper.token(56);
 
     try {
       let v = await models.users.findOne({

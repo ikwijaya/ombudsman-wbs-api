@@ -5,31 +5,31 @@ LABEL appname="ombudsman-api"
 LABEL version="1.0.0"
 
 #SET ARGS
-ARG NODE_ENV="production"
-ARG PORT=9000
-ARG APP_NAME="WBS2.0"
-ARG APP_LOGO="https://wbs2.ombudsman.go.id/api/v1/others/logo/"
-ARG APP_URL="http://wbs2.ombudsman.go.id/#"
-ARG API_URL="http://wbs2.ombudsman.go.id/api/v1"
-ARG CIPHER_KEY="3zTvzr3p67VC61jmV54rIYu1545x4TlY"
-ARG CIPHER_IV="60iP0h6vJoEa"
-ARG CAPTCHA="6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
-ARG DEBUG="1"
-ARG DB_URL="postgres://postgres:g3n@dm!n@192.168.8.10:5432/wbs2_db"
-ARG DB_CLIENT="postgres"
-ARG DB_SCHEMA="public"
-ARG DB_SSL="0"
-ARG DEFAULT_PASSWORD="7654321Aa!"
-ARG EMAIL_HOST="mail.ombudsman.go.id"
-ARG EMAIL="no_reply@ombudsman.go.id"
-ARG EMAIL_PASSWORD="rumahkaca123%"
-ARG EMAIL_PORT=587
-ARG EMAIL_SECURE="0"
-ARG EXPIRES="12"
-ARG LOGIN_INTERVAL="6h"
-ARG LOG="bunyan"
-ARG UPLOAD_PATH="./upload/"
-ARG PERIODE="60"
+ENV NODE_ENV="production"
+ENV PORT=9000
+ENV APP_NAME="WBS2.0"
+ENV APP_LOGO="https://wbs2.ombudsman.go.id/api/v1/others/logo/"
+ENV APP_URL="http://wbs2.ombudsman.go.id/#"
+ENV API_URL="http://wbs2.ombudsman.go.id/api/v1"
+ENV CIPHER_KEY="3zTvzr3p67VC61jmV54rIYu1545x4TlY"
+ENV CIPHER_IV="60iP0h6vJoEa"
+ENV CAPTCHA="6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
+ENV DEBUG="1"
+ENV DB_URL="postgres://postgres:g3n@dm!n@192.168.8.10:5432/wbs2_db"
+ENV DB_CLIENT="postgres"
+ENV DB_SCHEMA="public"
+ENV DB_SSL="0"
+ENV DEFAULT_PASSWORD="7654321Aa!"
+ENV EMAIL_HOST="mail.ombudsman.go.id"
+ENV EMAIL="no_reply@ombudsman.go.id"
+ENV EMAIL_PASSWORD="rumahkaca123%"
+ENV EMAIL_PORT=587
+ENV EMAIL_SECURE="0"
+ENV EXPIRES="12"
+ENV LOGIN_INTERVAL="6h"
+ENV LOG="bunyan"
+ENV UPLOAD_PATH="./upload/"
+ENV PERIODE="60"
 
 # SET ENV
 ENV APPDIR="/app"
@@ -46,7 +46,7 @@ COPY . ${APPDIR}
 WORKDIR ${APPDIR}
 RUN rm -rf .git
 RUN npm install
-RUN source .env.prod
+# RUN source /.env.prod
 
 ## LOOK A HEAD ENV
 RUN printenv

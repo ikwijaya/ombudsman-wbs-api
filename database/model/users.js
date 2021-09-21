@@ -4,7 +4,6 @@ const opt = require('../connection')[NODE_ENV]
 const knex = require('knex')
 const { gen } = require('n-digit-token')
 const moment = require('moment');
-const { v4: uuidv4 } = require('uuid');
 const { response } = require('../../models/index')
 const { helper } = require('../../helper')
 const core = require('../core')
@@ -730,9 +729,10 @@ class Users {
   resendVerifikasi(sid, id) {
     let db = knex(opt);
     let user_id = null;
-    const url_verify = uuidv4() + '-' + moment().format('YYMMDDTHHmmss');
-
+    
     return new Promise(async (resolve, reject) => {
+      const url_verify = await helper.token(56);
+      
       await core.checkSession(sid)
         .then(r => user_id = r.status ? r.user_id : null)
         .catch(e => { reject(e) })
