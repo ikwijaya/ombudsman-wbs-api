@@ -7,11 +7,9 @@ const { users } = require('../../../sequelize/controllers')
 router.post('/', async (req, res, next) => {
   let email = req.body.email || null;
   let fullname = req.body.fullname || null;
-  let identityNo = req.body.identityNo || null;
   let phoneNo = req.body.phoneNo || null;
   let password = req.body.password || null;
   let repeatPassword = req.body.repeatPassword || null;
-
   let decryptPass = hmac.decryptText(password);
   let decryptRePass = hmac.decryptText(repeatPassword);
 
@@ -25,9 +23,13 @@ router.post('/', async (req, res, next) => {
         let o = await users.register({
           email: email,
           fullname: fullname,
-          identity_no: identityNo,
+          identity_no: req.body.identityNo,
           phone_no: phoneNo,
-          passwd: decryptPass
+          passwd: decryptPass,
+          filename: req.body.filename,
+          path: req.body.path,
+          mime_type: req.body.mime_type,
+          filesize: req.body.filesize
         }).catch(e => { throw (e) });
 
         res.send(o)

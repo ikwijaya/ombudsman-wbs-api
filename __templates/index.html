@@ -47,7 +47,7 @@
     watch: {},
     methods: {
         load(){
-            this.http('GET', '/version', null, (res) => {
+            this.http('GET', '/api/version', null, (res) => {
                 this.item = res
             })
         },

@@ -26,6 +26,7 @@ module.exports = {
       );
 
       if (c > 0) return response.failed('Email sudah digunakan silakan gunakan email lain.');
+      if(!obj['filename']) return response.failed('Silakan masukan softcopy dari kartu indentitas Anda, misal KTP.');
 
       obj['is_verify'] = false;
       obj['url_verify'] = url_verify;
