@@ -23,10 +23,11 @@ module.exports = {
         attributes: [
           'idx_t_clarification',
           'date', 'teams', 'result',
-          'to', 'address', 'by',
-          'object', 'meet_date', 'approver',
-          'letter_no', 'letter_date', 'filename',
-          'path', 'mime_type', 'filesize'
+          'to', 'address', 'by','object', 
+          [Sequelize.literal(`cast(meet_date AS DATE)`), 'meet_date'], 
+          'meet_time', 'approver',
+          'agenda', 'tempat', 'letter_no', 'letter_date', 
+          'filename', 'path', 'mime_type', 'filesize'
         ],
         include: [
           {
@@ -71,7 +72,14 @@ module.exports = {
         }
       )
 
+      let c = await models.complaints.findOne({
+        attributes: ['form_no'],
+        where: { idx_m_complaint: id }
+      })
+
       if (m instanceof models.clarification) m.setDataValue('teams_arr', teams);
+      if (m instanceof models.clarification) m.setDataValue('form_no', c instanceof models.complaints ? c.getDataValue('form_no') : null);
+
       return {
         item: m,
         item2: det

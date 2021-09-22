@@ -63,7 +63,8 @@ module.exports = {
               required: false,
               attributes: [
                 'idx_t_complaint_study_event',
-                'event', 'date', 'notes', 'simple_app_no'
+                'event', 'date', 'notes', 'simple_app_no',
+                'dcreate', 'ucreate', 'dmodified', 'umodified'
               ],
               model: models.complaint_study_events,
               where: { record_status: 'A' }

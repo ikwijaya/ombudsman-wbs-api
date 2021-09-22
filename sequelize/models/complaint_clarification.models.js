@@ -24,8 +24,14 @@ module.exports = (sq) => {
     address: DataTypes.TEXT(),
     by: DataTypes.STRING(),
     object: DataTypes.TEXT(),
-    meet_date: DataTypes.TEXT(),
     approver: DataTypes.BIGINT,
+
+    // gantinya meet_date, kenapa penamaannya campur aduk?
+    // sue!! karena requirementnya campur-aduk-pula
+    meet_date: DataTypes.DATE(),
+    meet_time: DataTypes.TIME,
+    agenda: DataTypes.STRING(),
+    tempat: DataTypes.STRING(),
 
     // as request2
     letter_no: DataTypes.STRING(),
