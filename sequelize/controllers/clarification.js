@@ -27,7 +27,8 @@ module.exports = {
           [Sequelize.literal(`cast(meet_date AS DATE)`), 'meet_date'], 
           'meet_time', 'approver',
           'agenda', 'tempat', 'letter_no', 'letter_date', 
-          'filename', 'path', 'mime_type', 'filesize'
+          'filename', 'path', 'mime_type', 'filesize',
+          [Sequelize.literal(`concat('${API_URL}/others/open/',filename)`), 'url']
         ],
         include: [
           {
