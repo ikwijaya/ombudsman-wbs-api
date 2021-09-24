@@ -1,10 +1,10 @@
 
 const router = require('express').Router()
 const { response } = require('../../../models')
-const { helper, cache } = require('../../../helper')
+const { helper } = require('../../../helper')
 const { UPLOAD_PATH } = require('../../../config')
 
-router.get('/:filename', cache.MCache(30), async (req, res, next) => {
+router.get('/:filename', async (req, res, next) => {
   try {
     let name = req.params.filename || null;
 

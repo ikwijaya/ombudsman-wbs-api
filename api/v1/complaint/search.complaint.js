@@ -11,13 +11,15 @@ router.post('/', async (req, res, next) => {
   let teradu = req.body.teradu || [];
   let terperiksa = req.body.terperiksa || [];
   let custom_filter = req.body.custom_filter || 0;
+  let date_range = req.body.date_range || [];
 
   try {
     let o = await complaint.load(sid, keyword, status_code,
       {
         teradu: teradu,
         terperiksa: terperiksa,
-        custom_filter: custom_filter
+        custom_filter: custom_filter,
+        date_range: date_range
       }, null).catch(e => { throw (e) })
     res.send(o).status(200)
   } catch (err) {

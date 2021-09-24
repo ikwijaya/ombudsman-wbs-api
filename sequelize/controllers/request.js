@@ -113,7 +113,7 @@ module.exports = {
    * @param {*} obj 
    * @returns 
    */
-  async next(sid, id = null) {
+  async next(sid, id = null, flag = null) {
     const t = await sequelize.transaction();
 
     try {
@@ -121,8 +121,10 @@ module.exports = {
       if (sessions.length === 0 && id)
         return response.failed('Session expires')
 
+      if(!flag) return response.failed('Silakan pilih FORM untuk melanjutkan !')
       let where = {};
       where['idx_m_complaint'] = id;
+      where['mode'] = flag;
       where[Op.or] = {
         'letter_no': { [Op.eq]: null },
         'letter_date': { [Op.eq]: null },
@@ -130,7 +132,7 @@ module.exports = {
       }
 
       let count = await models.request.count({ where: where, transaction: t });
-      if (count > 0) return response.failed(`<ul><li>` + ['Kolom Nomor Surat, Tanggal Surat dan Upload Dokumen Surat TIDAK boleh kosong.'].join('</li><li>') + `</li></ul>`)
+      if (count > 0) return response.failed(`<ul><li>` + [`Kolom Nomor Surat, Tanggal Surat dan Upload Dokumen Surat pada FORM KEPADA <b>${flag}</b> TIDAK boleh kosong.`].join('</li><li>') + `</li></ul>`)
 
       await models.complaints.update(
         { idx_m_status: 9 }, // to Telaah dan Analysis

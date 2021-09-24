@@ -86,10 +86,16 @@ module.exports = {
           name: 'MDP',
           color: 'purple lighten-2'
         }
-      } else {
+      } else if(violationNo instanceof models.complaint_decisions
+        && [10].includes(parseInt(violationNo.getDataValue('violation')))) {
         dcode = {
           name: 'TPA',
           color: 'red lighten-1'
+        }
+      } else {
+        dcode = {
+          name: '-',
+          color: 'grey lighten-3'
         }
       }
 
@@ -472,10 +478,9 @@ module.exports = {
    */
   async load(sid = null, keyword = null, status_code = [], others = null, id = null) {
     try {
-      let where = {}; let whereCode = {};
+      let where = {}; let whereCode = {}; let whereDUsers = {}
       let sessions = await core.checkSession(sid)
-      let users = [];
-      let typeId = null;
+      let users = []; let typeId = null; let isRequiredST = false;
 
       if (sessions.length === 0)
         return [];
@@ -533,31 +538,37 @@ module.exports = {
        * 3. MINE
        * 4. LAST EDITED
        */
-       if(others.custom_filter == 1) where[Op.and] = [Sequelize.literal(`DATE(complaints.dcreate)=CURRENT_DATE`)]
-       if(others.custom_filter == 2) where[Op.and] = [Sequelize.literal(`date_part('month', DATE(complaints.dcreate))=date_part('month', (SELECT current_timestamp))`)]
-       if(others.custom_filter == 3) where['ucreate'] = sessions[0].user_id.toString()
-       if(others.custom_filter == 4) {
-        let clogs = await models.clogs.findAll({
-          attributes: ['idx_m_complaint'],
-          where: {[Op.and]: [Sequelize.literal(`DATE(dcreate)=CURRENT_DATE`)]},
-          group: ['idx_m_complaint']
-        })
+      if(others && others.custom_filter){
+        if(others.custom_filter == 999) where[Op.and] = [Sequelize.literal(`DATE(complaints.dcreate) BETWEEN CAST('${others.date_range[0]}' AS DATE) AND CAST('${others.date_range[1]}' AS DATE)`)]
+        if(others.custom_filter == 1) where[Op.and] = [Sequelize.literal(`DATE(complaints.dcreate)=CURRENT_DATE`)]
+        if(others.custom_filter == 2) where[Op.and] = [Sequelize.literal(`date_part('month', DATE(complaints.dcreate))=date_part('month', (SELECT current_timestamp))`)]
+        if(others.custom_filter == 3) where['ucreate'] = sessions[0].user_id.toString()
+        if(others.custom_filter == 4) {
+          let clogs = await models.clogs.findAll({
+            attributes: ['idx_m_complaint'],
+            where: {[Op.and]: [Sequelize.literal(`DATE(dcreate)=CURRENT_DATE`)]},
+            group: ['idx_m_complaint']
+          })
 
-        where['idx_m_complaint'] = { [Op.in]: clogs.map(e => e['idx_m_complaint']) }
-       }
+          where['idx_m_complaint'] = { [Op.in]: clogs.map(e => e['idx_m_complaint']) }
+        }
+        if(others.custom_filter == 5) {
+          let clogs = await models.clogs.findAll({
+            attributes: ['idx_m_complaint'],
+            where: {
+              [Op.and]: [Sequelize.literal(`DATE(dcreate)=CURRENT_DATE`)],
+              'ucreate': sessions[0].user_id
+            },
+            group: ['idx_m_complaint']
+          })
 
-       if(others.custom_filter == 5) {
-        let clogs = await models.clogs.findAll({
-          attributes: ['idx_m_complaint'],
-          where: {
-            [Op.and]: [Sequelize.literal(`DATE(dcreate)=CURRENT_DATE`)],
-            'ucreate': sessions[0].user_id
-          },
-          group: ['idx_m_complaint']
-        })
-
-        where['idx_m_complaint'] = { [Op.in]: clogs.map(e => e['idx_m_complaint']) }
-       }
+          where['idx_m_complaint'] = { [Op.in]: clogs.map(e => e['idx_m_complaint']) }
+        }
+        if(others.custom_filter == 6) {
+          whereDUsers['idx_m_user'] = sessions[0].user_id
+          isRequiredST = true
+        }
+      }
 
       /**
        * RoleId     Name
@@ -862,8 +873,17 @@ module.exports = {
               model: models.closing
             },
             {
+              required: isRequiredST,
               attributes: ['date', [Sequelize.literal(PERIODE), 'periode']],
               model: models.complaint_determinations,
+              include: [
+                {
+                  required: isRequiredST,
+                  attributes: ['idx_m_user'],
+                  model: models.complaint_determination_users,
+                  where: whereDUsers
+                }
+              ]
             }
           ],
           order: [

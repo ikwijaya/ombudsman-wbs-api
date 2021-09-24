@@ -6,9 +6,10 @@ const { request } = require('../../../sequelize/controllers')
 router.post('/', async (req, res, next) => {
   let sid = req.body.sid || null;
   let id = req.body.idx_m_complaint || null;
+  let flag = req.body.flag || null
 
   try {
-    let o = await request.next(sid, id).catch(e => { throw (e) })
+    let o = await request.next(sid, id, flag).catch(e => { throw (e) })
     res.send(o)
   } catch (err) {
     res.status(401).send(response.failed(err, []))
