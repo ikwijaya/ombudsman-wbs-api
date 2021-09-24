@@ -380,7 +380,8 @@ function applyExtraSetup(sq) {
       allowNull: false
     }
   })
-  complaints.hasOne(confirmation, {
+  // changes hasOne -> hasMany
+  complaints.hasMany(confirmation, {
     foreignKey: {
       name: 'idx_m_complaint',
       allowNull: false

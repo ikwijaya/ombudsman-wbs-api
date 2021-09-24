@@ -13,6 +13,14 @@ module.exports = (sq) => {
       type: DataTypes.BIGINT,
       allowNull: false
     },
+
+    /** as request nadia */
+    date: DataTypes.DATE,
+    by: DataTypes.STRING,
+    media: DataTypes.STRING,
+    notes: DataTypes.TEXT(),
+    /** --end-- */
+
     value: DataTypes.TEXT(),
     head_of_kumm: DataTypes.BIGINT,
     response: DataTypes.TEXT(),

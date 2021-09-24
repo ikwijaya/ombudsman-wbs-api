@@ -619,7 +619,7 @@ module.exports = {
 
       return {
         media: media,
-        by: ['TERADU', 'PENGADU'],
+        by: ['TERADU', 'PENGADU', 'PIHAK LAIN'],
         approvers: approvers,
         violations: violations
       }

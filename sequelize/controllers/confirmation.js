@@ -18,11 +18,17 @@ module.exports = {
       if (sessions.length === 0)
         return null;
 
-      let m = await models.confirmation.findOne({
+      let r = await core.checkRoles(sessions[0].user_id, [11]);
+      // changes from findOne -> finalAll
+      let m = await models.confirmation.findAll({
         attributes: [
           'idx_t_confirmation',
-          'value', 'head_of_kumm', 'via',
-          'response', 'to', 'address', 'by', 'object', 'desc'
+          'value', 'head_of_kumm', 'via', 
+          [Sequelize.literal(`cast(date AS DATE)`),'date'], 
+          'by', 'media', 'notes',
+          'response', 'to', 'address', 'by', 'object', 'desc',
+          [Sequelize.literal(`case when 1=${r.filter(a => a.idx_m_form == 11 && a.is_update).length > 0 ? 1 : 0} then true else false end`), 'is_update'],
+          [Sequelize.literal(`case when 1=${r.filter(a => a.idx_m_form == 11 && a.is_delete).length > 0 ? 1 : 0} then true else false end`), 'is_delete'],
         ],
         where: { idx_m_complaint: id, record_status: 'A' }
       })
@@ -32,7 +38,7 @@ module.exports = {
           'idx_t_clarification',
           'date', 'teams', 'result',
           'to', 'address', 'by',
-          'object', 'meet_date', 'approver'
+          'object', 'meet_date', 'approver',
         ],
         include: [
           {
@@ -49,7 +55,8 @@ module.exports = {
 
       return {
         item: m,
-        item2: cla
+        item2: cla,
+        is_insert: r.filter(a => a.idx_m_form == 11 && a.is_insert).length > 0
       }
     } catch (error) {
       throw (error)
@@ -71,13 +78,13 @@ module.exports = {
 
       obj['ucreate'] = sessions[0].user_id;
       await models.confirmation.create(obj, { transaction: t, });
-      await models.complaints.update(
-        { idx_m_status: 12 }, // to Penyusunan LHPA
-        {
-          transaction: t,
-          where: { idx_m_complaint: obj['idx_m_complaint'] }
-        }
-      )
+      // await models.complaints.update(
+      //   { idx_m_status: 12 }, // to Penyusunan LHPA
+      //   {
+      //     transaction: t,
+      //     where: { idx_m_complaint: obj['idx_m_complaint'] }
+      //   }
+      // )
       await t.commit()
       return response.success('Konfirmasi pengadu berhasi disimpan')
     } catch (error) {
@@ -125,6 +132,43 @@ module.exports = {
   /**
    * 
    * @param {*} sid 
+   * @param {*} id 
+   * @returns 
+   */
+  async delete(sid, obj = null) {
+    const t = await sequelize.transaction();
+
+    try {
+      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      if (sessions.length === 0)
+        return response.failed('Session expires')
+      if (!obj)
+        return response.failed('Data TIDAK ditemukan')
+
+      await models.confirmation.destroy({
+        where: { idx_t_confirmation: obj.id },
+        transaction: t,
+      });
+
+      await models.clogs.create({
+        idx_m_complaint: obj.idx_m_complaint,
+        action: 'U',
+        flow: '11',
+        changes: JSON.stringify(obj),
+        ucreate: sessions[0].user_id
+      }, { transaction: t, });
+
+      await t.commit()
+      return response.success('Data berhasi dihapus')
+    } catch (error) {
+      console.log('errr', error)
+      await t.rollback()
+      throw (error)
+    }
+  },
+  /**
+   * 
+   * @param {*} sid 
    * @param {*} obj 
    * @returns 
    */
@@ -138,10 +182,10 @@ module.exports = {
 
       let where = {};
       where['idx_m_complaint'] = id;
-      where['via'] = { [Op.eq]: null };
+      // where['via'] = { [Op.eq]: null };
 
-      let count = await models.confirmation.count({ where: where, transaction: t });
-      if (count > 0) return response.failed(`<ul><li>` + ['Kolom Konfirmasi melalui TIDAK boleh kosong.'].join('</li><li>') + `</li></ul>`)
+      // let count = await models.confirmation.count({ where: where, transaction: t });
+      // if (count > 0) return response.failed(`<ul><li>` + ['Setidaknya.'].join('</li><li>') + `</li></ul>`)
 
       await models.complaints.update(
         { idx_m_status: 12 }, // to Konfirmasi pengadu

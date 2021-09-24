@@ -26,7 +26,8 @@ module.exports = {
           'to', 'address', 'by','object', 
           [Sequelize.literal(`cast(meet_date AS DATE)`), 'meet_date'], 
           'meet_time', 'approver',
-          'agenda', 'tempat', 'letter_no', 'letter_date', 
+          'agenda', 'tempat', 'letter_no', 
+          [Sequelize.literal(`cast(letter_date AS DATE)`),'letter_date'], 
           'filename', 'path', 'mime_type', 'filesize',
           [Sequelize.literal(`concat('${API_URL}/others/open/',filename)`), 'url']
         ],
@@ -144,7 +145,7 @@ module.exports = {
       let where = {};
       where['idx_m_complaint'] = id;
       where[Op.or] = {
-        'approver': { [Op.eq]: null },
+        // 'approver': { [Op.eq]: null },
         'letter_no': { [Op.eq]: null },
         'letter_date': { [Op.eq]: null },
         'filename': { [Op.eq]: null }
@@ -162,48 +163,36 @@ module.exports = {
       )
 
       // surat request pengadu | to, address, by, object | get pengadu dari m_complaint
-      let pengadu; let teradu = [];
-      let complaint = await models.complaints.findOne({
-        attributes: ['manpower', 'description', 'ucreate', 'hopes', 'idx_m_legal_standing'],
-        include: [
-          {
-            required: false,
-            attributes: [
-              'idx_t_complaint_study'
-            ],
-            model: models.complaint_studies,
-            include: [{
-              required: false,
-              attributes: ['name', 'occupation'],
-              model: models.complaint_study_reported,
-              include: [
-                {
-                  required: false,
-                  attributes: ['name'],
-                  model: models.work_units
-                }
-              ]
-            }],
-            where: { record_status: 'A' }
-          },
-        ],
-        where: { idx_m_complaint: id }
-      })
+      // let pengadu; let teradu = [];
+      // let complaint = await models.complaints.findOne({
+      //   attributes: ['manpower', 'description', 'ucreate', 'hopes', 'idx_m_legal_standing'],
+      //   where: { idx_m_complaint: id }
+      // })
+      // let studies = await models.complaint_studies.findOne({
+      //   attributes: ['idx_m_complaint'],
+      //   include: [
+      //     {
+      //       attributes: ['name', 'occupation'],
+      //       model: models.complaint_study_reported
+      //     },
+      //   ],
+      //   where: { idx_m_complaint: v.getDataValue('idx_m_complaint') }
+      // })
 
-      if (complaint instanceof models.complaints) {
-        teradu = complaint.getDataValue('complaint_study')['complaint_study_reporteds'].map(e => e.name) || [];
-        pengadu = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: complaint.getDataValue('ucreate') } })
-        let getPengadu = complaint.getDataValue('idx_m_legal_standing') == -1 ? complaint.getDataValue('manpower') :
-          complaint['ucreate'] = pengadu instanceof models.users ? pengadu.getDataValue('name') : null
+      // if (complaint instanceof models.complaints) {
+      //   teradu = studies.getDataValue('complaint_study_reporteds').map(e => `${e.name} - ${e.occupation ? e.occupation : '--'}`) || [];
+      //   pengadu = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: complaint.getDataValue('ucreate') } })
+      //   let getPengadu = complaint.getDataValue('idx_m_legal_standing') == -1 ? complaint.getDataValue('manpower') :
+      //     complaint['ucreate'] = pengadu instanceof models.users ? pengadu.getDataValue('name') : null
 
-        await models.confirmation.create({
-          idx_m_complaint: id,
-          to: teradu.join(' , '),
-          by: getPengadu,
-          object: complaint.getDataValue('description'),
-          address: 'tempat',
-        }, { transaction: t });
-      }
+      //   await models.confirmation.create({
+      //     idx_m_complaint: id,
+      //     to: teradu.join(' , '),
+      //     by: getPengadu,
+      //     object: complaint.getDataValue('description'),
+      //     address: 'tempat',
+      //   }, { transaction: t });
+      // }
 
       // LOGS
       await models.clogs.create({

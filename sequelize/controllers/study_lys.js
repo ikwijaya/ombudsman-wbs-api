@@ -359,30 +359,21 @@ module.exports = {
         let pengadu; let teradu = [];
         let complaint = await models.complaints.findOne({
           attributes: ['manpower', 'description', 'ucreate', 'hopes', 'idx_m_legal_standing'],
+          where: { idx_m_complaint: v.getDataValue('idx_m_complaint') }
+        })
+        let studies = await models.complaint_studies.findOne({
+          attributes: ['idx_m_complaint'],
           include: [
             {
-              attributes: [
-                'idx_t_complaint_study'
-              ],
-              model: models.complaint_studies,
-              include: [{
-                attributes: ['name', 'occupation'],
-                model: models.complaint_study_reported,
-                include: [
-                  {
-                    attributes: ['name'],
-                    model: models.work_units
-                  }
-                ]
-              }],
-              where: { record_status: 'A' }
+              attributes: ['name', 'occupation'],
+              model: models.complaint_study_reported
             },
           ],
           where: { idx_m_complaint: v.getDataValue('idx_m_complaint') }
         })
 
         if (complaint instanceof models.complaints) {
-          teradu = complaint.getDataValue('complaint_study')['complaint_study_reporteds'].map(e => e.name) || [];
+          teradu = studies.getDataValue('complaint_study_reporteds').map(e => `${e.name} - ${e.occupation ? e.occupation : '--'}`) || [];
           pengadu = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: complaint.getDataValue('ucreate') } })
           let getPengadu = complaint.getDataValue('idx_m_legal_standing') == -1 ? complaint.getDataValue('manpower') :
             complaint['ucreate'] = pengadu instanceof models.users ? pengadu.getDataValue('name') : null
