@@ -8,4 +8,5 @@ documentation
 file.json
 junk
 *.sql
-*.env
+.git
+builds

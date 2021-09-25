@@ -1,4 +1,4 @@
-FROM node:10.22.0-alpine3.11
+FROM node:12.22.5-alpine3.14
 
 LABEL maintainer="OmbudsmanTeams"
 LABEL appname="ombudsman-api"
@@ -8,27 +8,20 @@ LABEL version="1.0.0"
 ENV APPDIR="/app"
 
 # INSTALL FEATURE FOR CHECKING CONNECTION
-RUN apk --no-cache add curl
-RUN apk --no-cache add python3 g++ make
+RUN apk --no-cache add curl python3 g++ make
 
 # SET WORK DIRECTORY
-RUN mkdir -p ${APPDIR}
 WORKDIR ${APPDIR}
-COPY . ${APPDIR}
+COPY . .
 
-# PREPARE INSTALL DEPEDENCIES
-WORKDIR ${APPDIR}
-RUN rm -rf .git
+# PREPARE INSTALL DEPENDENCIES
 RUN npm install
-# RUN source /.env.prod
-
-## LOOK A HEAD ENV
-RUN printenv
 
 # EXPOSE FOR ACCESS FROM ANY
 # EXPOSE 8080
-CMD ["npm","run","start"]
+ENTRYPOINT ["npm","run"]
+CMD ["start"]
 
 # HEALTH CHECK
 HEALTHCHECK --interval=5m --timeout=10s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8080/ || exit 1 
+  CMD curl -f http://localhost:9000/ || exit 1

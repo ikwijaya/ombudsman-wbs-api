@@ -1,0 +1,15 @@
+deploy:
+    before_script:
+        - cd $SUBPROJECT_PATH
+    script:
+        - git pull
+        - rm -rf builds
+        - cd $PROJECT_PATH
+        - ./destroy.sh
+        - ./start.prod.sh
+    after_script:
+       - ./check.sh
+    only:
+        - master
+    tags:
+        - wbs2
