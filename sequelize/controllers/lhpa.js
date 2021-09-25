@@ -118,9 +118,9 @@ module.exports = {
           'procedure', 'product', 'fakta', 'head_of_kumm',
           'analisis_pemeriksaan', 'pendapat_pemeriksa',
           'kesimpulan_pemeriksa', 'tindak_lanjut', 'dcreate',
-          [Sequelize.literal(`to_char(checked_date, 'yyyy-mm-dd hh24:mi:ss)`),'checked_date'], 'checked_by', 
-          [Sequelize.literal(`to_char(checked_date, 'yyyy-mm-dd hh24:mi:ss)`),'approved_date'], , 'approved_by',
-          [Sequelize.literal(`to_char(checked_date, 'yyyy-mm-dd hh24:mi:ss)`),'arranged_date'], , 'arranged_by'
+          [Sequelize.literal(`to_char(lhpa.checked_date, 'YYYY-MM-DD HH24:MI:SS')`),'checked_date'], 'checked_by', 
+          [Sequelize.literal(`to_char(lhpa.checked_date, 'YYYY-MM-DD HH24:MI:SS')`),'approved_date'], 'approved_by',
+          [Sequelize.literal(`to_char(lhpa.checked_date, 'YYYY-MM-DD HH24:MI:SS')`),'arranged_date'], 'arranged_by'
         ],
         include: [
           {
@@ -152,6 +152,7 @@ module.exports = {
         order: [['dcreate', 'asc']]
       })
 
+      let users = await models.users.findAll({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name'], 'idx_m_user'], where: { idx_m_user_type: -1 } })
       if (m.length > 0) {
         m = JSON.parse(JSON.stringify(m));
         m.map(async (e) => {
@@ -160,13 +161,9 @@ module.exports = {
           let is_kuasa = complaint instanceof models.complaints ? complaint.getDataValue('is_kuasa_pelapor') : false;
           let form_no = complaint instanceof models.complaints ? complaint.getDataValue('form_no') : null;
 
-          let arranged_by = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: e['arranged_by'] } })
-          let approved_by = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: e['approved_by'] } })
-          let checked_by = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: me['checked_by'] } })
-
-          e.arranged_by_name = arranged_by instanceof models.users ? arranged_by.getDataValue('name') : null
-          e.approved_by_name = approved_by instanceof models.users ? approved_by.getDataValue('name') : null
-          e.checked_by_name = checked_by instanceof models.users ? checked_by.getDataValue('name') : null
+          e.arranged_by_name = users.filter(a => a['idx_m_user'] == e['arranged_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['arranged_by'])[0].name : null
+          e.approved_by_name = users.filter(a => a['idx_m_user'] == e['approved_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['approved_by'])[0].name : null
+          e.checked_by_name = users.filter(a => a['idx_m_user'] == e['checked_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['checked_by'])[0].name : null
           e.kronologi_aduan = studies instanceof models.complaint_studies ? studies.getDataValue('complaint_study_events') : []
           e.is_approve = e.approved_by == sessions[0].user_id;
           e.is_check = e.checked_by == sessions[0].user_id;

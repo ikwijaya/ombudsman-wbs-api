@@ -394,7 +394,7 @@ module.exports = {
               is_read: r.filter(a => a.idx_m_form == value && a.is_read).length > 0,
               is_update: r.filter(a => a.idx_m_form == value && a.is_update).length > 0 && !has_cancel && lhpa.length > 0,
               is_delete: r.filter(a => a.idx_m_form == value && a.is_delete).length > 0 && !has_cancel,
-              is_insert: r.filter(a => a.idx_m_form == value && a.is_insert).length > 0 && !has_cancel && lhpa.length == 0
+              is_insert: r.filter(a => a.idx_m_form == value && a.is_insert).length > 0 && !has_cancel
             };
             break;
           case 13: // bedah pengaduan
