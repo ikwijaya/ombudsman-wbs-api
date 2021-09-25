@@ -316,14 +316,8 @@ module.exports = {
         }
       });
 
-      let mon = await models.monitoring.findOne({
-        where: {
-          idx_m_complaint: id,
-          record_status: 'A',
-          form_status: '0'
-        }
-      });
-
+      let mon = await models.monitoring.findOne({ where: { idx_m_complaint: id, record_status: 'A', form_status: '0' } });
+      let lhpa = await models.lhpa.findAll({ where: {idx_m_complaint: id, record_status: 'A'} })
       let clo = await models.closing.findOne({ where: { idx_m_complaint: id, record_status: 'A', form_status: '1' } })
 
       if (!c) return null;
@@ -398,9 +392,9 @@ module.exports = {
           case 12: // penyusunan LHPA
             e.data = {
               is_read: r.filter(a => a.idx_m_form == value && a.is_read).length > 0,
-              is_update: r.filter(a => a.idx_m_form == value && a.is_update).length > 0 && !has_cancel,
+              is_update: r.filter(a => a.idx_m_form == value && a.is_update).length > 0 && !has_cancel && lhpa.length > 0,
               is_delete: r.filter(a => a.idx_m_form == value && a.is_delete).length > 0 && !has_cancel,
-              is_insert: r.filter(a => a.idx_m_form == value && a.is_insert).length > 0 && !has_cancel
+              is_insert: r.filter(a => a.idx_m_form == value && a.is_insert).length > 0 && !has_cancel && lhpa.length == 0
             };
             break;
           case 13: // bedah pengaduan
