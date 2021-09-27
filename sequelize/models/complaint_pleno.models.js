@@ -16,6 +16,11 @@ module.exports = (sq) => {
     date: DataTypes.DATEONLY,
     result: DataTypes.TEXT(),
     notes: DataTypes.TEXT(),
+    
+    // bego nih, ngapain sih minta di input ulang!!
+    pengadu: DataTypes.TEXT(),
+    form_no: DataTypes.TEXT(),
+
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,
