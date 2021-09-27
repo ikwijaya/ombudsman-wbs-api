@@ -589,7 +589,7 @@ module.exports = {
   /**
    * 
    */
-  async requestAdditional() {
+  async requestAdditional(id) {
     try {
       let media = await models.options.findAll(
         {
@@ -617,11 +617,62 @@ module.exports = {
         where: { record_status: 'A' }
       })
 
+      let regional = await models.regions.findAll({
+        raw: true,
+        attributes: ['regional'],
+        include: [
+          {
+            required: true,
+            attributes: [],
+            model: models.cities,
+            group: ['regional'],
+            include: [
+              {
+                required: true,
+                attributes: [],
+                model: models.complaint_study_incidents,
+                include: [
+                  {
+                    required: true,
+                    attributes: [],
+                    model: models.complaint_studies,
+                    where: { idx_m_complaint: id }
+                  }
+                ]
+              }
+            ],
+          }
+        ]
+      })
+
+      let head_regional = await models.users.findAll({
+        attributes: [
+          'idx_m_user',
+          [Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']
+        ],
+        include: [{
+          required: true,
+          model: models.userregion,
+          where: { regional: { [Op.in]: regional.map(e => e.regional) } }
+        }],
+        where: { record_status: 'A', idx_m_user_type: 4 }
+      });
+
+      let head_kumm = await models.users.findAll({
+        attributes: [
+          'idx_m_user',
+          [Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']
+        ],
+        where: { record_status: 'A', idx_m_user_type: 3 }
+      });
+
       return {
         media: media,
         by: ['TERADU', 'PENGADU', 'PIHAK LAIN'],
         approvers: approvers,
-        violations: violations
+        violations: violations,
+        head_of_kumm: head_kumm,
+        head_of_regional: head_regional
       }
     } catch (err) {
       throw (err)

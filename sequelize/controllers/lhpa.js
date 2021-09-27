@@ -118,9 +118,9 @@ module.exports = {
           'procedure', 'product', 'fakta', 'head_of_kumm',
           'analisis_pemeriksaan', 'pendapat_pemeriksa',
           'kesimpulan_pemeriksa', 'tindak_lanjut', 'dcreate',
-          [Sequelize.literal(`to_char(lhpa.checked_date, 'YYYY-MM-DD HH24:MI:SS')`),'checked_date'], 'checked_by', 
-          [Sequelize.literal(`to_char(lhpa.checked_date, 'YYYY-MM-DD HH24:MI:SS')`),'approved_date'], 'approved_by',
-          [Sequelize.literal(`to_char(lhpa.checked_date, 'YYYY-MM-DD HH24:MI:SS')`),'arranged_date'], 'arranged_by'
+          [Sequelize.literal(`to_char(lhpa.checked_date, 'DD-MM-YYYY HH24:MI:SS')`),'checked_date'], 'checked_by', 
+          [Sequelize.literal(`to_char(lhpa.approved_date, 'DD-MM-YYYY HH24:MI:SS')`),'approved_date'], 'approved_by',
+          [Sequelize.literal(`to_char(lhpa.arranged_date, 'DD-MM-YYYY HH24:MI:SS')`),'arranged_date'], 'arranged_by'
         ],
         include: [
           {
@@ -152,7 +152,7 @@ module.exports = {
         order: [['dcreate', 'asc']]
       })
 
-      let users = await models.users.findAll({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name'], 'idx_m_user'], where: { idx_m_user_type: -1 } })
+      let users = await models.users.findAll({ raw: true, attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name'], 'idx_m_user'], where: { idx_m_user_type: { [Op.ne]: -1 } } })
       if (m.length > 0) {
         m = JSON.parse(JSON.stringify(m));
         m.map(async (e) => {
@@ -165,8 +165,27 @@ module.exports = {
           e.approved_by_name = users.filter(a => a['idx_m_user'] == e['approved_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['approved_by'])[0].name : null
           e.checked_by_name = users.filter(a => a['idx_m_user'] == e['checked_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['checked_by'])[0].name : null
           e.kronologi_aduan = studies instanceof models.complaint_studies ? studies.getDataValue('complaint_study_events') : []
-          e.is_approve = e.approved_by == sessions[0].user_id;
-          e.is_check = e.checked_by == sessions[0].user_id;
+          
+          /** SECURITY */
+          if(e.arranged_by == sessions[0].user_id){
+            e.is_update = !e.checked_date
+            e.is_check = false
+            e.is_approve = false
+          }
+
+          if(e.checked_by == sessions[0].user_id){
+            e.is_update = !e.approved_date
+            e.is_check = !e.approved_date
+            e.is_approve = false
+          }
+
+          if(e.approved_by == sessions[0].user_id){
+            e.is_update = true
+            e.is_check = false
+            e.is_approve = true
+          }
+          /** END -- SECURITY */
+
           e.form_no = form_no;
           e.date = complaint instanceof models.complaints ? complaint.getDataValue('date') : null
           e.pengadu = is_kuasa ? complaint.getDataValue('man_power') : complaint.getDataValue('ucreate')
@@ -264,7 +283,9 @@ module.exports = {
 
       obj.lhpa['umodified'] = sessions[0].user_id;
       obj.lhpa['dmodified'] = new Date();
-
+      obj.lhpa['arranged_by'] = sessions[0].user_id;
+      obj.lhpa['arranged_date'] = new Date()
+      
       await models.lhpa.update(obj.lhpa, {
         where: { idx_t_lhpa: obj.lhpa.id },
         transaction: t,
@@ -302,8 +323,8 @@ module.exports = {
 
       obj.lhpa['umodified'] = sessions[0].user_id;
       obj.lhpa['dmodified'] = new Date();
-      obj.lhpa['checked_by'] = sessions[0].user_id;
       obj.lhpa['checked_date'] = new Date();
+      if(!obj.lhpa['approved_by']) return response.failed('Kolom Disetujui Oleh TIDAK boleh kosong')
 
       await models.lhpa.update(obj.lhpa, {
         where: { idx_t_lhpa: obj.lhpa.id },
@@ -342,18 +363,23 @@ module.exports = {
 
       obj.lhpa['umodified'] = sessions[0].user_id;
       obj.lhpa['dmodified'] = new Date();
-      obj.lhpa['approved_by'] = sessions[0].user_id;
       obj.lhpa['approved_date'] = new Date();
 
       await models.lhpa.update(obj.lhpa, { where: { idx_t_lhpa: obj.lhpa.id }, transaction: t });
-      // to Konfirmasi pengadu
+      await models.complaints.update({
+        umodified: sessions[0].user_id,
+        dmodified: new Date(),
+        idx_m_status: 13
+      },{transaction:t, where: { idx_m_complaint: obj.lhpa['idx_m_complaint'], }})
+
+      // to Bedah Pengaduan
       await models.clogs.create({
         idx_m_complaint: obj.lhpa['idx_m_complaint'],
         action: 'U',
         flow: '12',
         changes: JSON.stringify(obj),
         ucreate: sessions[0].user_id,
-        notes: 'telah melanjutkan ke flow selanjutnya (konfirmasi pengadu)'
+        notes: 'telah melanjutkan ke flow selanjutnya (bedah pengaduan)'
       }, { transaction: t, });
 
       await t.commit()

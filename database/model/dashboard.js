@@ -164,6 +164,7 @@ class Dashboard {
           'c.idx_m_complaint',
           'c.form_no',
           db.raw(`concat('Regional ', CAST(wk.regional AS VARCHAR)) AS regional`),
+          db.raw(`CASE WHEN c.idx_m_legal_standing = -1 THEN c.manpower ELSE u.fullname END AS pengadu`),
           'str.name AS teradu',
           'wk.name AS unit_kerja',
           'st.name AS tahapan'
@@ -172,6 +173,7 @@ class Dashboard {
         .innerJoin('t_complaint_study_reported AS str', 's.idx_t_complaint_study', 'str.idx_t_complaint_study')
         .innerJoin('m_work_unit AS wk', 'str.idx_m_work_unit', 'wk.idx_m_work_unit')
         .leftJoin('m_status AS st', 'st.idx_m_status', 'c.idx_m_status')
+        .leftJoin('m_user AS u', db.raw(`CAST(u.idx_m_user AS VARCHAR)`), 'c.ucreate')
         .andWhereRaw(`true=CASE WHEN 'PUBLIC'=? THEN c.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
         .andWhereRaw(`c.form_status = '1'`)
         .then(async r => {
@@ -215,14 +217,94 @@ class Dashboard {
         .select(
           db.raw(`count(mr.regional) AS value`),
           db.raw(`concat('Regional ',mr.regional) AS text`),
+          db.raw(`CASE 
+              WHEN dc.idx_m_violation IN (5,9) THEN 'MDP' 
+              WHEN dc.idx_m_violation IN (10) THEN 'TPA' 
+            END AS status_name`
+          ),
+          db.raw(`CASE 
+              WHEN dc.idx_m_violation IN (5,9) THEN 'purple' 
+              WHEN dc.idx_m_violation IN (10) THEN 'red' 
+            END AS status_color`
+          ),
         )
         .innerJoin('t_complaint_study AS s', 'c.idx_m_complaint', 's.idx_m_complaint')
+        .leftJoin('t_complaint_decision AS dc', 'dc.idx_m_complaint', 'c.idx_m_complaint')
         .leftJoin('t_complaint_study_incident AS sr', 'sr.idx_t_complaint_study', 's.idx_t_complaint_study')
         .leftJoin('m_city AS ct', 'sr.idx_m_city', 'ct.idx_m_city')
         .leftJoin('m_region AS mr', 'mr.idx_m_region', 'ct.idx_m_region')
         .whereRaw(`true=CASE WHEN 'PUBLIC'=? THEN c.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
         .andWhereRaw(`c.form_status = '1'`)
-        .groupByRaw(`mr.regional`)
+        .andWhereRaw(`dc.idx_m_violation IN (5,9,10)`)
+        .groupByRaw(`mr.regional, dc.idx_m_violation`)
+    } catch (error) {
+      throw (error)
+    }
+  }
+
+  /**
+   * 
+   * @param {*} sid 
+   * @returns 
+   */
+   async getCountByUKName(sid) {
+    try {
+      let db = knex(opt);
+      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      if (sessions.length === 0)
+        return []
+
+      return await db('m_complaint AS c')
+        .select(
+          db.raw(`count(ct.name) AS value`),
+          db.raw(`ct.name AS text`),
+        )
+        .innerJoin('t_complaint_study AS s', 'c.idx_m_complaint', 's.idx_m_complaint')
+        .leftJoin('t_complaint_study_incident AS sr', 'sr.idx_t_complaint_study', 's.idx_t_complaint_study')
+        .leftJoin('m_work_unit AS ct', 'ct.idx_m_work_unit', 'sr.idx_m_work_unit')
+        .whereRaw(`true=CASE WHEN 'PUBLIC'=? THEN c.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
+        .andWhereRaw(`c.form_status = '1'`)
+        .groupByRaw(`ct.name`)
+    } catch (error) {
+      throw (error)
+    }
+  }
+
+  /**
+   * 
+   * @param {*} sid 
+   * @returns 
+   */
+   async getCountByUKRegion(sid) {
+    try {
+      let db = knex(opt);
+      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      if (sessions.length === 0)
+        return []
+
+      return await db('m_complaint AS c')
+        .select(
+          db.raw(`count(ct.regional) AS value`),
+          db.raw(`CONCAT('Regional ', ct.regional) AS text`),
+          db.raw(`CASE 
+              WHEN dc.idx_m_violation IN (5,9) THEN 'MDP' 
+              WHEN dc.idx_m_violation IN (10) THEN 'TPA' 
+            END AS status_name`
+          ),
+          db.raw(`CASE 
+              WHEN dc.idx_m_violation IN (5,9) THEN 'purple' 
+              WHEN dc.idx_m_violation IN (10) THEN 'red' 
+            END AS status_color`
+          ),
+        )
+        .innerJoin('t_complaint_study AS s', 'c.idx_m_complaint', 's.idx_m_complaint')
+        .leftJoin('t_complaint_study_incident AS sr', 'sr.idx_t_complaint_study', 's.idx_t_complaint_study')
+        .leftJoin('t_complaint_decision AS dc', 'dc.idx_m_complaint', 'c.idx_m_complaint')
+        .leftJoin('m_work_unit AS ct', 'ct.idx_m_work_unit', 'sr.idx_m_work_unit')
+        .whereRaw(`true=CASE WHEN 'PUBLIC'=? THEN c.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
+        .andWhereRaw(`c.form_status = '1' AND ct.regional IS NOT NULL`)
+        .andWhereRaw(`dc.idx_m_violation IN (5,9,10)`)
+        .groupByRaw(`ct.regional, dc.idx_m_violation`)
     } catch (error) {
       throw (error)
     }

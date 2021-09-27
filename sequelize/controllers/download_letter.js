@@ -4685,8 +4685,10 @@ module.exports = {
           'idx_t_lhpa',
           [Sequelize.literal(`concat('LAPORAN ', lhpa.type)`), 'type'],
           'substansi', 'procedure', 'product', 'fakta', 'head_of_kumm',
-          'analisis_pemeriksaan', 'pendapat_pemeriksa', 'kesimpulan_pemeriksa', 'tindak_lanjut',
-          'dcreate'
+          'analisis_pemeriksaan', 'pendapat_pemeriksa', 'kesimpulan_pemeriksa', 'tindak_lanjut', 'dcreate',
+          [Sequelize.literal(`to_char(lhpa.checked_date, 'DD-MM-YYYY HH24:MI:SS')`),'checked_date'], 'checked_by', 
+          [Sequelize.literal(`to_char(lhpa.approved_date, 'DD-MM-YYYY HH24:MI:SS')`),'approved_date'], 'approved_by',
+          [Sequelize.literal(`to_char(lhpa.arranged_date, 'DD-MM-YYYY HH24:MI:SS')`),'arranged_date'], 'arranged_by'
         ],
         include: [
           {
@@ -4718,8 +4720,7 @@ module.exports = {
         order: [['dcreate', 'asc']]
       })
 
-      let users = await models.users.findAll({ attributes: ['idx_m_user', 'fullname'], where: { idx_m_user: { [Op.in]: m.map(e => e['head_of_kumm']) } } })
-
+      let users = await models.users.findAll({ raw: true, attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name'], 'idx_m_user'], where: { idx_m_user_type: { [Op.ne]: -1 } } })
       if (m.length > 0) {
         m = JSON.parse(JSON.stringify(m));
         m.map(e => {
@@ -4727,6 +4728,9 @@ module.exports = {
           let st_number = determination instanceof models.complaint_determinations ? determination.getDataValue('st_number') : null;
           let is_kuasa = complaint instanceof models.complaints ? complaint.getDataValue('is_kuasa_pelapor') : false
           let form_no = complaint instanceof models.complaints ? complaint.getDataValue('form_no') : null
+          e.arranged_by_name = users.filter(a => a['idx_m_user'] == e['arranged_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['arranged_by'])[0].name : null
+          e.approved_by_name = users.filter(a => a['idx_m_user'] == e['approved_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['approved_by'])[0].name : null
+          e.checked_by_name = users.filter(a => a['idx_m_user'] == e['checked_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['checked_by'])[0].name : null
           e.form_no = form_no;
           e.date = complaint instanceof models.complaints ? complaint.getDataValue('date') : null
           e.pengadu = is_kuasa ? complaint.getDataValue('man_power') : complaint.getDataValue('ucreate')
@@ -4752,7 +4756,7 @@ module.exports = {
           </p>
           `;
           e.kronologi_aduan = studies instanceof models.complaint_studies ? studies.getDataValue('complaint_study_events') : []
-          e.head_of_kumm_name = users.filter(a => a['idx_m_user'] == e['head_of_kumm']).length > 0 ? users.filter(a => a['idx_m_user'] == e['head_of_kumm'])[0]['fullname'] : '';
+          // e.head_of_kumm_name = users.filter(a => a['idx_m_user'] == e['head_of_kumm']).length > 0 ? users.filter(a => a['idx_m_user'] == e['head_of_kumm'])[0]['fullname'] : '';
         })
 
         m.sort(function (a, b) { return a['dcreate'] - b['dcreate'] });
@@ -5055,24 +5059,24 @@ module.exports = {
           </td>
         </tr>
         <tr>
-          <td colspan="4" style="text-align: right">
-            <div><b>Kepala Keasistenan Utama Manajemen Mutu,</b></div>
-            <div> ${m[i].head_of_kumm_name} </div>
+          <td colspan="3" style="text-align: center">
+            <div><b>Disusun Pada ${m[i].arranged_date},</b></div>
+            <div> Oleh ${m[i].arranged_by_name} </div>
+          </td>
+          <td colspan="3" style="text-align: center">
+            <div><b>Diperiksa Pada ${m[i].checked_date},</b></div>
+            <div> Oleh ${m[i].checked_by_name} </div>
           </td>
         </tr>
         <tr>
-          <td colspan="4" style="font-size: 10px">
-            <div>Tembusan Yth,:</div>
-            <ol>
-              <li>
-                Wakil Ketua/Anggota Ombudsman/Pengampu Keasistenan
-                Utama Manajemen Mutu
-              </li>
-            </ol>
+          <td colspan="4" style="text-align: right">
+          <div><b>Disetujui Pada ${m[i].approved_date},</b></div>
+          <div> Oleh ${m[i].approved_by_name} </div>
           </td>
         </tr>
-        </table>
-        `
+      </table>
+      <br /><br />
+      `
       }
 
       return { html: html }
