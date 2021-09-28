@@ -655,7 +655,8 @@ module.exports = {
               else false 
             end`), 'is_close'],
             [Sequelize.literal(`case when 
-                cast(status.code AS integer) IN (13,14)
+                cast(status.code AS integer) IN (14)
+                and surgery.approved_date IS NOT NULL
                 and 1=${[0, 2, 3, 4, 5].includes(typeId) ? 1 : 0}
                 and complaint_decision.idx_m_violation = 10
               then false 
@@ -665,6 +666,10 @@ module.exports = {
           ],
           where: where,
           include: [
+            {
+              attributes: ['approved_date'],
+              model: models.surgery
+            },
             {
               required: false,
               attributes: ['idx_m_legal_standing', 'name'],

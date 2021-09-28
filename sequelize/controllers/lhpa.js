@@ -167,10 +167,10 @@ module.exports = {
           e.kronologi_aduan = studies instanceof models.complaint_studies ? studies.getDataValue('complaint_study_events') : []
           
           /** SECURITY */
-          if(e.arranged_by == sessions[0].user_id){
-            e.is_update = !e.checked_date
-            e.is_check = false
-            e.is_approve = false
+          if(m.arranged_by == sessions[0].user_id || !m.arranged_date){
+            m.is_update = !m.checked_date || !m.arranged_date
+            m.is_check = false
+            m.is_approve = false
           }
 
           if(e.checked_by == sessions[0].user_id){
@@ -372,15 +372,30 @@ module.exports = {
         idx_m_status: 13
       },{transaction:t, where: { idx_m_complaint: obj.lhpa['idx_m_complaint'], }})
 
-      // to Bedah Pengaduan
-      await models.clogs.create({
+      await models.surgery.create({
         idx_m_complaint: obj.lhpa['idx_m_complaint'],
-        action: 'U',
-        flow: '12',
-        changes: JSON.stringify(obj),
-        ucreate: sessions[0].user_id,
-        notes: 'telah melanjutkan ke flow selanjutnya (bedah pengaduan)'
-      }, { transaction: t, });
+        ucreate: sessions[0].user_id
+      }, { transaction: t })
+
+      // to Bedah Pengaduan
+      await models.clogs.bulkCreate([
+        {
+          idx_m_complaint: obj.lhpa['idx_m_complaint'],
+          action: 'U',
+          flow: '12',
+          changes: JSON.stringify(obj),
+          ucreate: sessions[0].user_id,
+          notes: 'telah menyetujui lhpa'
+        },
+        {
+          idx_m_complaint: obj.lhpa['idx_m_complaint'],
+          action: 'C',
+          flow: '13',
+          changes: JSON.stringify(obj),
+          ucreate: 'auto',
+          notes: 'telah melanjutkan ke flow selanjutnya (bedah pengaduan)'
+        }
+      ], { transaction: t, });
 
       await t.commit()
       return response.success('Penyetujuan lhpa berhasil disimpan')

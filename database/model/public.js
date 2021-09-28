@@ -5,19 +5,25 @@ const opt = require('../connection')[NODE_ENV]
 const knex = require('knex')
 const { response } = require('../../models/index')
 
-class WBS {
+class Public {
   getFAQ(keyword = null) {
     let db = knex(opt)
-
-    return new Promise(async (resolve, reject) => {
-      db('t_faq')
-        .select(
-          'question',
-          'answer'
-        )
-        .then((r) => resolve(parsed(r)))
-        .catch(e => { reject(e) })
-    });
+    try {
+      return new Promise(async (resolve, reject) => {
+        db('faq')
+          .select('question','answer')
+          // .andWhereRaw(`question LIKE CONCAT('%',respon,'%')`,[keyword])
+          .orderBy('id', 'asc')
+          .then((r) => resolve(parsed(r)))
+          .catch(e => { 
+            console.log('e', e)
+            reject(e) 
+          })
+      }); 
+    } catch (error) {
+      console.log('err', error)
+      throw(error)
+    }
   }
 
   /**
@@ -46,4 +52,4 @@ function parsed(rows) {
   return rows ? JSON.parse(JSON.stringify(rows)) : []
 }
 
-module.exports = WBS
+module.exports = Public

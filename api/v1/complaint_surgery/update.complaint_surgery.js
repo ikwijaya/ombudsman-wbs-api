@@ -5,7 +5,7 @@ const { surgery } = require('../../../sequelize/controllers')
 
 router.post('/', async (req, res, next) => {
   let sid = req.body.sid || null;
-  let obj = req.body.obj || {};
+  let obj = req.body || {};
 
   try {
     let o = await surgery.update(sid, obj).catch(e => { throw (e) })

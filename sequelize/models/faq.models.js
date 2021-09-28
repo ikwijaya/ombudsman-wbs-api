@@ -3,28 +3,14 @@ const { DB_SCHEMA } = require('../../config')
 const SCHEMA = DB_SCHEMA
 
 module.exports = (sq) => {
-  sq.define('surgery', {
-    idx_t_surgery: {
+  sq.define('faq', {
+    id: {
       type: DataTypes.BIGINT,
       primaryKey: true,
       autoIncrement: true
     },
-    idx_m_complaint: {
-      type: DataTypes.BIGINT,
-      allowNull: false
-    },
-    notes: DataTypes.TEXT(),
-    pengampu_kumm: DataTypes.STRING,
-    result: DataTypes.TEXT(),
-    form_status: DataTypes.STRING,
-
-    // as request
-    checked_date: DataTypes.DATE,
-    checked_by: DataTypes.BIGINT,
-    approved_date: DataTypes.DATE,
-    approved_by: DataTypes.BIGINT,
-    arranged_date: DataTypes.DATE,
-    arranged_by: DataTypes.BIGINT,
+    question: DataTypes.TEXT,
+    answer: DataTypes.TEXT,
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -49,7 +35,7 @@ module.exports = (sq) => {
     }
   }, {
     schema: SCHEMA,
-    tableName: 't_surgery',
+    tableName: 'faq',
     timestamps: false,
   });
 }

@@ -1,16 +1,15 @@
 
 const router = require('express').Router()
 const { response } = require('../../../models')
-const Public = require('../../../database/model/public')
+const { surgery } = require('../../../sequelize/controllers')
 
 router.post('/', async (req, res, next) => {
-  let keyword = req.body.keyword || null;
+  let sid = req.body.sid || null;
+  let obj = req.body || {};
 
   try {
-    let x = new Public()
-    await x.getFAQ(keyword)
-      .then((r) => res.status(200).send(r))
-      .catch(e => { throw (e) });
+    let o = await surgery.approve(sid, obj).catch(e => { throw (e) })
+    res.send(o)
   } catch (err) {
     res.status(401).send(response.failed(err, []))
   }

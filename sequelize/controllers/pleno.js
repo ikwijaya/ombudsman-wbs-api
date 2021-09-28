@@ -268,6 +268,11 @@ module.exports = {
               model: models.study_lys,
               where: { record_status: 'A' }
             },
+            {
+              required: true,
+              model: models.surgery,
+              where: { approved_date: { [Op.ne]: null } }
+            }
           ],
           order: [
             ['dcreate', 'DESC']
@@ -297,7 +302,6 @@ module.exports = {
 
       return { items: complaint };
     } catch (err) {
-
       throw (err)
     }
   },
