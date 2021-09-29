@@ -10,7 +10,7 @@ module.exports = {
   /**
    * 
    * @param {*} sid 
-   * @param {*} complaintId 
+   * @param {*} id 
    * @returns 
    */
   async get(sid, id = null) {
@@ -18,7 +18,8 @@ module.exports = {
       let sessions = await core.checkSession(sid)
       if (sessions.length === 0)
         return null;
-
+    
+      let r = await core.checkRoles(sessions[0].user_id,[10]);
       let m = await models.clarification.findOne({
         attributes: [
           'idx_t_clarification',
@@ -84,7 +85,8 @@ module.exports = {
 
       return {
         item: m,
-        item2: det
+        item2: det,
+        is_insert: r.filter(a => a.idx_m_form == 10 && a.is_insert).length > 0
       }
     } catch (error) {
       throw (error)

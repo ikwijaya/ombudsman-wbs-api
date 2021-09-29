@@ -147,6 +147,7 @@ module.exports = {
       if (sessions.length === 0)
         return [];
 
+      let r = await core.checkRoles(sessions[0].user_id,[14]);
       let users = []
       let complaint = await models.complaints.findAll(
         {
@@ -298,7 +299,10 @@ module.exports = {
         }
       })
 
-      return { items: complaint };
+      return { 
+        items: complaint,
+        is_insert: r.filter((a) => a.idx_m_form == 14 && a.is_insert).length > 0
+      };
     } catch (err) {
       throw (err)
     }

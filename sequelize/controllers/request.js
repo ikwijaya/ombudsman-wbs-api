@@ -19,6 +19,7 @@ module.exports = {
       if (sessions.length === 0)
         return null;
 
+      let r = await core.checkRoles(sessions[0].user_id,[8]);
       let m = await models.request.findAll({
         attributes: [
           'idx_t_request', 'by',
@@ -33,7 +34,10 @@ module.exports = {
         order: [['idx_t_request', 'asc']]
       })
 
-      return m
+      return {
+        items: m,
+        is_insert: r.filter(a => a.idx_m_form == 8 && a.is_insert).length > 0
+      }
     } catch (error) {
       throw (error)
     }

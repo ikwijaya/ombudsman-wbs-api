@@ -9,7 +9,7 @@ module.exports = {
   /**
    * 
    * @param {*} sid 
-   * @param {*} complaintId 
+   * @param {*} id 
    * @returns 
    */
   async get(sid = null, id = null) {
@@ -18,6 +18,7 @@ module.exports = {
       if (sessions.length === 0)
         return null;
 
+      let r = await core.checkRoles(sessions[0].user_id,[16]);
       let m = await models.monitoring.findAll(
         {
           attributes: [
@@ -27,7 +28,9 @@ module.exports = {
             'validation_date',
             'notes',
             'is_did',
-            'form_status'
+            'form_status',
+            [Sequelize.literal(`${r.filter(a => a.is_update && a.idx_m_form == 16).length > 0}`), 'is_update'],
+            [Sequelize.literal(`${r.filter(a => a.is_delete && a.idx_m_form == 16).length > 0}`), 'is_delete']
           ],
           include: [
             {
@@ -35,8 +38,8 @@ module.exports = {
               attributes: [
                 'idx_t_monitoring_detail',
                 'date', 'is_did', 'notes', 'by',
-                [Sequelize.literal(`true`), 'is_update'],
-                [Sequelize.literal(`true`), 'is_delete']
+                [Sequelize.literal(`${r.filter(a => a.is_update && a.idx_m_form == 16).length > 0}`), 'is_update'],
+                [Sequelize.literal(`${r.filter(a => a.is_delete && a.idx_m_form == 16).length > 0}`), 'is_delete']
               ],
               model: models.monitoring_detail,
             },
@@ -45,9 +48,11 @@ module.exports = {
         }
       )
 
-      return { items: m, }
+      return { 
+        items: m, 
+        is_insert: r.filter(a => a.is_insert && a.idx_m_form == 16).length > 0
+      }
     } catch (err) {
-
       throw (err)
     }
   },
