@@ -1,103 +1,81 @@
 const { models } = require('..');
 const { Sequelize, Op, DataTypes } = require('sequelize');
-const moment = require('moment');
 const core = require('./core');
 const { response } = require('../../models/index');
 const sequelize = require('..');
-const { APP_CODE, PRODUCT_MODE, API_URL } = require('../../config')
+const { API_URL } = require('../../config')
 
 module.exports = {
   /**
    * 
    * @param {*} sid 
    * @param {*} obj 
-   * @returns 
    */
-  async save(sid, obj = {}) {
+  async next(sid, obj = {}){
     const t = await sequelize.transaction();
 
     try {
       let sessions = await core.checkSession(sid).catch(e => { throw (e) })
-      if (sessions.length === 0)
+      if (sessions.length === 0 && id)
         return response.failed('Session expires')
 
-      let plenos = obj.data;
-      await models.complaint_pleno.bulkCreate(obj.data, { transaction: t });
+      let idx_m_complaint = obj.data.idx_m_complaint || [];
+      delete obj.data.idx_m_complaint;
+      await models.complaint_pleno.update(obj.data,
+        { 
+          where: { idx_m_complaint: { [Op.in]: idx_m_complaint } },
+          transaction: t 
+        })
 
-      for (let i = 0; i < plenos.length; i++) {
-        await models.complaints.update(
-          { idx_m_status: 15 }, // to Penyampaian tindak lanjut
-          {
-            transaction: t,
-            where: { idx_m_complaint: plenos[i].idx_m_complaint }
-          }
-        )
+      let where = {};
+      where['idx_m_complaint'] = {[Op.in]: idx_m_complaint};
+      where['date'] = { [Op.eq]: null };
 
-        // surat request pengadu | to, address, by, object | get pengadu dari m_complaint
+      let count = await models.complaint_pleno.count({ where: where, transaction: t });
+      if (count > 0) return response.failed(`<ul><li>` + ['Kolom tanggal rapat pleno TIDAK boleh kosong.'].join('</li><li>') + `</li></ul>`)
+
+      // to Penyampaian Tindak Lanjut
+      await models.complaints.update({ idx_m_status: 15 }, { transaction: t, where: { idx_m_complaint: {[Op.in]: idx_m_complaint} } })
+      let logs = []
+      for(let i=0; i<idx_m_complaint.length; i++){
+        logs.push({
+          idx_m_complaint: idx_m_complaint[i],
+          action: 'U',
+          flow: '15',
+          changes: JSON.stringify(obj),
+          ucreate: sessions[0].user_id,
+          notes: 'telah melanjutkan ke flow selanjutnya (penyampaian tindak lanjut)'
+        })
+      }
+
+      for (let i = 0; i < idx_m_complaint.length; i++) {
         let pengadu; let teradu = [];
         let complaint = await models.complaints.findOne({
           attributes: ['manpower', 'description', 'ucreate', 'hopes', 'idx_m_legal_standing'],
+          where: { idx_m_complaint: idx_m_complaint[i] },
+          transaction: t
+        })
+        let studies = await models.complaint_studies.findOne({
+          attributes: ['idx_m_complaint'],
           include: [
             {
-              attributes: [
-                'idx_t_complaint_study'
-              ],
-              model: models.complaint_studies,
-              include: [{
-                attributes: ['name', 'occupation'],
-                model: models.complaint_study_reported,
-                include: [
-                  {
-                    attributes: ['name'],
-                    model: models.work_units
-                  }
-                ]
-              }],
-              where: { record_status: 'A' }
+              attributes: ['name', 'occupation'],
+              model: models.complaint_study_reported
             },
           ],
-          where: { idx_m_complaint: plenos[i].idx_m_complaint }
+          where: { idx_m_complaint: idx_m_complaint[i] },
         })
 
         if (complaint instanceof models.complaints) {
-          teradu = complaint.getDataValue('complaint_study')['complaint_study_reporteds'].map(e => e.name) || [];
-          pengadu = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: complaint.getDataValue('ucreate') } })
+          teradu = studies.getDataValue('complaint_study_reporteds').map(e => `${e.name} - ${e.occupation ? e.occupation : '--'}`) || [];
+          pengadu = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], transaction: t, where: { idx_m_user: complaint.getDataValue('ucreate') } })
           let getPengadu = complaint.getDataValue('idx_m_legal_standing') == -1 ? complaint.getDataValue('manpower') :
             complaint['ucreate'] = pengadu instanceof models.users ? pengadu.getDataValue('name') : null
-
-          // get tim pemeriksa
-          let pemeriksa = await models.complaint_determination_users.findAll(
-            {
-              raw: true,
-              attributes: [],
-              include: [
-                {
-                  attributes: ['fullname', 'email', 'idx_m_user'],
-                  model: models.users,
-                  include: [
-                    {
-                      attributes: ['name'],
-                      model: models.usertypes
-                    }
-                  ]
-                },
-                {
-                  attributes: ['idx_m_complaint'],
-                  model: models.complaint_determinations,
-                  where: { idx_m_complaint: plenos[i].idx_m_complaint }
-                }
-              ]
-            }
-          )
-          let getPemeriksa = ``;
-          for (let i = 0; i < pemeriksa.length; i++) {
-            getPemeriksa += `<li>${pemeriksa[i]['user.fullname']}</li>`
-          }
 
           // auto generate penyampaian tindak lanjut
           await models.delivery.bulkCreate([
             {
-              idx_m_complaint: plenos[i].idx_m_complaint,
+              idx_m_complaint: idx_m_complaint[i],
               type: 'PENGADU',
               by: teradu.join(' , '),
               to: getPengadu,
@@ -106,7 +84,7 @@ module.exports = {
               desc: null
             },
             {
-              idx_m_complaint: plenos[i].idx_m_complaint,
+              idx_m_complaint: idx_m_complaint[i],
               type: 'TERADU',
               to: teradu.join(' , '),
               by: getPengadu,
@@ -117,20 +95,21 @@ module.exports = {
           ], { transaction: t })
 
           await models.clogs.create({
-            idx_m_complaint: plenos[i].idx_m_complaint,
+            idx_m_complaint: idx_m_complaint[i],
             action: 'I',
             flow: '14',
-            changes: JSON.stringify(plenos[i]),
+            changes: JSON.stringify(idx_m_complaint[i]),
             ucreate: sessions[0].user_id
           }, { transaction: t, });
         }
       }
 
+      await models.clogs.bulkCreate(logs,{ transaction: t })
       await t.commit()
-      return response.success('Berhasil menyimpan data hasil Rapat Pleno')
+      return response.success('Berhasil ke proses selanjutnya')
     } catch (error) {
       await t.rollback()
-
+      console.log('error', error)
       throw (error)
     }
   },
@@ -138,8 +117,6 @@ module.exports = {
   /**
    * 
    * @param {*} sid 
-   * @param {*} keyword 
-   * @param {*} status_code 
    * @param {*} id 
    * @returns 
    */
