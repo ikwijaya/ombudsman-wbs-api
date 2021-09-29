@@ -17,6 +17,7 @@ module.exports = (sq) => {
     date: DataTypes.DATE,
     is_did: DataTypes.BOOLEAN,
     notes: DataTypes.TEXT(),
+    media: DataTypes.STRING,
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,

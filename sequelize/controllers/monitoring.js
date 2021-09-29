@@ -37,7 +37,7 @@ module.exports = {
               required: false,
               attributes: [
                 'idx_t_monitoring_detail',
-                'date', 'is_did', 'notes', 'by',
+                'date', 'is_did', 'notes', 'by', 'media',
                 [Sequelize.literal(`${r.filter(a => a.is_update && a.idx_m_form == 16).length > 0}`), 'is_update'],
                 [Sequelize.literal(`${r.filter(a => a.is_delete && a.idx_m_form == 16).length > 0}`), 'is_delete']
               ],
