@@ -29,6 +29,14 @@ module.exports = (sq) => {
     closing_no: DataTypes.STRING(),
     closing_date: DataTypes.DATE,
     
+    // as request 
+    checked_date: DataTypes.DATE,
+    checked_by: DataTypes.BIGINT,
+    approved_date: DataTypes.DATE,
+    approved_by: DataTypes.BIGINT,
+    arranged_date: DataTypes.DATE,
+    arranged_by: DataTypes.BIGINT,
+    
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,
