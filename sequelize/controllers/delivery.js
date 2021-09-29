@@ -19,59 +19,20 @@ module.exports = {
       if (sessions.length === 0)
         return null;
 
-      let complaint = await models.complaints.findOne({
-        attributes: ['form_no', 'date'],
-        where: { idx_m_complaint: id }
-      })
-
-      let pleno = await models.complaint_pleno.findOne({
-        attributes: ['date', 'notes'],
-        where: { idx_m_complaint: id, date: { [Op.ne]: null } }
-      });
-
-      let province = await models.complaint_study_incidents.findAll({
-        raw: true,
-        attributes: ['idx_t_complaint_study'],
-        include: [
-          {
-            attributes: ['name'],
-            model: models.cities,
-            include: [
-              {
-                attributes: ['name', [Sequelize.literal(`concat('Regional ',regional)`), 'regional']],
-                model: models.regions
-              }
-            ]
-          },
-          {
-            attributes: [],
-            model: models.complaint_studies,
-            where: { idx_m_complaint: id }
-          }
-        ]
-      });
-
       let m = await models.delivery.findAll({
         raw: true,
         attributes: [
           'idx_t_delivery', 'idx_m_complaint', 'action', 'type', 'isWithFact',
-          'to', 'address', 'by', 'object', 'desc', 'letter_no', 'letter_date',
-          'filename', 'path', 'mime_type', 'filesize'
+          'to', 'address', 'by', 'object', 'desc', 'letter_no',
+          [Sequelize.literal(`cast(letter_date AS DATE)`), 'letter_date'],
+          'filename', 'path', 'mime_type', 'filesize',
+          [Sequelize.literal(`concat('${API_URL}/others/open/',filename)`), 'url']
         ],
         where: { idx_m_complaint: id, record_status: 'A' },
-        order: [['dcreate', 'asc']]
+        order: [['idx_t_delivery', 'asc']]
       })
 
-      m.map(e => {
-        e['pleno_date'] = pleno instanceof models.complaint_pleno ? moment(pleno.getDataValue('date')).format('DD MMMM YYYY') : null;
-        e['province'] = province.map(e => `${e['city.region.name']} (${e['city.region.regional']})`).join(' , ');
-        e['form_date'] = complaint instanceof models.complaints ? moment(complaint.getDataValue('date')).format('DD MMMM YYYY') : null;
-        e['form_no'] = complaint instanceof models.complaints ? complaint.getDataValue('form_no') : null;
-      })
-
-      return {
-        items: m
-      }
+      return { items: m }
     } catch (error) {
       throw (error)
     }
@@ -184,9 +145,9 @@ module.exports = {
       await models.monitoring.create({
         idx_m_complaint: id,
         title: 'Default',
-        by: '(auto) system wbs',
+        by: 'auto-system',
         dcreate: new Date(),
-        ucreate: 'wbs-auto'
+        ucreate: 'auto'
       }, { transaction: t })
 
       // LOGS

@@ -113,7 +113,28 @@ module.exports = {
       throw (error)
     }
   },
+  /**
+   * 
+   * @param {*} sid 
+   * @param {*} id 
+   * @returns 
+   */
+  async get(sid = null, id = null){
+    try {
+      let sessions = await core.checkSession(sid)
+      if (sessions.length === 0)
+        return null;
 
+      let m = await models.complaint_pleno.findOne({
+        attributes: ['date', 'result', 'notes', 'pengadu', 'form_no'],
+        where: { idx_m_complaint: id }
+      })
+
+      return { item: m };
+    } catch (err) {
+      throw (err)
+    }
+  },
   /**
    * 
    * @param {*} sid 
