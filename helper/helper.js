@@ -81,6 +81,187 @@ module.exports = {
 
   /**
    * 
+   * @param {*} subject 
+   * @param {*} body_msg 
+   * @param {*} arr = [No WBS, Update, Oleh]
+   * @returns 
+   */
+  mailTemplate(subject = 'WBS Updates', body_msg = ``, arr = []){
+    return new Promise(async (resolve) => {
+      let tables = ``;
+      for(let i=0; i<arr.length; i++){
+        tables += `<tr>
+          <td>${arr[i].wbs}</td>
+          <td>${arr[i].update}</td>
+          <td>${arr[i].by}</td>
+        </tr>`
+      }
+
+      let html = `
+        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        <html xmlns="http://www.w3.org/1999/xhtml">
+        
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <title>${subject}</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <style type="text/css">
+            #outlook a { padding: 0; }
+            .ReadMsgBody { width: 100%; }
+            .ExternalClass { width: 100%; }
+            .ExternalClass,
+            .ExternalClass p,
+            .ExternalClass span,
+            .ExternalClass font,
+            .ExternalClass td,
+            .ExternalClass div { line-height: 100%; }
+        
+            body,
+            table,
+            td,
+            p,
+            a,
+            li,
+            blockquote {
+                -webkit-text-size-adjust: 100%;
+                -ms-text-size-adjust: 100%;
+            }
+        
+            table,
+            td {
+                mso-table-lspace: 0pt;
+                mso-table-rspace: 0pt;
+            }
+        
+            img { -ms-interpolation-mode: bicubic; }
+            html,
+            body,
+            .body-wrap,
+            .body-wrap-cell {
+                margin: 0;
+                padding: 0;
+                background: #ffffff;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 14px;
+                color: #464646;
+                text-align: left;
+            }
+        
+            img {
+                border: 0;
+                line-height: 100%;
+                outline: none;
+                text-decoration: none;
+            }
+        
+            table { border-collapse: collapse !important; }
+            td,
+            th {
+                text-align: left;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 14px;
+                color: #464646;
+                line-height: 1.5em;
+            }
+        
+            b a,
+            .footer a {
+                text-decoration: none;
+                color: #464646;
+            }
+        
+            a.blue-link {
+                color: blue;
+                text-decoration: underline;
+            }
+        
+            td.center { text-align: center; }
+            .left { text-align: left; }
+            .body-padding { padding: 24px 40px 40px; }
+            .border-bottom { border-bottom: 1px solid #D8D8D8; }
+            table.full-width-gmail-android { width: 100% !important; }
+            .header {
+                font-weight: bold;
+                font-size: 16px;
+                line-height: 16px;
+                height: 16px;
+                padding-top: 19px;
+                padding-bottom: 7px;
+            }
+        
+            .header a {
+                color: #464646;
+                text-decoration: none;
+            }
+        
+            a:hover { background-color: lemonchiffon; }
+            a:active {
+                box-shadow: none;
+                top: 5px;
+            }
+        
+            .footer a { font-size: 12px; }
+            </style>
+        
+            <style type="text/css" media="only screen and (max-width: 650px)">
+            @media only screen and (max-width: 650px) {
+                * { font-size: 16px !important; }
+                table[class*="w320"] { width: 320px !important; }
+        
+                td[class="mobile-center"],
+                div[class="mobile-center"] {
+                  text-align: center !important;
+                }
+        
+                td[class*="body-padding"] { padding: 20px !important; }
+                td[class="mobile"] {
+                  text-align: right;
+                  vertical-align: top;
+                }
+            }
+            </style>
+        </head>
+        
+        <body style="padding:0; margin:0; display:block; background: #f8f8f8; -webkit-text-size-adjust:none">
+            <table class="w320 full-width-gmail-android" bgcolor="#f9f8f8" background="https://www.filepicker.io/api/file/al80sTOMSEi5bKdmCgp2" style="background-color:transparent" cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr>
+                  <td width="100%" height="48" valign="top">
+                    <!--[if gte mso 9]>
+                      <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="mso-width-percent:1000;height:49px;">
+                      <v:fill type="tile" src="https://www.filepicker.io/api/file/al80sTOMSEi5bKdmCgp2" color="#ffffff" />
+                      <v:textbox inset="0,0,0,0">
+                    <![endif]-->
+                    <table class="full-width-gmail-android" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr><td class="header center" width="100%">${subject}</td></tr>
+                    </table>
+                    <!--[if gte mso 9]>
+                      </v:textbox>
+                      </v:rect>
+                    <![endif]-->
+                  </td>
+              </tr>
+            </table>
+            <p>${body_msg}</p>
+            <p>
+              <table>
+                <thead>
+                  <tr>
+                    <td>No WBS</td>
+                    <td>Update</td>
+                    <td>Oleh</td>
+                  </tr>
+                </thead>
+                <tbody>${tables}</tbody>
+              </table>
+            </p>
+        </body>
+      </html>`;
+      resolve(html)
+    })
+  },
+
+  /**
+   * 
    * @param {*} to 
    * @param {*} subject 
    * @param {*} html 

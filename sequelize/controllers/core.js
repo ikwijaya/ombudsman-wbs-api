@@ -19,6 +19,7 @@ module.exports = {
             'fullname',
             'email',
             [Sequelize.literal(`concat(users.fullname,' (',users.email,')')`), 'e_name'],
+            [Sequelize.literal(`users.email`), 'email'],
             [Sequelize.literal(`users.idx_m_user`), 'user_id'],
             [Sequelize.literal(`case when usertype.name='PUBLIC' then 'PUBLIC' else 'INTERNAL' end`), 'user_type'],
             [Sequelize.literal(`sessions.sid`), 'sid'],

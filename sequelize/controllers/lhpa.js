@@ -167,22 +167,25 @@ module.exports = {
           e.kronologi_aduan = studies instanceof models.complaint_studies ? studies.getDataValue('complaint_study_events') : []
           
           /** SECURITY */
-          if(m.arranged_by == sessions[0].user_id || !m.arranged_date){
-            m.is_update = !m.checked_date || !m.arranged_date
+          if((m.arranged_by == sessions[0].user_id || !m.arranged_date) && is_update){
+            m.is_update = !m.checked_date
             m.is_check = false
             m.is_approve = false
+            m.is_update2 = !m.checked_date || !m.approved_date
           }
 
-          if(e.checked_by == sessions[0].user_id){
-            e.is_update = !e.approved_date
-            e.is_check = !e.approved_date
-            e.is_approve = false
+          if(m.checked_by == sessions[0].user_id && is_update){
+            m.is_update = !m.approved_date
+            m.is_check = !m.approved_date
+            m.is_approve = false
+            m.is_update2 = !m.approved_date
           }
 
-          if(e.approved_by == sessions[0].user_id){
-            e.is_update = true
-            e.is_check = false
-            e.is_approve = true
+          if(m.approved_by == sessions[0].user_id && is_update){
+            m.is_update = true
+            m.is_check = false
+            m.is_approve = true
+            m.is_update2 = false
           }
           /** END -- SECURITY */
 
@@ -313,7 +316,7 @@ module.exports = {
    * @param {*} obj 
    * @returns 
    */
-   async check(sid, obj = {}) {
+  async check(sid, obj = {}) {
     const t = await sequelize.transaction();
 
     try {
