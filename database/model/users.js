@@ -214,7 +214,7 @@ class Users {
         db('m_user_type')
           .select('idx_m_user_type', 'name')
           .whereNotIn('idx_m_user_type', a)
-          .andWhere('record_status', '=', 'A'),,
+          .andWhere('record_status', '=', 'A'),
         this.getRolesById(sid, id)
       ]).then(rows => rows)
     } catch (error) {
