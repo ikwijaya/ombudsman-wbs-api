@@ -11,7 +11,7 @@ router.post('/', cache.MCache(30), async (req, res, next) => {
     let x = new WBS()
     let count_by_type = await x.getCountByType(sid).catch(e => { throw (e) })
     let count_by_status = await x.getCountByStatus(sid).catch(e => { throw (e) })
-    let to_you = await x.getToYou(sid).catch(e => { throw (e) })
+    let to_you = []
     let total = await x.getTotal(sid).catch(e => { throw (e) })
     let count_by_region = await x.getCountByRegion(sid).catch(e => { throw (e) })
     let count_by_region_name = await x.getCountByRegionName(sid).catch(e => { throw (e) })

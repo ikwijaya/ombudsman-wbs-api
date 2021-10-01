@@ -85,6 +85,7 @@ class Dashboard {
       if (sessions.length === 0)
         return []
 
+      let uid = sessions[0].user_id
       return await db('m_complaint AS c')
         .select(
           'c.idx_m_complaint',
@@ -93,34 +94,50 @@ class Dashboard {
           db.raw(`case 
             when 
               (cast(v.checked_by as integer) = ? AND v.approved_date is null) OR
-              (cast(l.head_of_reg as integer) = ? AND l.head_of_kumm_date is null) 
+              (cast(l.head_of_reg as integer) = ? AND l.head_of_kumm_date is null) OR
+              (cast(lh.checked_by as integer) = ? AND lh.approved_date is null) OR
+              (cast(sg.checked_by as integer) = ? AND sg.approved_date is null) OR
+              (cast(cl.checked_by as integer) = ? AND cl.form_status='0' AND cl.approved_date is null)
               then true
               else false end 
-            AS is_need_check`, [sessions[0].user_id, sessions[0].user_id]),
+            AS is_need_check`, [uid,uid,uid,uid,uid]),
           db.raw(`case 
-            when 
-              (v.checked_by is not null AND cast(v.approved_by as integer) = ?) OR  
-              (l.head_of_reg is not null AND cast(l.head_of_kumm as integer) = ?)
+            when (v.checked_by is not null AND cast(v.approved_by as integer) = ?) OR  
+              (l.head_of_reg is not null AND cast(l.head_of_kumm as integer) = ?) OR
+              (lh.checked_by is not null AND cast(lh.approved_by as integer) = ?) OR
+              (sg.checked_by is not null AND cast(sg.approved_by as integer) = ?) OR
+              (cl.checked_by is not null AND cl.form_status='0' AND cast(cl.approved_by as integer) = ?)
               then true
               else false end 
-            AS is_need_approve`, [sessions[0].user_id, sessions[0].user_id]),
+            AS is_need_approve`, [uid,uid,uid,uid,uid,uid]),
           db.raw(`case 
-            when 
-              (cast(v.checked_by as integer) = ? AND v.approved_date is null) OR
-              (cast(l.head_of_reg as integer) = ? AND l.head_of_kumm_date is null) 
+            when (cast(v.checked_by as integer) = ? AND v.approved_date is null) OR
+              (cast(l.head_of_reg as integer) = ? AND l.head_of_kumm_date is null) OR
+              (cast(lh.checked_by as integer) = ? AND lh.approved_date is null) OR
+              (cast(sg.checked_by as integer) = ? AND sg.approved_date is null) OR
+              (cast(cl.checked_by as integer) = ? AND cl.form_status='0' AND cl.approved_date is null)
             then 'Membutuhkan pemeriksaan dari Anda'
-            when 
-              (v.checked_by is not null AND cast(v.approved_by as integer) = ?) OR  
-              (l.head_of_reg is not null AND cast(l.head_of_kumm as integer) = ?)
-            then 'Membutuhkan Approval Anda' 
-            else '' end 
-            AS informasi`, [sessions[0].user_id, sessions[0].user_id, sessions[0].user_id, sessions[0].user_id])
+            when (v.checked_by is not null AND cast(v.approved_by as integer) = ?) OR  
+              (l.head_of_reg is not null AND cast(l.head_of_kumm as integer) = ?) OR
+              (lh.checked_by is not null AND cast(lh.approved_by as integer) = ?) OR
+              (sg.checked_by is not null AND cast(sg.approved_by as integer) = ?) OR
+              (cl.checked_by is not null AND cl.form_status='0' AND cast(cl.approved_by as integer) = ?)
+            then 'Membutuhkan Approval Anda' else 'Tidak Ada aksi' end 
+            AS informasi`, [
+              uid,uid,uid,uid,uid,uid,
+              uid,uid,uid,uid,uid,uid
+            ])
         )
         .leftJoin('t_validation as v', 'v.idx_m_complaint', 'c.idx_m_complaint')
         .leftJoin('t_study_lys AS l', 'l.idx_m_complaint', 'c.idx_m_complaint')
         .leftJoin('m_status AS s', 'c.idx_m_status', 's.idx_m_status')
-        .whereRaw(`s.code IN ('7','9')`)
-        .andWhereRaw(`c.form_status NOT IN ('99', '100')`)
+        .leftJoin('t_lhpa AS lh', 'c.idx_m_complaint', 'lh.idx_m_complaint')
+        .leftJoin('t_surgery AS sg', 'c.idx_m_complaint', 'sg.idx_m_complaint')
+        .leftJoin('t_closing AS cl', 'c.idx_m_complaint', 'cl.idx_m_complaint')
+        .whereRaw(`
+          s.code IN ('7','9')
+          AND c.form_status NOT IN ('99', '100') 
+        `)
     } catch (error) {
       throw (error)
     }

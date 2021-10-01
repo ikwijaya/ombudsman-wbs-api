@@ -3,11 +3,11 @@ const { NODE_ENV, DEFAULT_PASSWD, APP_LOGO } = require('../../config')
 const opt = require('../connection')[NODE_ENV]
 const knex = require('knex')
 const { gen } = require('n-digit-token')
-const moment = require('moment');
 const { response } = require('../../models/index')
 const { helper } = require('../../helper')
 const core = require('../core')
 const sq_users = require('../../sequelize/controllers/users')
+const sq_core = require('../../sequelize/controllers/core')
 const form_id = 200;
 
 class Users {
@@ -57,6 +57,8 @@ class Users {
                   'mu.phone_no',
                   'mu.email',
                   'ut.name AS user_type_name',
+                  db.raw(`case when mu.record_status = 'N' then 'red darken-1' else 'green lighten-1' end AS dcolor`),
+                  db.raw(`case when mu.record_status = 'N' then true else false end AS disabled`),
                   db.raw(`ut.idx_m_user_type AS idx_m_user_type`, []),
                   'mu.remarks',
                   'mu.is_login',
@@ -199,18 +201,20 @@ class Users {
    * @param {*} id 
    * @returns 
    */
-  getAdditionalUpdate(sid, id) {
+  async getAdditionalUpdate(sid, id) {
     let db = knex(opt)
-
+    
     try {
+      let sessions = await sq_core.checkSession(sid).catch(e => { throw(e) })
+      let is_sa = sessions.length > 0 ? sessions[0].is_sa : false
+      let a = [-1] 
+      if(!is_sa) a.push(0)
+      
       return Promise.all([
         db('m_user_type')
-          .select(
-            'idx_m_user_type',
-            'name'
-          )
-          .where({ record_status: 'A' })
-          .andWhereRaw(`name <> ?`, ['PUBLIC']),
+          .select('idx_m_user_type', 'name')
+          .whereNotIn('idx_m_user_type', a)
+          .andWhere('record_status', '=', 'A'),,
         this.getRolesById(sid, id)
       ]).then(rows => rows)
     } catch (error) {
@@ -220,16 +224,23 @@ class Users {
 
   /**
    * 
+   * @param {*} sid 
+   * @returns 
    */
-  getAdditional() {
+  async getAdditional(sid = null) {
     let db = knex(opt)
-
+    
     try {
+      let sessions = await sq_core.checkSession(sid).catch(e => { throw(e) })
+      let is_sa = sessions.length > 0 ? sessions[0].is_sa : false
+      let a = [-1] 
+      if(!is_sa) a.push(0)
+
       return Promise.all([
         db('m_user_type')
           .select('idx_m_user_type', 'name')
-          .where({ record_status: 'A' })
-          .andWhereRaw(`name <> ?`, ['PUBLIC']),
+          .whereNotIn('idx_m_user_type', a)
+          .andWhere('record_status', '=', 'A'),
         db('m_form AS a')
           .select(
             'a.idx_m_form',

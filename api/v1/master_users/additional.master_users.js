@@ -7,13 +7,14 @@ const { hmac } = require('../../../helper')
 /**
  * Route
  */
-router.get('/', async (req, res, next) => {
+router.get('/:sid', async (req, res, next) => {
   try {
     let x = new WBS()
-    await x.getAdditional()
+    await x.getAdditional(req.params.sid)
       .then((r) => res.status(200).send(r))
       .catch(e => { throw (e) });
   } catch (err) {
+    console.log(err)
     res.status(401).send(response.failed(err, []))
   }
 });
