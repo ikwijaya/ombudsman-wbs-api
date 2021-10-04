@@ -42,10 +42,10 @@ module.exports = {
               where: {
                 sid: sid,
                 record_status: 'A',
-                [Op.and]: [Sequelize.literal(`expires>=CURRENT_TIMESTAMP`)]
-                // expires: {
-                //   [Op.gt]: new Date()
-                // }
+                // [Op.and]: [Sequelize.literal(`expires>=CURRENT_TIMESTAMP`)]
+                expires: {
+                  [Op.gt]: moment()
+                }
               },
             }
           ]
