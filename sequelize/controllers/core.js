@@ -44,7 +44,7 @@ module.exports = {
                 record_status: 'A',
                 // [Op.and]: [Sequelize.literal(`expires>=CURRENT_TIMESTAMP`)]
                 expires: {
-                  [Op.gt]: moment()
+                  [Op.gt]: new Date()
                 }
               },
             }
