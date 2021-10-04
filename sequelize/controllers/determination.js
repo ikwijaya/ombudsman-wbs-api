@@ -24,8 +24,8 @@ module.exports = {
       let v = await models.complaint_determinations.findOne(
         {
           attributes: [
-            'idx_t_complaint_determination',
-            'date', 'notes', 'determination_by',
+            'idx_t_complaint_determination', 'notes', 'determination_by',
+            [Sequelize.literal(`cast(date AS DATE)`), 'date'],
             'st_number'
           ],
           include: [

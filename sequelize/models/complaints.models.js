@@ -33,6 +33,7 @@ module.exports = (sq) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
+    original_no: DataTypes.STRING,
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,
