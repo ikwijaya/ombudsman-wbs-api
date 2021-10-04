@@ -16,6 +16,9 @@ module.exports = (sq) => {
     type: DataTypes.STRING,
     sid: DataTypes.STRING(512),
     expires: DataTypes.DATE,
+    user_agent: DataTypes.STRING,
+    ip_address: DataTypes.STRING,
+    host: DataTypes.STRING,
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,

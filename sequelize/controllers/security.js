@@ -16,7 +16,7 @@ module.exports = {
    * @param {*} password 
    * @returns 
    */
-  async login(username, password) {
+  async login(username, password, obj = null) {
     const t = await sequelize.transaction();
 
     try {
@@ -80,6 +80,9 @@ module.exports = {
           expires: expires,
           user_id: users.idx_m_user,
           type: users.user_type,
+          user_agent: obj ? obj.ua : null,
+          ip_address: obj ? obj.ip : null,
+          host: obj ? obj.host : null,
           ucreate: username,
         },
         {
