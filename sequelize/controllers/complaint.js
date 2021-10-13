@@ -598,7 +598,7 @@ module.exports = {
               when status.code='1' and complaints.form_status='0' then concat('edit - ', status.name)
               when status.code='3' and complaint_study.form_status='0' then concat('edit - ', status.name)
               when status.code='4' and complaint_decision.form_status='0' then concat('edit - ', status.name)
-              when status.code='4' and complaint_actions.idx_t_complaint_action is not null then 'Tindak Lanjut oleh Inspektorat'
+              when status.code='5' and complaint_actions.idx_t_complaint_action is not null then 'Tindak Lanjut oleh Inspektorat'
               when status.code='17' and closing.form_status='1' then 'Laporan Telah ditutup'
             else status.name end`), 'status_name'],
             [Sequelize.literal(`case 
@@ -606,6 +606,7 @@ module.exports = {
               when status.code='1' and complaints.form_status='0' then 'yellow lighten-3'
               when status.code='3' and complaint_study.form_status='0' then 'yellow lighten-3'
               when status.code='4' and complaint_decision.form_status='0' then 'yellow lighten-3'
+              when status.code='5' and complaint_actions.idx_t_complaint_action is not null then 'grey lighten-2'
               when status.code='2' and complaint_verification.verification_type='0' then 'red lighten-2'
               when status.code='17' and closing.form_status='1' then 'blue lighten-3'
             else status.color end`), 'status_color'],
