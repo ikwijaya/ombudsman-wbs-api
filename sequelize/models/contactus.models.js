@@ -10,6 +10,7 @@ module.exports = (sq) => {
       autoIncrement: true
     },
     email: DataTypes.TEXT,
+    phone_no: DataTypes.TEXT,
     notes: DataTypes.TEXT,
     dcreate: {
       type: DataTypes.DATE,
