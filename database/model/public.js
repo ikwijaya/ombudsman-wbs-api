@@ -36,7 +36,7 @@ class Public {
 
     return new Promise(async (resolve, reject) => {
       db.transaction(t => {
-        return db('t_contact_us')
+        return db('contact_us')
           .insert(obj)
           .transacting(t)
           .then(t.commit)
