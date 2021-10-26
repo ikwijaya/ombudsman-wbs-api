@@ -161,6 +161,32 @@ module.exports = {
           let is_kuasa = complaint instanceof models.complaints ? complaint.getDataValue('is_kuasa_pelapor') : false;
           let form_no = complaint instanceof models.complaints ? complaint.getDataValue('form_no') : null;
 
+          e.form_no = form_no;
+          e.date = complaint instanceof models.complaints ? complaint.getDataValue('date') : null
+          e.pengadu = is_kuasa ? complaint.getDataValue('man_power') : complaint.getDataValue('ucreate')
+          e.alamat_pengadu = null
+          e.layanan = complaint instanceof models.complaints ? complaint.getDataValue('source_complaint') : null
+          e.harapan_pengadu = complaint instanceof models.complaints ? complaint.getDataValue('hopes') : null
+          e.pokok_aduan = complaint instanceof models.complaints ? complaint.getDataValue('complaint_decisions') : []
+          e.kronologi_aduan = studies instanceof models.complaint_studies ? studies.getDataValue('complaint_study_events') : []
+          e.teradu = studies instanceof models.complaint_studies ? studies.getDataValue('complaint_study_reporteds') : []
+          e.terperiksa = null;
+          e.legal_standing = complaint instanceof models.complaints ? complaint.getDataValue('legal_standing') : null
+          e.source_complaint = complaint instanceof models.complaints ? complaint.getDataValue('source_complaint') : null
+          e.dasar_pemeriksaan = `
+          <p>
+            <div class="title">A. DASAR PEMERIKSAAN</div>
+            <ol>
+              <li>Undang-Undang No. 37 Tahun 2008 tentang Ombudsman Republik Indonesia</li>
+              <li>Undang-Undang No. 25 Tahun 2009 tentang Pelayanan Publik</li>
+              <li>Peraturan Ombudsman RI No. 26 tahun 2017 tentang Tata Cara Penerimaan, Pemeriksaan, dan Penyelesaian Laporan</li>
+              <li>Peraturan Ombudsman RI No. 27 tahun 2017 tentang Sistem Pelaporan dan Penanganan Pelanggaran Internal</li>
+              <li>Putusan penanggung jawab WBS tanggal ${complaint.getDataValue('complaint_decision') ? moment(complaint.getDataValue('complaint_decision')['dcreate']).format('DD MMMM YYYY') : '--'}</li>
+              <li>Surat Tugas Kepala Keasistenan Utama Manajemen Mutu Nomor ${st_number} Tanggal ${st_date ? moment(st_date).format('DD MMMM YYYY') : '--'} tentang Penunjukan Tim Pemeriksa Aduan Nomor ${form_no}</li>
+            </ol>
+          </p>
+          `;
+
           e.arranged_by_name = users.filter(a => a['idx_m_user'] == e['arranged_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['arranged_by'])[0].name : null
           e.approved_by_name = users.filter(a => a['idx_m_user'] == e['approved_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['approved_by'])[0].name : null
           e.checked_by_name = users.filter(a => a['idx_m_user'] == e['checked_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['checked_by'])[0].name : null
@@ -187,32 +213,6 @@ module.exports = {
             m.is_update2 = false
           }
           /** END -- SECURITY */
-
-          e.form_no = form_no;
-          e.date = complaint instanceof models.complaints ? complaint.getDataValue('date') : null
-          e.pengadu = is_kuasa ? complaint.getDataValue('man_power') : complaint.getDataValue('ucreate')
-          e.alamat_pengadu = null
-          e.layanan = complaint instanceof models.complaints ? complaint.getDataValue('source_complaint') : null
-          e.harapan_pengadu = complaint instanceof models.complaints ? complaint.getDataValue('hopes') : null
-          e.pokok_aduan = complaint instanceof models.complaints ? complaint.getDataValue('complaint_decisions') : []
-          e.kronologi_aduan = studies instanceof models.complaint_studies ? studies.getDataValue('complaint_study_events') : []
-          e.teradu = studies instanceof models.complaint_studies ? studies.getDataValue('complaint_study_reporteds') : []
-          e.terperiksa = null;
-          e.legal_standing = complaint instanceof models.complaints ? complaint.getDataValue('legal_standing') : null
-          e.source_complaint = complaint instanceof models.complaints ? complaint.getDataValue('source_complaint') : null
-          e.dasar_pemeriksaan = `
-          <p>
-            <div class="title">A. DASAR PEMERIKSAAN</div>
-            <ol>
-              <li>Undang-Undang No. 37 Tahun 2008 tentang Ombudsman Republik Indonesia</li>
-              <li>Undang-Undang No. 25 Tahun 2009 tentang Pelayanan Publik</li>
-              <li>Peraturan Ombudsman RI No. 26 tahun 2017 tentang Tata Cara Penerimaan, Pemeriksaan, dan Penyelesaian Laporan</li>
-              <li>Peraturan Ombudsman RI No. 27 tahun 2017 tentang Sistem Pelaporan dan Penanganan Pelanggaran Internal</li>
-              <li>Putusan penanggung jawab WBS tanggal ${complaint.getDataValue('complaint_decision') ? moment(complaint.getDataValue('complaint_decision')['dcreate']).format('DD MMMM YYYY') : '--'}</li>
-              <li>Surat Tugas Kepala Keasistenan Utama Manajemen Mutu Nomor ${st_number} Tanggal ${st_date ? moment(st_date).format('DD MMMM YYYY') : '--'} tentang Penunjukan Tim Pemeriksa Aduan Nomor ${form_no}</li>
-            </ol>
-          </p>
-          `;
         })
 
         m.sort(function (a, b) { return a['dcreate'] - b['dcreate'] });
