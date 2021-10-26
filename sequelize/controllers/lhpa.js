@@ -196,25 +196,25 @@ module.exports = {
           e.checked_by_name = users.filter(a => a['idx_m_user'] == e['checked_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['checked_by'])[0].name : null
           
           /** SECURITY */
-          if((m.arranged_by == sessions[0].user_id || !m.arranged_date) && is_update){
-            m.is_update = !m.checked_date
-            m.is_check = false
-            m.is_approve = false
-            m.is_update2 = !m.checked_date || !m.approved_date
+          if((e.arranged_by == sessions[0].user_id || !e.arranged_date) && is_update){
+            e.is_update = !e.checked_date
+            e.is_check = false
+            e.is_approve = false
+            e.is_update2 = !e.checked_date || !e.approved_date
           }
 
-          if(m.checked_by == sessions[0].user_id && is_update){
-            m.is_update = !m.approved_date
-            m.is_check = !m.approved_date
-            m.is_approve = false
-            m.is_update2 = !m.approved_date
+          if(e.checked_by == sessions[0].user_id && is_update){
+            e.is_update = !e.approved_date
+            e.is_check = !e.approved_date
+            e.is_approve = false
+            e.is_update2 = !e.approved_date
           }
 
-          if(m.approved_by == sessions[0].user_id && is_update){
-            m.is_update = true
-            m.is_check = false
-            m.is_approve = true
-            m.is_update2 = false
+          if(e.approved_by == sessions[0].user_id && is_update){
+            e.is_update = true
+            e.is_check = false
+            e.is_approve = true
+            e.is_update2 = false
           }
           /** END -- SECURITY */
         })
