@@ -164,7 +164,6 @@ module.exports = {
           e.arranged_by_name = users.filter(a => a['idx_m_user'] == e['arranged_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['arranged_by'])[0].name : null
           e.approved_by_name = users.filter(a => a['idx_m_user'] == e['approved_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['approved_by'])[0].name : null
           e.checked_by_name = users.filter(a => a['idx_m_user'] == e['checked_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['checked_by'])[0].name : null
-          e.kronologi_aduan = studies instanceof models.complaint_studies ? studies.getDataValue('complaint_study_events') : []
           
           /** SECURITY */
           if((m.arranged_by == sessions[0].user_id || !m.arranged_date) && is_update){
@@ -196,6 +195,7 @@ module.exports = {
           e.layanan = complaint instanceof models.complaints ? complaint.getDataValue('source_complaint') : null
           e.harapan_pengadu = complaint instanceof models.complaints ? complaint.getDataValue('hopes') : null
           e.pokok_aduan = complaint instanceof models.complaints ? complaint.getDataValue('complaint_decisions') : []
+          e.kronologi_aduan = studies instanceof models.complaint_studies ? studies.getDataValue('complaint_study_events') : []
           e.teradu = studies instanceof models.complaint_studies ? studies.getDataValue('complaint_study_reporteds') : []
           e.terperiksa = null;
           e.legal_standing = complaint instanceof models.complaints ? complaint.getDataValue('legal_standing') : null
