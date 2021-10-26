@@ -19,6 +19,9 @@ module.exports = {
       if (sessions.length === 0)
         return null;
 
+      // check roles
+      let r = await core.checkRoles(sessions[0].user_id,[12]);
+
       // additional
       let studies = await models.complaint_studies.findOne(
         {
