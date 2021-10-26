@@ -152,6 +152,7 @@ module.exports = {
         order: [['dcreate', 'asc']]
       })
 
+      let is_update = r.filter(a => a.idx_m_form == 12 && a.is_update).length > 0
       let users = await models.users.findAll({ raw: true, attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name'], 'idx_m_user'], where: { idx_m_user_type: { [Op.ne]: -1 } } })
       if (m.length > 0) {
         m = JSON.parse(JSON.stringify(m));
