@@ -19,6 +19,7 @@ module.exports = {
       if (sessions.length === 0)
         return null;
 
+      let r = await core.checkRoles(sessions[0].user_id,[15]);
       let m = await models.delivery.findAll({
         raw: true,
         attributes: [
@@ -32,7 +33,10 @@ module.exports = {
         order: [['idx_t_delivery', 'asc']]
       })
 
-      return { items: m }
+      return { 
+        items: m,
+        is_insert: r.filter(e => e.idx_m_form == 15 && e.is_insert).length > 0 
+      }
     } catch (error) {
       throw (error)
     }
