@@ -35,7 +35,7 @@ module.exports = {
         include: [{
           required: false,
           model: models.regions,
-          attributes: ['name', 'regional']
+          attributes: ['idx_m_region', 'name', 'regional']
         }],
         where: { record_status: 'A' },
       });

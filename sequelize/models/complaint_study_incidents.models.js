@@ -14,6 +14,7 @@ module.exports = (sq) => {
       allowNull: false
     },
     idx_m_city: DataTypes.BIGINT,
+    idx_m_region: DataTypes.BIGINT,
     idx_m_work_unit: DataTypes.BIGINT,
     start_date: DataTypes.DATEONLY,
     end_date: DataTypes.DATEONLY,

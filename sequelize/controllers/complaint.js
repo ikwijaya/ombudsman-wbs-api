@@ -998,6 +998,7 @@ module.exports = {
               end_date: e.end_date,
               notes: e.notes,
               idx_m_city: e.idx_m_city,
+              idx_m_region: e.idx_m_region,
               office_name: e.office_name,
               address: e.address,
               idx_m_work_unit: e.idx_m_work_unit
