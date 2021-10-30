@@ -1200,6 +1200,11 @@ module.exports = {
       if (obj['violations'] == 0 && is_submit)
         return response.failed('Dugaan pelanggaran Tidak boleh kosong')
 
+      if (obj.complaint['idx_m_legal_standing'] == -1 
+        && is_submit 
+        && (!obj.complaint['source_complaint'] || obj.complaint['source_complaint'] == '')
+      ) return response.failed('Dugaan pelanggaran Tidak boleh kosong')
+      
       await models.complaint_violations.destroy({
         transaction: t,
         where: { idx_m_complaint: obj.complaint['idx_m_complaint'] }

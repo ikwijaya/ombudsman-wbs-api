@@ -15,6 +15,8 @@ router.post('/', async (req, res, next) => {
     let msg = [];
     if (!c.idx_m_legal_standing)
       msg.push('<li>Kolom Legal Standing TIDAK boleh kosong.</li>')
+    if(c.idx_m_legal_standing == -1 && (!c.manpower || c.manpower == ''))
+      msg.push('<li>Kolom Kuasa dari TIDAK boleh kosong.</li>')
     if (!c.description)
       msg.push('<li>Kolom Perihal/Ringkasan aduan TIDAK boleh kosong.</li>')
     if (!c.hopes)
