@@ -23,6 +23,7 @@ module.exports = {
         attributes: [
           [Sequelize.literal(`cast(work_units.idx_m_work_unit AS VARCHAR)`),'idx_m_work_unit'],
           [Sequelize.literal(`concat(case when work_units.regional is null then '' else concat('Regional ', work_units.regional) end,' - ', work_units.name)`), 'name'],
+          'regional'
         ],
         where: { record_status: 'A' }
       })
