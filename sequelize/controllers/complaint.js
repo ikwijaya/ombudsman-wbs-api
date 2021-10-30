@@ -732,7 +732,7 @@ module.exports = {
               model: models.complaint_incidents,
               include: [
                 {
-                  attributes: ['name'],
+                  attributes: ['name', 'regional'],
                   model: models.work_units
                 },
                 {

@@ -70,7 +70,7 @@ module.exports = {
               model: models.complaint_study_incidents,
               include: [
                 {
-                  attributes: ['idx_m_work_unit', 'name'],
+                  attributes: ['idx_m_work_unit', 'name', 'regional'],
                   required: false,
                   model: models.work_units
                 },
@@ -80,7 +80,7 @@ module.exports = {
                   model: models.cities,
                   include: [
                     {
-                      attributes: ['idx_m_region', 'name'],
+                      attributes: ['idx_m_region', 'name', 'regional'],
                       model: models.regions
                     }
                   ]
