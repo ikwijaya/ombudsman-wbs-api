@@ -739,7 +739,7 @@ module.exports = {
                   attributes: ['name'],
                   include: [
                     {
-                      attributes: ['name'],
+                      attributes: ['idx_m_region', 'name', 'regional'],
                       model: models.regions
                     }
                   ],
