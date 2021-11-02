@@ -1243,7 +1243,7 @@ module.exports = {
         )
 
         if (incidents > 0)
-          return response.failed('Tempat Kejadian Kolom Unit Kerja, Kota dan Waktu Kejadian TIDAK boleh kosong.')
+          return response.failed('Tempat Kejadian Kolom Unit Kerja dan Waktu Kejadian TIDAK boleh kosong.')
 
         if (reporteds > 0)
           return response.failed('Terlapor Kolom Nama Terlapor TIDAK boleh kosong.')
