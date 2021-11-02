@@ -183,6 +183,44 @@ module.exports = {
 
   async getSecurity(sid, stepper) {
 
-  }
+  },
 
+  /**
+   * load table session for checking some info
+   * only superadmin can read this
+   * @param {*} sid 
+   */
+  async loadSession(sid) {
+    try {
+      let sessions = await this.checkSession(sid);
+      if (sessions.length === 0 && sessions.filter(a => a.is_sa).length > 0)
+        return null;
+
+      let r = await this.checkRoles(sessions[0].user_id,[9997]);
+      let items = await models.sessions.findAll({
+        attributes: [
+          'type', 'expires', 'dcreate', 'dmodified', 'user_agent', 'ip_address', 'host'
+          [Sequelize.literal(`CASE WHEN sessions.record_status = 'A' THEN 'online' ELSE 'offline' END`), 'status_name'],
+          [Sequelize.literal(`CASE WHEN sessions.record_status = 'A' THEN 'green' ELSE 'red' END`), 'status_color'],
+        ],
+        include: [
+          {
+            attributes: ['email', 'username'],
+            model: models.users,
+            include: [
+              {
+                attributes: ['name'],
+                model: models.usertypes
+              }
+            ]
+          }
+        ]
+      })
+
+      return { items: r.filter(a => a.idx_m_form == 9997 && a.is_read).length > 0 ? items : [] }
+    } catch (error) {
+      console.log(error)
+      throw (error)
+    }
+  }
 }
