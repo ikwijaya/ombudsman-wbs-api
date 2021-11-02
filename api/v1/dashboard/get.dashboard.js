@@ -6,6 +6,7 @@ const WBS = require('../../../database/model/dashboard')
 
 router.post('/', cache.MCache(30), async (req, res, next) => {
   let sid = req.body.sid || null;
+  // let sid = '76fab62cc7ac481e5b4f2cbc6a4f1fe14261ca2366522a0e835bb043c52789552b5fd545890d59d497f8f509493d047e11232110022346.457'
 
   try {
     let x = new WBS()
@@ -39,7 +40,7 @@ router.post('/', cache.MCache(30), async (req, res, next) => {
       complaint_by_person: complaint_by_person, 
       complaint_by_ukname1: complaint_by_ukname1,             // UNIT KERJA INSPEKTORAT
       complaint_by_ukname1: complaint_by_ukname2,             // UNIT KERJA KUMM
-      complaint_by_ukreg1: complaint_by_ukreg1                // INSPEKTORAT REGIONAL - UNIT KERJA (PERWAKILAN UNIT KERJA)
+      complaint_by_ukreg1: complaint_by_ukreg1,               // INSPEKTORAT REGIONAL - UNIT KERJA (PERWAKILAN UNIT KERJA)
       complaint_by_ukreg2: complaint_by_ukreg2                // KUMM
     })
   } catch (err) {
