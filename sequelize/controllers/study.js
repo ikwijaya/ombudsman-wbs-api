@@ -348,7 +348,10 @@ module.exports = {
           {
             where: {
               idx_t_complaint_study: obj.complaint['idx_t_complaint_study'],
-              name: null
+              [Op.or]: [
+                { name: null },
+                { idx_m_work_unit: null }
+              ]
             }
           }
         )
@@ -357,7 +360,7 @@ module.exports = {
           return response.failed('Tempat Kejadian Kolom Unit Kerja, Kota dan Waktu Kejadian TIDAK boleh kosong.')
 
         if (reporteds > 0)
-          return response.failed('Terlapor Kolom Nama Terlapor TIDAK boleh kosong.')
+          return response.failed('Terlapor Kolom Nama Terlapor dan Unit Kerja TIDAK boleh kosong.')
       }
 
       await models.complaint_studies.update(obj.complaint, {
@@ -584,8 +587,10 @@ module.exports = {
         return response.failed('Session expired, please relogin.')
 
       obj['ucreate'] = sessions[0].user_id
-      await models.complaint_study_reported.create(obj, { transaction: t, });
+      if(!obj['idx_m_work_unit'])
+        return response.failed('Kolom Unit Kerja TIDAK boleh kosong.')
 
+      await models.complaint_study_reported.create(obj, { transaction: t, });
       await t.commit()
       return response.success('Teradu berhasil ditambah')
     } catch (error) {
@@ -610,6 +615,9 @@ module.exports = {
 
       obj['umodified'] = sessions[0].user_id
       obj['dmodified'] = new Date()
+      if(!obj['idx_m_work_unit'])
+        return response.failed('Kolom Unit Kerja TIDAK boleh kosong.')
+        
       await models.complaint_study_reported.update(obj, {
         transaction: t,
         where: { idx_t_complaint_study_reported: obj['idx_t_complaint_study_reported'] }
