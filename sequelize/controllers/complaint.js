@@ -1226,7 +1226,7 @@ module.exports = {
               [Op.or]: [
                 { start_date: null },
                 { end_date: null },
-                { idx_m_city: null },
+                // { idx_m_city: null },
                 { idx_m_work_unit: null }
               ]
             }

@@ -25,7 +25,8 @@ router.post('/', async (req, res, next) => {
       msg.push('<li>Kolom Jenis Dugaan Pelanggaran TIDAK boleh kosong.</li>')
     if (event.length == 0)
       msg.push('<li>Kronologi Aduan TIDAK boleh kosong.</li>')
-    if (await helper.validateArrayVal(incident, ['idx_m_work_unit', 'idx_m_city', 'start_date', 'end_date']) || incident.length === 0)
+    // remove 'idx_m_city'
+    if (await helper.validateArrayVal(incident, ['idx_m_work_unit', 'start_date', 'end_date']) || incident.length === 0)
       msg.push('<li>Tempat Kejadian Kolom Unit Kerja, Kota dan Waktu Kejadian TIDAK boleh kosong.</li>')
     if (await helper.validateArrayVal(reported, ['name']) || reported.length === 0)
       msg.push('<li>Terlapor Kolom Nama Terlapor TIDAK boleh kosong.</li>')
