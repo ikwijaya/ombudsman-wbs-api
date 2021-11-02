@@ -20,8 +20,10 @@ router.post('/', cache.MCache(30), async (req, res, next) => {
     let complaint_by_process = await x.getComplaintByProcess(sid).catch(e => { throw (e) })
     // let complaint_by_work_unit = await x.getCountByWorkUnit(sid).catch(e => { throw (e) })
     let complaint_by_person = await x.getCountByPerson(sid).catch(e => { throw (e) })
-    let complaint_by_ukname = await x.getCountByUKName(sid).catch(e => { throw (e) })
-    let complaint_by_ukreg = await x.getCountByUKRegion(sid).catch(e => { throw (e) })
+    let complaint_by_ukname1 = await x.getCountByUKName1(sid).catch(e => { throw (e) })
+    let complaint_by_ukname2 = await x.getCountByUKName2(sid).catch(e => { throw (e) })
+    let complaint_by_ukreg1 = await x.getCountByUKRegion1(sid).catch(e => { throw (e) })
+    let complaint_by_ukreg2 = await x.getCountByUKRegion2(sid).catch(e => { throw (e) })
 
     res.send({
       count_by_type: count_by_type,               // SUMBER ADUAN
@@ -35,8 +37,10 @@ router.post('/', cache.MCache(30), async (req, res, next) => {
       complaint_by_process: complaint_by_process.rows,      // PROSES KUMM
       complaint_by_work_unit: [],
       complaint_by_person: complaint_by_person, 
-      complaint_by_ukname: complaint_by_ukname,             // UNIT KERJA
-      complaint_by_ukreg: complaint_by_ukreg                // REGIONAL - UNIT KERJA (PERWAKILAN UNIT KERJA)
+      complaint_by_ukname1: complaint_by_ukname1,             // UNIT KERJA INSPEKTORAT
+      complaint_by_ukname1: complaint_by_ukname2,             // UNIT KERJA KUMM
+      complaint_by_ukreg1: complaint_by_ukreg1                // INSPEKTORAT REGIONAL - UNIT KERJA (PERWAKILAN UNIT KERJA)
+      complaint_by_ukreg2: complaint_by_ukreg2                // KUMM
     })
   } catch (err) {
     req.log.error('error', err)
