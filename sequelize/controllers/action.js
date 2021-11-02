@@ -18,7 +18,7 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
-      let roles = await core.checkRoles(sessions[0].user_id, [5]).catch(e => { throw (e) })
+      let roles = await core.checkRoles(sessions[0].user_id, [6]).catch(e => { throw (e) })
       let actions = await models.complaint_actions.findAll(
         {
           attributes: [
@@ -34,11 +34,17 @@ module.exports = {
       )
 
       let closed = await models.complaint_actions.count(
-        { where: { is_close: true } }
+        { where: 
+          { 
+            is_close: true,
+            idx_m_complaint: complaintId,
+            record_status: 'A'
+          } 
+        }
       );
 
       return {
-        is_insert: roles.filter(a => a.is_read && a.idx_m_form == 5).length > 0 && closed == 0 ? true : false,
+        is_insert: roles.filter(a => a.is_read && a.idx_m_form == 6).length > 0 && closed == 0 ? true : false,
         items: actions
       }
     } catch (error) {
