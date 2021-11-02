@@ -324,30 +324,49 @@ module.exports = {
         }
       )
 
-      let regional = await models.regions.findAll({
+      // let regional = await models.regions.findAll({
+      //   raw: true,
+      //   attributes: ['regional'],
+      //   include: [
+      //     {
+      //       required: true,
+      //       attributes: [],
+      //       model: models.cities,
+      //       group: ['regional'],
+      //       include: [
+      //         {
+      //           required: true,
+      //           attributes: [],
+      //           model: models.complaint_study_incidents,
+      //           include: [
+      //             {
+      //               required: true,
+      //               attributes: [],
+      //               model: models.complaint_studies,
+      //               where: { idx_m_complaint: id }
+      //             }
+      //           ]
+      //         }
+      //       ],
+      //     }
+      //   ]
+      // })
+
+      let regional = await models.work_units.findAll({
         raw: true,
         attributes: ['regional'],
         include: [
           {
             required: true,
-            attributes: [],
-            model: models.cities,
-            group: ['regional'],
+            model: models.complaint_study_reported,
             include: [
               {
                 required: true,
                 attributes: [],
-                model: models.complaint_study_incidents,
-                include: [
-                  {
-                    required: true,
-                    attributes: [],
-                    model: models.complaint_studies,
-                    where: { idx_m_complaint: id }
-                  }
-                ]
+                model: models.complaint_studies,
+                where: { idx_m_complaint: id }
               }
-            ],
+            ]
           }
         ]
       })
@@ -435,30 +454,49 @@ module.exports = {
    */
   async closingAdditional(id) {
     try {
-      let regional = await models.regions.findAll({
+      // let regional = await models.regions.findAll({
+      //   raw: true,
+      //   attributes: ['regional'],
+      //   include: [
+      //     {
+      //       required: true,
+      //       attributes: [],
+      //       model: models.cities,
+      //       group: ['regional'],
+      //       include: [
+      //         {
+      //           required: true,
+      //           attributes: [],
+      //           model: models.complaint_study_incidents,
+      //           include: [
+      //             {
+      //               required: true,
+      //               attributes: [],
+      //               model: models.complaint_studies,
+      //               where: { idx_m_complaint: id }
+      //             }
+      //           ]
+      //         }
+      //       ],
+      //     }
+      //   ]
+      // })
+
+      let regional = await models.work_units.findAll({
         raw: true,
         attributes: ['regional'],
         include: [
           {
             required: true,
-            attributes: [],
-            model: models.cities,
-            group: ['regional'],
+            model: models.complaint_study_reported,
             include: [
               {
                 required: true,
                 attributes: [],
-                model: models.complaint_study_incidents,
-                include: [
-                  {
-                    required: true,
-                    attributes: [],
-                    model: models.complaint_studies,
-                    where: { idx_m_complaint: id }
-                  }
-                ]
+                model: models.complaint_studies,
+                where: { idx_m_complaint: id }
               }
-            ],
+            ]
           }
         ]
       })
@@ -519,30 +557,49 @@ module.exports = {
         where: { record_status: 'A' }
       });
 
-      let regional = await models.regions.findAll({
+      // let regional = await models.regions.findAll({
+      //   raw: true,
+      //   attributes: ['regional'],
+      //   include: [
+      //     {
+      //       required: true,
+      //       attributes: [],
+      //       model: models.cities,
+      //       group: ['regional'],
+      //       include: [
+      //         {
+      //           required: true,
+      //           attributes: [],
+      //           model: models.complaint_study_incidents,
+      //           include: [
+      //             {
+      //               required: true,
+      //               attributes: [],
+      //               model: models.complaint_studies,
+      //               where: { idx_m_complaint: id }
+      //             }
+      //           ]
+      //         }
+      //       ],
+      //     }
+      //   ]
+      // })
+
+      let regional = await models.work_units.findAll({
         raw: true,
         attributes: ['regional'],
         include: [
           {
             required: true,
-            attributes: [],
-            model: models.cities,
-            group: ['regional'],
+            model: models.complaint_study_reported,
             include: [
               {
                 required: true,
                 attributes: [],
-                model: models.complaint_study_incidents,
-                include: [
-                  {
-                    required: true,
-                    attributes: [],
-                    model: models.complaint_studies,
-                    where: { idx_m_complaint: id }
-                  }
-                ]
+                model: models.complaint_studies,
+                where: { idx_m_complaint: id }
               }
-            ],
+            ]
           }
         ]
       })
@@ -621,30 +678,49 @@ module.exports = {
         where: { record_status: 'A' }
       })
 
-      let regional = await models.regions.findAll({
+      // let regional = await models.regions.findAll({
+      //   raw: true,
+      //   attributes: ['regional'],
+      //   include: [
+      //     {
+      //       required: true,
+      //       attributes: [],
+      //       model: models.cities,
+      //       group: ['regional'],
+      //       include: [
+      //         {
+      //           required: true,
+      //           attributes: [],
+      //           model: models.complaint_study_incidents,
+      //           include: [
+      //             {
+      //               required: true,
+      //               attributes: [],
+      //               model: models.complaint_studies,
+      //               where: { idx_m_complaint: id }
+      //             }
+      //           ]
+      //         }
+      //       ],
+      //     }
+      //   ]
+      // })
+
+      let regional = await models.work_units.findAll({
         raw: true,
         attributes: ['regional'],
         include: [
           {
             required: true,
-            attributes: [],
-            model: models.cities,
-            group: ['regional'],
+            model: models.complaint_study_reported,
             include: [
               {
                 required: true,
                 attributes: [],
-                model: models.complaint_study_incidents,
-                include: [
-                  {
-                    required: true,
-                    attributes: [],
-                    model: models.complaint_studies,
-                    where: { idx_m_complaint: id }
-                  }
-                ]
+                model: models.complaint_studies,
+                where: { idx_m_complaint: id }
               }
-            ],
+            ]
           }
         ]
       })
