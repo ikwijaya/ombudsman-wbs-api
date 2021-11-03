@@ -2,13 +2,16 @@
 const router = require('express').Router()
 const { response } = require('../../../models')
 const { helper } = require('../../../helper')
+const CPM = require('connect-multiparty')
+const multiparty = CPM();
 const { createWorker, PSM, OEM } = require('tesseract.js')
 const worker = createWorker({ logger: ev => console.log('[running] ocr => ', ev) })
 
-router.post('/', async (req, res, next) => {
+router.post('/', multiparty, async (req, res, next) => {
   try {
-    let url = req.body.url || null
-    let filename = req.body.filename || null
+    let upload = req.files.upload || []
+    let url = upload.path;
+    let filename = upload.originalFilename
 
     if(!url) res.status(200).send(response.failed(`Image ${filename} not found!`))
     else {
