@@ -5,8 +5,7 @@ deploy:
         - git pull
         - rm -rf builds
         - cd $PROJECT_PATH
-        - ./destroy.sh
-        - ./start.prod.sh
+	- ./start.api.sh
     after_script:
        - ./check.sh
     only:
