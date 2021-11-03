@@ -184,7 +184,8 @@ class Dashboard {
           db.raw(`CASE WHEN c.idx_m_legal_standing = -1 THEN c.manpower ELSE u.fullname END AS pengadu`),
           'str.name AS teradu',
           'wk.name AS unit_kerja',
-          'st.name AS tahapan'
+          // 'st.name AS tahapan',
+          db.raw(`CASE WHEN st.idx_m_status = 3 THEN CONCAT(st.name,'*') ELSE st.name END AS tahapan`)
         )
         .innerJoin('t_complaint_study AS s', 'c.idx_m_complaint', 's.idx_m_complaint')
         .innerJoin('t_complaint_study_reported AS str', 's.idx_t_complaint_study', 'str.idx_t_complaint_study')
