@@ -564,17 +564,17 @@ class Dashboard {
       return await db
         .raw(`
           select 	count(1) as value
+              , concat('Masih dalam Pengerjaan') as text
+          from 	m_complaint mc 
+          inner join m_status ms on mc.idx_m_status=ms.idx_m_status 
+          where 	cast(ms.code as integer) between 2 and 16 and mc.form_status = '1'
+          union all
+          select 	count(1) as value
               , 'Telah dilakukan Penutupan' as text
           from 	m_complaint mc 
           inner join m_status ms on mc.idx_m_status=ms.idx_m_status 
           inner join t_closing tc on mc.idx_m_complaint=tc.idx_m_complaint
           where 	cast(ms.code as integer)=17 and mc.form_status = '1' and tc.form_status='1'
-          union all
-          select 	count(1) as value
-              , concat('Masih dalam Pengerjaan') as text
-          from 	m_complaint mc 
-          inner join m_status ms on mc.idx_m_status=ms.idx_m_status 
-          where 	cast(ms.code as integer) between 2 and 16 and mc.form_status = '1'
           union all
           select 	count(1) as value
               , concat('(!) Telah dilakukan Pencabutan') as text
