@@ -27,7 +27,8 @@
     "nodemailer": "^6.6.0",
     "pg": "^8.6.0",
     "pg-connection-string": "^2.5.0",
-    "sequelize": "^6.6.2"
+    "sequelize": "^6.6.2",
+    "tesseract.js": "^2.1.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.13"
