@@ -22,7 +22,7 @@ module.exports = {
       let work_units = await models.work_units.findAll({
         attributes: [
           [Sequelize.literal(`cast(work_units.idx_m_work_unit AS VARCHAR)`),'idx_m_work_unit'],
-          [Sequelize.literal(`concat(case when work_units.regional is null then '' else concat('Reg. ', work_units.regional) end,' - ', work_units.name)`), 'name'],
+          [Sequelize.literal(`concat(case when work_units.regional is null then null else concat('Reg. ', work_units.regional, ' - ') end, work_units.name)`), 'name'],
           'regional'
         ],
         where: { record_status: 'A' }
@@ -158,7 +158,7 @@ module.exports = {
       let work_units = await models.work_units.findAll({
         attributes: [
           [Sequelize.literal(`cast(work_units.idx_m_work_unit AS VARCHAR)`),'idx_m_work_unit'],
-          [Sequelize.literal(`concat(case when work_units.regional is null then '' else concat('Reg. ', work_units.regional) end,' - ', work_units.name)`), 'name'],
+          [Sequelize.literal(`concat(case when work_units.regional is null then null else concat('Reg. ', work_units.regional, ' - ') end, work_units.name)`), 'name'],
           'regional'
         ],
         where: { record_status: 'A' }
