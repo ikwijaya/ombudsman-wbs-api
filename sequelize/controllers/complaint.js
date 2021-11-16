@@ -272,9 +272,16 @@ module.exports = {
 
       if(dtr instanceof models.complaint_determinations) durasi = dtr.getDataValue('date')
 
+      /**
+       * 5: maladministrasi
+       * 9: masih dalam proses
+       * 10: telah terbit produk akhir
+       * sesuai SK maladministrasi (5) memiliki proses yg sama seperti telah terbit produk akhir (10)
+       * 
+       */
       if (
         violationNo instanceof models.complaint_decisions
-        && [5,9].includes(parseInt(violationNo.getDataValue('violation')))
+        && [5,10].includes(parseInt(violationNo.getDataValue('violation')))
       ) {
         dcode = {
           name: 'MDP',
