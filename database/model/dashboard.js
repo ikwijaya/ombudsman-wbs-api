@@ -373,7 +373,7 @@ class Dashboard {
       return await db('m_work_unit AS wk')
         .select(
           db.raw(`count(wk.regional) AS value`),
-          db.raw(`CONCAT('Regional ', wk.regional) AS text`)
+          db.raw(`CONCAT('Regional ', wk.regional,' - ',wk.name) AS text`)
         )
         .innerJoin('t_complaint_study_reported AS rp', 'wk.idx_m_work_unit', 'rp.idx_m_work_unit')
         .innerJoin('t_complaint_study AS s', 'rp.idx_t_complaint_study', 's.idx_t_complaint_study')
@@ -384,7 +384,7 @@ class Dashboard {
         .andWhereRaw(`c.form_status = '1' AND wk.regional IS NOT NULL`)
         .andWhereRaw(`dc.idx_m_violation NOT IN (5,9,10)`)
         .andWhereRaw(`dt.idx_m_complaint is null`)
-        .groupByRaw(`wk.regional, dc.idx_m_violation`)
+        .groupByRaw(`wk.regional, dc.idx_m_violation`, `wk.name`)
 
       // return await db('m_complaint AS c')
       //   .select(
@@ -424,7 +424,7 @@ class Dashboard {
       return await db('m_work_unit AS wk')
         .select(
           db.raw(`count(wk.regional) AS value`),
-          db.raw(`CONCAT('Regional ', wk.regional) AS text`),
+          db.raw(`CONCAT('Regional ', wk.regional,' - ', wk.name) AS text`),
           db.raw(`CASE 
               WHEN dc.idx_m_violation IN (5,9) THEN 'MDP' 
               WHEN dc.idx_m_violation IN (10) THEN 'TPA' 
@@ -445,7 +445,7 @@ class Dashboard {
         .andWhereRaw(`c.form_status = '1' AND wk.regional IS NOT NULL`)
         .andWhereRaw(`dc.idx_m_violation IN (5,9,10)`)
         .andWhereRaw(`dt.idx_m_complaint is not null`)
-        .groupByRaw(`wk.regional, dc.idx_m_violation`)
+        .groupByRaw(`wk.regional, dc.idx_m_violation`, `wk.name`)
 
       // return await db('m_complaint AS c')
       //   .select(
