@@ -281,7 +281,7 @@ module.exports = {
        */
       if (
         violationNo instanceof models.complaint_decisions
-        && [5,10].includes(parseInt(violationNo.getDataValue('violation')))
+        && [9].includes(parseInt(violationNo.getDataValue('violation')))
       ) {
         dcode = {
           name: 'MDP',
