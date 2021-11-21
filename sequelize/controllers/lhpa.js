@@ -20,7 +20,8 @@ module.exports = {
         return null;
 
       // check roles
-      let r = await core.checkRoles(sessions[0].user_id,[12]);
+      let r = await core.checkRoles(sessions[0].user_id,[12, 92]);
+      let is_void_checker = r.filter(a => a.idx_m_form == 92 && a.is_read).length > 0
 
       // additional
       let studies = await models.complaint_studies.findOne(
@@ -203,7 +204,7 @@ module.exports = {
             e.is_update2 = !e.checked_date || !e.approved_date
           }
 
-          if(e.checked_by == sessions[0].user_id && is_update){
+          if((e.checked_by == sessions[0].user_id || is_void_checker) && is_update){
             e.is_update = !e.approved_date
             e.is_check = !e.approved_date
             e.is_approve = false

@@ -18,7 +18,8 @@ module.exports = {
       if (sessions.length === 0)
         return null;
 
-      let r = await core.checkRoles(sessions[0].user_id,[17]);
+      let r = await core.checkRoles(sessions[0].user_id,[17, 92]);
+      let is_void_checker = r.filter(a => a.idx_m_form == 92 && a.is_read).length > 0
       let complaint = await models.complaints.findOne({
         attributes: ['form_no', 'date'],
         where: { idx_m_complaint: id }
@@ -66,7 +67,7 @@ module.exports = {
           m.is_update2 = !m.checked_date || !m.approved_date
         }
 
-        if(m.checked_by == sessions[0].user_id && is_update){
+        if((m.checked_by == sessions[0].user_id || is_void_checker) && is_update){
           m.is_update = !m.approved_date
           m.is_check = !m.approved_date
           m.is_approve = false

@@ -22,6 +22,8 @@ module.exports = {
         return null;
 
       let arranged_by, approved_by, checked_by;
+      let r = await core.checkRoles(sessions[0].user_id,[92]);
+      let is_void_checker = r.filter(a => a.idx_m_form == 92 && a.is_read).length > 0
       let validation = await models.validation.findOne(
         {
           attributes: [
@@ -162,7 +164,7 @@ module.exports = {
       if (validation instanceof models.validation) {
         // security
         is_approve = validation.getDataValue('approved_by') == sessions[0].user_id;
-        is_check = validation.getDataValue('checked_by') == sessions[0].user_id;
+        is_check = validation.getDataValue('checked_by') == sessions[0].user_id || is_void_checker;
 
         arranged_by = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: validation.getDataValue('arranged_by') } })
         approved_by = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: validation.getDataValue('approved_by') } })

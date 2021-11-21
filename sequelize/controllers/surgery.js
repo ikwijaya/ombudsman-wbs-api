@@ -20,6 +20,8 @@ module.exports = {
         return null;
 
       let users = []
+      let r = await core.checkRoles(sessions[0].user_id,[92]);
+      let is_void_checker = r.filter(a => a.idx_m_form == 92 && a.is_read).length > 0
       let m = await models.surgery.findOne({
         raw: true,
         attributes: [
@@ -43,7 +45,7 @@ module.exports = {
         m.is_approve = false
       }
 
-      if(m.checked_by == sessions[0].user_id){
+      if(m.checked_by == sessions[0].user_id || is_void_checker){
         m.is_update = !m.approved_date
         m.is_check = !m.approved_date
         m.is_approve = false

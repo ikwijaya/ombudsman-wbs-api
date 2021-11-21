@@ -19,6 +19,8 @@ module.exports = {
       if (sessions.length === 0)
         return null;
 
+      let r = await core.checkRoles(sessions[0].user_id,[92]);
+      let is_void_checker = r.filter(a => a.idx_m_form == 92 && a.is_read).length > 0
       let m = await models.study_lys.findOne({
         attributes: [
           'idx_t_study_lys', 'manpower', 'description',
@@ -134,7 +136,7 @@ module.exports = {
       let is_check = false; let is_approve = false;
       if (m instanceof models.study_lys) {
         is_approve = m.getDataValue('head_of_kumm') == sessions[0].user_id;
-        is_check = m.getDataValue('head_of_reg') == sessions[0].user_id;
+        is_check = m.getDataValue('head_of_reg') == sessions[0].user_id || is_void_checker;
 
         arranged_by = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: m.getDataValue('arranged_by') } })
         head_of_kumm = await models.users.findOne({
