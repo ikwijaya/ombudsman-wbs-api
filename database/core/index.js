@@ -48,6 +48,44 @@ module.exports = {
         .finally(() => { db.destroy() })
     })
   },
+  /**
+   * 
+   * @param {*} id 
+   * @returns 
+   */
+  checkUser: (id) => {
+    var db = knex(opt)
+    return new Promise((resolve, reject) => {
+      db('m_user AS mu')
+        .select(
+          'ts.user_id',
+          'mt.name as user_type',
+          'mt.idx_m_user_type'
+        )
+        .leftJoin('m_user_type as mt', 'mu.idx_m_user_type', 'mt.idx_m_user_type')
+        .whereRaw(`mu.idx_m_user=?`, [id])
+        .then((rows) => {
+          let parse = JSON.parse(JSON.stringify(rows))
+          let o = parse.length == 0 ? {
+            status: false,
+            user_id: null,
+            user_type: null,
+            idx_m_user_type: null
+          } : {
+            status: true,
+            user_id: parse[0].user_id,
+            user_type: parse[0].user_type,
+            idx_m_user_type: parse[0].idx_m_user_type
+          };
+
+          resolve(o)
+        })
+        .catch((e) => {
+          reject(e)
+        })
+        .finally(() => { db.destroy() })
+    })
+  },
 
   /**
    * 

@@ -278,26 +278,32 @@ class Users {
    */
   disableUser(sid, id, is_disable = true) {
     let db = knex(opt)
-    let user_id = null
+    let user = null
 
     return new Promise(async (resolve, reject) => {
       await core.checkSession(sid)
-        .then(r => user_id = r.status ? r.user_id : null)
+        .then(r => user = r.status ? r : null)
         .catch(e => { reject(e) })
 
-      if (user_id) {
-        db.transaction(t => {
-          return db('m_user')
-            .transacting(t)
-            .update({
-              record_status: is_disable ? 'N' : 'A',
-              umodified: user_id,
-              dmodified: db.raw('current_timestamp')
-            })
-            .where({ idx_m_user: id })
-            .then(r => resolve(response.success(`${is_disable ? "Disable" : "Enable"} user has been succeed.`)))
-            .catch(e => { reject(e) })
-        })
+      if (user.user_id) {
+        if(user.user_id !== id){
+          db.transaction(t => {
+            return db('m_user')
+              .transacting(t)
+              .update({
+                record_status: is_disable ? 'N' : 'A',
+                umodified: user.user_id,
+                dmodified: db.raw('current_timestamp')
+              })
+              .where({ idx_m_user: id })
+              .then(r => resolve(response.success(`${is_disable ? "Disable" : "Enable"} user has been succeed.`)))
+              .catch(e => { reject(e) })
+          })
+        } else if(user.idx_m_user_type == '0') {
+          resolve(response.failed('Cannot disable user as high level admin.', true))
+        } else {
+          resolve(response.failed('You can`t disable your account with yourself.', true))
+        }
       } else {
         resolve(response.failed('Session expires, please relogin.', true))
       }
@@ -687,16 +693,16 @@ class Users {
    */
   updateUsers(sid, idx_m_user, users = {}, roles = []) {
     let db = knex(opt);
-    let user_id = null;
-
+    let user = null;
+    
     return new Promise(async (resolve, reject) => {
       await core.checkSession(sid)
-        .then(r => user_id = r.status ? r.user_id : null)
+        .then(r => user = r.status ? r : null)
         .catch(e => { reject(e) })
 
-      if (user_id) {
+      if (user.user_id) {
         users.dmodified = new Date();
-        users.umodified = user_id;
+        users.umodified = user.user_id;
 
         db.transaction(t => {
           return db('t_roles')
