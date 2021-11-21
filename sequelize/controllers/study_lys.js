@@ -349,6 +349,19 @@ module.exports = {
       obj.study['head_of_kumm'] = sessions[0].user_id;
       obj.study['head_of_kumm_date'] = new Date();
 
+      let is_checked = await models.study.count({
+        where: {
+          idx_t_study_lys: obj.study.id,
+          [Op.or]: [
+            { checked_by: null, },
+            { checked_date: null }
+          ]
+        },
+        transaction: t
+      })
+
+      if(is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
+
       // delete heula
       // await models.study_lys_event.destroy({ transaction: t, where: { idx_t_study_lys: obj.study.id } })
       // await models.study_lys_violation.destroy({ transaction: t, where: { idx_t_study_lys: obj.study.id } })
