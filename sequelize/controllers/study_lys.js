@@ -286,6 +286,19 @@ module.exports = {
       obj.study['head_of_reg'] = sessions[0].user_id;
       obj.study['head_of_reg_date'] = new Date();
 
+      let is_arranged = await models.study_lys.count({
+        where: {
+          idx_t_study_lys: obj.study.id,
+          [Op.or]: [
+            { arranged_by: null, },
+            { arranged_date: null }
+          ]
+        },
+        transaction: t
+      })
+
+      if(is_arranged > 0) return response.failed('Form belum dilakukan penyusunan, Silakan klik tombol SIMPAN untuk melakukan sign penyusunan.')
+
       // delete heula
       // await models.study_lys_event.destroy({ transaction: t, where: { idx_t_study_lys: obj.study.id } })
       // await models.study_lys_violation.destroy({ transaction: t, where: { idx_t_study_lys: obj.study.id } })

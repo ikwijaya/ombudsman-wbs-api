@@ -332,6 +332,19 @@ module.exports = {
       obj.lhpa['umodified'] = sessions[0].user_id;
       obj.lhpa['dmodified'] = new Date();
       obj.lhpa['checked_date'] = new Date();
+
+      let is_arranged = await models.lhpa.count({
+        where: {
+          idx_t_lhpa: obj.lhpa.id,
+          [Op.or]: [
+            { arranged_by: null, },
+            { arranged_date: null }
+          ]
+        },
+        transaction: t
+      })
+
+      if(is_arranged > 0) return response.failed('Form belum dilakukan penyusunan, Silakan klik tombol SIMPAN untuk melakukan sign penyusunan.')
       if(!obj.lhpa['approved_by']) return response.failed('Kolom Disetujui Oleh TIDAK boleh kosong')
 
       await models.lhpa.update(obj.lhpa, {

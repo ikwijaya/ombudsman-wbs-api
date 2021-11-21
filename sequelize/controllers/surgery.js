@@ -317,6 +317,19 @@ module.exports = {
       obj.data['umodified'] = sessions[0].user_id;
       obj.data['dmodified'] = new Date();
       obj.data['checked_date'] = new Date();
+
+      let is_arranged = await models.surgery.count({
+        where: {
+          idx_t_surgery: obj.data.id,
+          [Op.or]: [
+            { arranged_by: null, },
+            { arranged_date: null }
+          ]
+        },
+        transaction: t
+      })
+
+      if(is_arranged > 0) return response.failed('Form belum dilakukan penyusunan, Silakan klik tombol SIMPAN untuk melakukan sign penyusunan.')
       if(!obj.data['approved_by']) return response.failed('Kolom Disetujui Oleh TIDAK boleh kosong')
 
       await models.surgery.update(obj.data, {

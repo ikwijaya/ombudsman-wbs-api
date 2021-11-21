@@ -207,6 +207,19 @@ module.exports = {
       obj.closing['umodified'] = sessions[0].user_id;
       obj.closing['dmodified'] = new Date();
       obj.closing['checked_date'] = new Date();
+
+      let is_arranged = await models.closing.count({
+        where: {
+          idx_t_closing: obj.closing.id,
+          [Op.or]: [
+            { arranged_by: null, },
+            { arranged_date: null }
+          ]
+        },
+        transaction: t
+      })
+
+      if(is_arranged > 0) return response.failed('Form belum dilakukan penyusunan, Silakan klik tombol SIMPAN untuk melakukan sign penyusunan.')
       if(!obj.closing['approved_by']) return response.failed('Kolom Disetujui Oleh TIDAK boleh kosong')
 
       await models.closing.update(obj.closing, {
