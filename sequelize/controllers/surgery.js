@@ -382,7 +382,16 @@ module.exports = {
         transaction: t
       })
 
+      let is_approved = await models.surgery.count({
+        where: {
+          idx_t_surgery: obj.data.id,
+          approved_by: {[Op.ne]: null}
+        },
+        transaction: t
+      })
+
       if(is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
+      if(is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
       await models.surgery.update(obj.data, { where: { idx_t_surgery: obj.data.id }, transaction: t });
       await models.complaints.update({
         umodified: sessions[0].user_id,

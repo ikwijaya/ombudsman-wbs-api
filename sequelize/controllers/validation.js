@@ -504,8 +504,17 @@ module.exports = {
         transaction: t
       })
 
+      let is_approved = await models.validation.count({
+        where: {
+          idx_t_validation: obj.validation.id,
+          approved_by: {[Op.ne]: null}
+        },
+        transaction: t
+      })
+
       if(is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
-      
+      if(is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
+
       // delete heula before create, bisa pake beforeDestroy tp belom paham cuy
       await models.validation_checklists.destroy({ transaction: t, where: { idx_t_validation: obj.validation.id } })
       await models.validation_comm.destroy({ transaction: t, where: { idx_t_validation: obj.validation.id } })

@@ -360,8 +360,16 @@ module.exports = {
         transaction: t
       })
 
-      if(is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
+      let is_approved = await models.study.count({
+        where: {
+          idx_t_study_lys: obj.study.id,
+          approved_by: {[Op.ne]: null}
+        },
+        transaction: t
+      })
 
+      if(is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
+      if(is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
       // delete heula
       // await models.study_lys_event.destroy({ transaction: t, where: { idx_t_study_lys: obj.study.id } })
       // await models.study_lys_violation.destroy({ transaction: t, where: { idx_t_study_lys: obj.study.id } })
