@@ -227,6 +227,9 @@ module.exports = {
   /**
    * 
    * @returns 
+   * 1: inspektorat
+   * 2: anggota kumm
+   * 4: kepala keasistenan regional
    */
   async determinationAdditional() {
     try {
@@ -236,7 +239,7 @@ module.exports = {
           'idx_m_user',
           [Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']
         ],
-        where: { record_status: 'A', idx_m_user_type: { [Op.in]: [2, 1] } }
+        where: { record_status: 'A', idx_m_user_type: { [Op.in]: [4, 2, 1] } }
       });
 
       let wbs = await models.users.findAll({
