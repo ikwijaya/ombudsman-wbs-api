@@ -276,7 +276,8 @@ module.exports = {
       let is_approved = await models.closing.count({
         where: {
           idx_t_closing: obj.closing.id,
-          approved_by: {[Op.ne]: null}
+          approved_by: {[Op.ne]: null},
+          approved_date: {[Op.ne]: null}
         },
         transaction: t
       })

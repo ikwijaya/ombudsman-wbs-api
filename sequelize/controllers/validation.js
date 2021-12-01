@@ -507,7 +507,8 @@ module.exports = {
       let is_approved = await models.validation.count({
         where: {
           idx_t_validation: obj.validation.id,
-          approved_by: {[Op.ne]: null}
+          approved_by: {[Op.ne]: null},
+          approved_date: {[Op.ne]: null}
         },
         transaction: t
       })

@@ -385,7 +385,8 @@ module.exports = {
       let is_approved = await models.surgery.count({
         where: {
           idx_t_surgery: obj.data.id,
-          approved_by: {[Op.ne]: null}
+          approved_by: {[Op.ne]: null},
+          approved_date: {[Op.ne]: null}
         },
         transaction: t
       })
