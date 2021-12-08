@@ -351,7 +351,7 @@ module.exports = {
       obj.study['head_of_kumm'] = sessions[0].user_id;
       obj.study['head_of_kumm_date'] = new Date();
 
-      let is_checked = await models.study.count({
+      let is_checked = await models.study_lys.count({
         where: {
           idx_t_study_lys: obj.study.id,
           [Op.or]: [
@@ -362,7 +362,7 @@ module.exports = {
         transaction: t
       })
 
-      let is_approved = await models.study.count({
+      let is_approved = await models.study_lys.count({
         where: {
           idx_t_study_lys: obj.study.id,
           head_of_kumm: { [Op.ne]: null },
