@@ -25,7 +25,7 @@ module.exports = {
   EMAIL_DEBUG: cfg['DEBUG'],
   EMAIL_LOGGER: cfg['DEBUG'],
   UPLOAD_PATH: cfg['UPLOAD_PATH'],
-  LOGO_PATH: `${cfg['UPLOAD_PATH']}logo/`,
+  LOGO_PATH: `assets/`,
   CIPHER_KEY: cfg['CIPHER_KEY'],
   CIPHER_IV: cfg['CIPHER_IV'],
   RECAPTCHA_SECRET_KEY: cfg['CAPTCHA'],
