@@ -19,7 +19,7 @@ module.exports = {
       if (sessions.length === 0)
         return null;
 
-      let r = await core.checkRoles(sessions[0].user_id,[92]);
+      let r = await core.checkRoles(sessions[0].user_id, [92]);
       let is_void_checker = r.filter(a => a.idx_m_form == 92 && a.is_read).length > 0
       let m = await models.study_lys.findOne({
         attributes: [
@@ -297,7 +297,7 @@ module.exports = {
         transaction: t
       })
 
-      if(is_arranged > 0) return response.failed('Form belum dilakukan penyusunan, Silakan klik tombol SIMPAN untuk melakukan sign penyusunan.')
+      if (is_arranged > 0) return response.failed('Form belum dilakukan penyusunan, Silakan klik tombol SIMPAN untuk melakukan sign penyusunan.')
 
       // delete heula
       // await models.study_lys_event.destroy({ transaction: t, where: { idx_t_study_lys: obj.study.id } })
@@ -331,7 +331,9 @@ module.exports = {
   },
 
   /**
-   * 
+   * Spesial untuk ini
+   * approved_by = head_of_kumm
+   * checked_by = head_of_reg
    * @param {*} sid 
    * @param {*} obj 
    * @returns 
@@ -353,8 +355,8 @@ module.exports = {
         where: {
           idx_t_study_lys: obj.study.id,
           [Op.or]: [
-            { checked_by: null, },
-            { checked_date: null }
+            { head_of_reg: null, },
+            { head_of_reg_date: null }
           ]
         },
         transaction: t
@@ -363,14 +365,14 @@ module.exports = {
       let is_approved = await models.study.count({
         where: {
           idx_t_study_lys: obj.study.id,
-          approved_by: {[Op.ne]: null},
-          approved_date: {[Op.ne]: null}
+          head_of_kumm: { [Op.ne]: null },
+          head_of_kumm_date: { [Op.ne]: null }
         },
         transaction: t
       })
 
-      if(is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
-      if(is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
+      if (is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
+      if (is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
       // delete heula
       // await models.study_lys_event.destroy({ transaction: t, where: { idx_t_study_lys: obj.study.id } })
       // await models.study_lys_violation.destroy({ transaction: t, where: { idx_t_study_lys: obj.study.id } })
