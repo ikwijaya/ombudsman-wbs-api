@@ -2322,25 +2322,11 @@ module.exports = {
           where: { idx_m_user: parseInt(c.getDataValue('ucreate')) }
         })
 
-        let reported = `
-          <table border="1" class="letter" width = "100%">
-            <tr>
-              <td>Nama Teradu</td>
-              <td>Identitas</td>
-              <td>Jabatan</td>
-            </tr>
-        `;
+        let reported = ``;
         for (let i = 0; i < s.getDataValue('complaint_study_reporteds').length; i++) {
           let report = s.getDataValue('complaint_study_reporteds')
-          reported += `
-          <tr>
-            <td>${report[i].name}</td>
-            <td>${report[i].identity_no}</td>
-            <td>${report[i].occupation}</td>
-          </tr>
-          `
+          reported += `${report[i].name}`
         }
-        reported += `</table>`
 
         // validation
         let arranged_by, approved_by, checked_by;
@@ -2557,11 +2543,6 @@ module.exports = {
               <td>Diperiksa: Kepala Keasistenan Regional</td>
               <td>Disetujui: Kepala Keasistenan Utama Manajement Mutu</td>
             </tr>
-            <tr>
-              <td><br /><br /><br /><br /></td>
-              <td><br /><br /><br /><br /></td>
-              <td><br /><br /><br /><br /></td>
-            </tr>
             <tr style="text-align: center; font-weight: bold;">
               <td>${v.getDataValue('arranged_by')}</td>
               <td>${v.getDataValue('checked_by')}</td>
@@ -2572,7 +2553,7 @@ module.exports = {
       }
 
       html += `</div>`;
-      return { html: html }
+      return { html: html.replace(/(null)/gm, '') }
     } catch (error) {
       throw (error)
     }
@@ -2580,7 +2561,7 @@ module.exports = {
 
   /**
    * Lampiran 7 : FORMAT 3A SURAT PEMBERITAHUAN HASIL VALIDASI KEPADA TERADU
-   * @param {*} id 
+   * @param {*} id /(null)/gm
    * @returns 
    */
   async letter_07F3A(id, flag = null) {
