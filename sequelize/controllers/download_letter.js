@@ -2243,7 +2243,7 @@ module.exports = {
    */
   async letter_06F2(id, flag = null) {
     try {
-      let html = `< div >
+      let html = `<div>
           <center style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">
             <img height="50px" width="175px" src="${API_URL}/others/logo/logo.png"></img>
             <div><span class="title">KERTAS KERJA VALIDASI</span></div>
@@ -2323,7 +2323,7 @@ module.exports = {
         })
 
         let reported = `
-          < table border = "1" class="letter" width = "100%" >
+          <table border="1" class="letter" width = "100%">
             <tr>
               <td>Nama Teradu</td>
               <td>Identitas</td>
@@ -2333,14 +2333,14 @@ module.exports = {
         for (let i = 0; i < s.getDataValue('complaint_study_reporteds').length; i++) {
           let report = s.getDataValue('complaint_study_reporteds')
           reported += `
-          < tr >
+          <tr>
             <td>${report[i].name}</td>
             <td>${report[i].identity_no}</td>
             <td>${report[i].occupation}</td>
-          </tr >
+          </tr>
           `
         }
-        reported += `</table > `
+        reported += `</table>`
 
         // validation
         let arranged_by, approved_by, checked_by;
@@ -2388,7 +2388,7 @@ module.exports = {
         let terlapor = comms.filter(e => e.by == 'TERLAPOR');
         let teradu = comms.filter(e => e.by == 'TERADU');
         let hterlapor = `
-          < table border = "1" class="letter" width = "100%" >
+          <table border="1" class="letter" width = "100%">
             <tr>
               <td width="20%">Tanggal</td>
               <td>Media</td>
@@ -2396,7 +2396,7 @@ module.exports = {
             </tr>
         `
         let hteradu = `
-          < table border = "1" class="letter" width = "100%" >
+          <table border="1" class="letter" width = "100%">
             <tr>
               <td width="20%">Tanggal</td>
               <td>Media</td>
@@ -2405,25 +2405,25 @@ module.exports = {
         `
         for (let i in terlapor) {
           hterlapor += `
-          < tr >
+          <tr>
               <td>${moment(terlapor[i].date).format('DD MMM YYYY | HH:mm:ss')}</td>
               <td>${terlapor[i].media}</td>
               <td>${terlapor[i].notes}</td>  
-            </tr >
+            </tr>
           `
         }
-        hterlapor += `</table > `
+        hterlapor += `</table> `
 
         for (let i in teradu) {
           hteradu += `
-          < tr >
+          <tr>
               <td>${moment(teradu[i].date).format('DD MMM YYYY | HH:mm:ss')}</td>
               <td>${teradu[i].media}</td>
               <td>${teradu[i].notes}</td>  
-            </tr >
+            </tr>
           `
         }
-        hteradu += `</table > `
+        hteradu += `</table> `
         arranged_by = await models.users.findOne({ where: { idx_m_user: v.getDataValue('arranged_by') } })
         approved_by = await models.users.findOne({ where: { idx_m_user: v.getDataValue('approved_by') } })
         checked_by = await models.users.findOne({ where: { idx_m_user: v.getDataValue('checked_by') } })
@@ -2433,9 +2433,9 @@ module.exports = {
         v['checked_by'] = checked_by instanceof models.users ? checked_by.getDataValue('email') : null
 
         let vstep = v.getDataValue('step') ? JSON.parse(v.getDataValue('step')) : [];
-        let hstep = `< ul > `;
-        for (let i in vstep) { hstep += `< li > ${vstep[i].value}</li > `; }
-        hstep += `</ul > `;
+        let hstep = `<ul> `;
+        for (let i in vstep) { hstep += `<li> ${vstep[i].value}</li> `; }
+        hstep += `</ul>`;
 
         // study_lys
         let sl = await models.study_lys.findOne({
@@ -2462,15 +2462,11 @@ module.exports = {
         })
 
         html += `
-          < p style = "font-weight: bold;" > A.Informasi Aduan</p >
+          <p style = "font-weight: bold;" > A.Informasi Aduan</p>
             <table border="1" class="letter" width="100%">
               <tr style="padding: 5px;">
-                <td width="20%" style="font-weight: bold;">No Register</td>
-                <td>${c.getDataValue('form_no')}</td>
-              </tr>
-              <tr>
-                <td>Tanggal</td>
-                <td>${moment(c.getDataValue('date')).format('DD MMM YY | HH:mm:ss')}</td>
+                <td width="20%" style="font-weight: bold;">Nomor WBS | Tanggal</td>
+                <td>${c.getDataValue('form_no')} | ${moment(c.getDataValue('date')).format('DD MMM YY')}</td>
               </tr>
               <tr>
                 <td>Pengadu</td>
@@ -2503,7 +2499,7 @@ module.exports = {
             </table>`
 
         html += `
-              < p style = "font-weight: bold; margin-top: 40px" > B.Validasi</p >
+              <p style="font-weight: bold; margin-top: 40px">B.Validasi</p>
                 <table border="1" class="letter" width="100%">
                   <thead>
                     <tr style="padding: 5px;">
@@ -2539,18 +2535,18 @@ module.exports = {
         `;
 
         html += `
-          < p style = "font-weight: bold; margin-top: 40px" > C.Kesimpulan Validasi</p >
+          <p style = "font-weight: bold; margin-top: 40px">C.Kesimpulan Validasi</p>
             <div>${v.getDataValue('result_obtained')}</div>
         `
 
         html += `
-          < p style = "font-weight: bold; margin-top: 40px" > D.Rencana Tindak Lanjut</p >
+          <p style = "font-weight: bold; margin-top: 40px">D.Rencana Tindak Lanjut</p>
           <div>${v.getDataValue('action_plan')}</div>
           <br /><br />
         `
 
         html += `
-          < table border = "1" class="letter" width = "100%" >
+          <table border = "1" class="letter" width = "100%">
             <tr>
               <td>Tanggal: <i>${moment(v.getDataValue('arranged_date')).format('DD MMM YYYY | HH:mm:ss')}</i></td>
               <td>Tanggal: <i>${moment(v.getDataValue('checked_date')).format('DD MMM YYYY | HH:mm:ss')}</i></td>
@@ -2571,16 +2567,13 @@ module.exports = {
               <td>${v.getDataValue('checked_by')}</td>
               <td>${v.getDataValue('approved_by')}</td>
             </tr>
-          </table >
+          </table>
           `
       }
 
-      html += `</div > `;
-      return {
-        html: html
-      }
+      html += `</div>`;
+      return { html: html }
     } catch (error) {
-
       throw (error)
     }
   },
@@ -4686,9 +4679,9 @@ module.exports = {
           [Sequelize.literal(`concat('LAPORAN ', lhpa.type)`), 'type'],
           'substansi', 'procedure', 'product', 'fakta', 'head_of_kumm',
           'analisis_pemeriksaan', 'pendapat_pemeriksa', 'kesimpulan_pemeriksa', 'tindak_lanjut', 'dcreate',
-          [Sequelize.literal(`to_char(lhpa.checked_date, 'DD-MM-YYYY HH24:MI:SS')`),'checked_date'], 'checked_by', 
-          [Sequelize.literal(`to_char(lhpa.approved_date, 'DD-MM-YYYY HH24:MI:SS')`),'approved_date'], 'approved_by',
-          [Sequelize.literal(`to_char(lhpa.arranged_date, 'DD-MM-YYYY HH24:MI:SS')`),'arranged_date'], 'arranged_by'
+          [Sequelize.literal(`to_char(lhpa.checked_date, 'DD-MM-YYYY HH24:MI:SS')`), 'checked_date'], 'checked_by',
+          [Sequelize.literal(`to_char(lhpa.approved_date, 'DD-MM-YYYY HH24:MI:SS')`), 'approved_date'], 'approved_by',
+          [Sequelize.literal(`to_char(lhpa.arranged_date, 'DD-MM-YYYY HH24:MI:SS')`), 'arranged_date'], 'arranged_by'
         ],
         include: [
           {
