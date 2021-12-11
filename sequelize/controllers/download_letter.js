@@ -3947,7 +3947,7 @@ module.exports = {
           where: { idx_m_complaint: id, record_status: 'A' }
         })
 
-        let sl_event = s.getDataValue('complaint_study_reporteds') || []
+        let sl_event = s.getDataValue('complaint_study_events') || []
         let hevent = `<table width="100%" border="1" class="letter">
           <tr>
             <td>Tanggal</td>
