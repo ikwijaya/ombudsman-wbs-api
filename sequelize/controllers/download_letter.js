@@ -3817,25 +3817,11 @@ module.exports = {
           where: { idx_m_user: parseInt(c.getDataValue('ucreate')) }
         })
 
-        let reported = `
-          <table border = "1" class="letter" width = "100%" >
-            <tr>
-              <td>Nama Teradu</td>
-              <td>Identitas</td>
-              <td>Jabatan</td>
-            </tr>
-        `;
+        let reported = ``;
         for (let i = 0; i < s.getDataValue('complaint_study_reporteds').length; i++) {
           let report = s.getDataValue('complaint_study_reporteds')
-          reported += `
-          <tr>
-            <td>${report[i].name}</td>
-            <td>${report[i].identity_no}</td>
-            <td>${report[i].occupation}</td>
-          </tr>
-          `
+          reported += `${report[i].name}`
         }
-        reported += `</table> `
 
         // validation
         let arranged_by, approved_by, checked_by;
@@ -3904,7 +3890,7 @@ module.exports = {
               <td>${moment(terlapor[i].date).format('DD MMM YYYY | HH:mm:ss')}</td>
               <td>${terlapor[i].media}</td>
               <td>${terlapor[i].notes}</td>  
-            </tr >
+            </tr>
           `
         }
         hterlapor += `</table > `
@@ -3915,7 +3901,7 @@ module.exports = {
               <td>${moment(teradu[i].date).format('DD MMM YYYY | HH:mm:ss')}</td>
               <td>${teradu[i].media}</td>
               <td>${teradu[i].notes}</td>  
-            </tr >
+            </tr>
           `
         }
         hteradu += `</table > `
@@ -3952,7 +3938,7 @@ module.exports = {
         })
 
         let sl_event = sl.getDataValue('study_lys_events') || []
-        let hevent = `< table width = "100%" border = "1" class="letter" >
+        let hevent = `<table width="100%" border="1" class="letter">
           <tr>
             <td>Tanggal</td>
             <td>Peristiwa</td>
@@ -3963,7 +3949,7 @@ module.exports = {
             <td>${moment(sl_event[i].date).format('DD MMM YYYY')}</td>
             <td>${sl_event[i].event}</td>
             <td>${sl_event[i].notes}</td>
-          </tr > `
+          </tr> `
         }
         hevent += `</table > `
 
@@ -3972,11 +3958,7 @@ module.exports = {
             <table border="1" class="letter" width="100%">
               <tr style="padding: 5px;">
                 <td width="20%" style="font-weight: bold;">No Registrasi Aduan</td>
-                <td>${c.getDataValue('form_no')}</td>
-              </tr>
-              <tr>
-                <td>Tanggal Pengaduan</td>
-                <td>${moment(c.getDataValue('date')).format('DD MMM YY | HH:mm:ss')}</td>
+                <td>${c.getDataValue('form_no')} | ${moment(c.getDataValue('date')).format('DD MMM YY')}</td>
               </tr>
               <tr>
                 <td>Pengadu</td>
@@ -4062,11 +4044,6 @@ module.exports = {
               <td>Diperiksa: Kepala Keasistenan Regional</td>
               <td>Disetujui: Kepala Keasistenan Utama Manajement Mutu</td>
             </tr>
-            <tr>
-              <td><br /><br /><br /><br /></td>
-              <td><br /><br /><br /><br /></td>
-              <td><br /><br /><br /><br /></td>
-            </tr>
             <tr style="text-align: center; font-weight: bold;">
               <td>${v.getDataValue('arranged_by')}</td>
               <td>${v.getDataValue('checked_by')}</td>
@@ -4078,10 +4055,9 @@ module.exports = {
 
       html += `</div>`;
       return {
-        html: html
+        html: html.replace(/(null)/gm, '')
       }
     } catch (error) {
-
       throw (error)
     }
   },
