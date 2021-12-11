@@ -3806,6 +3806,16 @@ module.exports = {
               model: models.complaint_study_reported,
               where: { record_status: 'A' }
             },
+            {
+              required: false,
+              attributes: [
+                'idx_t_complaint_study_event',
+                'event', 'date', 'notes', 'simple_app_no',
+                'dcreate', 'ucreate', 'dmodified', 'umodified'
+              ],
+              model: models.complaint_study_events,
+              where: { record_status: 'A' }
+            },
           ],
           where: { record_status: 'A', idx_m_complaint: c instanceof models.complaints ? c.getDataValue('idx_m_complaint') : null }
         }
@@ -3869,7 +3879,7 @@ module.exports = {
         let terlapor = comms.filter(e => e.by == 'TERLAPOR');
         let teradu = comms.filter(e => e.by == 'TERADU');
         let hterlapor = `
-          <table border = "1" class="letter" width = "100%">
+          <table border="1" class="letter" width = "100%">
             <tr>
               <td>Tanggal</td>
               <td>Media</td>
@@ -3937,7 +3947,7 @@ module.exports = {
           where: { idx_m_complaint: id, record_status: 'A' }
         })
 
-        let sl_event = sl.getDataValue('study_lys_events') || []
+        let sl_event = s.getDataValue('complaint_study_reporteds') || []
         let hevent = `<table width="100%" border="1" class="letter">
           <tr>
             <td>Tanggal</td>
