@@ -3945,20 +3945,24 @@ module.exports = {
             <td>Keterangan</td>
           </tr>`
         for (let i in sl_event) {
-          hevent += `< tr >
+          hevent += `<tr>
             <td>${moment(sl_event[i].date).format('DD MMM YYYY')}</td>
             <td>${sl_event[i].event}</td>
             <td>${sl_event[i].notes}</td>
           </tr> `
         }
-        hevent += `</table > `
+        hevent += `</table> `
 
         html += `
-          <p style = "font-weight: bold;" > A.Informasi Aduan</p>
+          <p style="font-weight: bold;">A.Informasi Aduan</p>
             <table border="1" class="letter" width="100%">
               <tr style="padding: 5px;">
                 <td width="20%" style="font-weight: bold;">No Registrasi Aduan</td>
-                <td>${c.getDataValue('form_no')} | ${moment(c.getDataValue('date')).format('DD MMM YY')}</td>
+                <td>${c.getDataValue('form_no')}</td>
+              </tr>
+              <tr style="padding: 5px;">
+                <td width="20%" style="font-weight: bold;">Tanggal Pengaduan</td>
+                <td>${moment(c.getDataValue('date')).format('DD MMM YY')}</td>
               </tr>
               <tr>
                 <td>Pengadu</td>
@@ -3971,7 +3975,7 @@ module.exports = {
             </table>`
 
         html += `
-              <p style = "font-weight: bold; margin-top: 40px" > B.Pemetaan Pengaduan</p>
+              <p style = "font-weight: bold; margin-top: 40px">B.Pemetaan Pengaduan</p>
                 <table border="1" class="letter" width="100%">
                   <tbody>
                     <tr>
@@ -3997,7 +4001,7 @@ module.exports = {
                             </td>
                           </tr>
                           <tr>
-                            <td colspan="2">Substansi: <i>ga paham, ngambil dari data mana ini?</i></td>
+                            <td colspan="2">Substansi: <i></i></td>
                           </tr>
                           <tr>
                             <td colspan="2">Prosedur: <i>${sl.getDataValue('procedure')}</i></td>
@@ -4017,7 +4021,7 @@ module.exports = {
         `;
 
         html += `
-          <p style = "font-weight: bold; margin-top: 40px" > C.Kronologi Pokok Aduan</p>
+          <p style = "font-weight: bold; margin-top: 40px">C.Kronologi Pokok Aduan</p>
           <div>${hevent}</div>
           <p style="font-weight: bold; margin-top: 40px">D. Pokok Aduan Yang Perlu diklarifikasi</p>
           <div>${sl.getDataValue('scope_clarification')}</div>
