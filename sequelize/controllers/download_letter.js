@@ -4104,7 +4104,7 @@ module.exports = {
         c.setDataValue('approver_name', user instanceof models.users ? user.getDataValue('fullname') : '');
         let meetday = helper.dayToIndo(moment(c.getDataValue('meet_date')).format('dddd'))
         let meetdate = moment(c.getDataValue('meet_date')).format('DD MMM YYYY')
-        let meettime = moment(c.getDataValue('meet_time')).format('HH:mm:ss')
+        let meettime = c.getDataValue('meet_time')
         let meetagenda = c.getDataValue('agenda')
         let meettempat = c.getDataValue('tempat')
 
