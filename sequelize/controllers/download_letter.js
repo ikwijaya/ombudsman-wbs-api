@@ -4297,16 +4297,16 @@ module.exports = {
           </tr>`;
         }
 
-        let team_html = ``;
+        let team_html = `<td colspan="3"><center class="ttd-grid">`;
         for (let i = 0; i < teams.length; i++) {
           team_html += `
-            <div style="flex: 30%; margin: 2px">
-              <div style="text-align: center;"><b>${teams[i]['user.usertype.name']}</b></div>
-              <div><br /><br /><br /><br /></div>
-              <div style="text-align: center;"><i>(${teams[i]['user.fullname']})</i></div>
+            <div class="ttd-flex">
+              <div><b>${teams[i]['user.usertype.name']}</b></div>
+              <div><i>(${teams[i]['user.fullname']})</i></div>
             </div>
           `
         }
+        team_html += `</center></td>`
 
         //   <td colspan="3">
         //   <center class="ttd-grid">
@@ -4401,11 +4401,7 @@ module.exports = {
               <p>
                 <table border="1" class="letter" width="100%">
                   <tr><td colspan="3"><span style="font-weight: bold;">I. Tim Pemeriksa</span></td></tr>
-                  <tr>
-                    <td colspan="3">
-                      <center style="display: flex">${team_html}</center>
-                    </td>
-                  </tr>
+                  <tr>${team_html}</tr>
                   <tr><td colspan="3"><span style="font-weight: bold;">II. Terperiksa</span></td></tr>
                   <tr>${terperiksa_table}</tr>
                 </table>
