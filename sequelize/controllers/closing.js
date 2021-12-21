@@ -273,17 +273,17 @@ module.exports = {
         transaction: t
       }).catch(e => { throw (e) })
 
-      let is_approved = await models.closing.count({
-        where: {
-          idx_t_closing: obj.closing.id,
-          approved_by: { [Op.ne]: null },
-          approved_date: { [Op.ne]: null }
-        },
-        transaction: t
-      }).catch(e => { throw (e) })
+      // let is_approved = await models.closing.count({
+      //   where: {
+      //     idx_t_closing: obj.closing.id,
+      //     approved_by: { [Op.ne]: null },
+      //     approved_date: { [Op.ne]: null }
+      //   },
+      //   transaction: t
+      // }).catch(e => { throw (e) })
 
       if (is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
-      if (is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
+      // if (is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
       await models.closing.update(obj.closing, { where: { idx_t_closing: obj.closing.id }, transaction: t });
       await models.complaints.update(
         { idx_m_status: 17 },
