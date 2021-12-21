@@ -24,7 +24,7 @@ const email_debug = EMAIL_DEBUG
 const email_logger = EMAIL_LOGGER
 
 module.exports = {
-  dayToIndo(day) {
+  dayToIndo(key) {
     let day = null;
     if (key) key = key.toLowerCase();
 
