@@ -4281,16 +4281,14 @@ module.exports = {
         for (let i = 0; i < cld.length; i++) {
           terperiksa += `
           <tr>
-            <td rowspan="3">${i + 1}</td>
+            <td rowspan="2">${i + 1}</td>
             <td>
               <tr>
                 <td>Name</td>
-                <td>:</td>
                 <td>${cld[i]['name']}</td>
               </tr>
               <tr>
                 <td>Jabatan</td>
-                <td>:</td>
                 <td>${cld[i]['occupation']}</td>
               </tr>
             </td>
