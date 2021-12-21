@@ -24,22 +24,56 @@ const email_debug = EMAIL_DEBUG
 const email_logger = EMAIL_LOGGER
 
 module.exports = {
-  async getGitCommit(){
+  dayToIndo(day) {
+    let day = null;
+    if (key) key = key.toLowerCase();
+
+    switch (key) {
+      case 'monday':
+        day = 'Senin';
+        break;
+      case 'tuesday':
+        day = 'Selasa';
+        break;
+      case 'wednesday':
+        day = 'Rabu';
+        break;
+      case 'thursday':
+        day = 'Kamis';
+        break;
+      case 'friday':
+        day = 'Jum`at';
+        break;
+      case 'saturday':
+        day = 'Sabtu';
+        break;
+      case 'sunday':
+        day = 'Minggu';
+        break;
+
+      default:
+        break;
+    }
+
+    return day;
+  },
+
+  async getGitCommit() {
     return new Promise(async (res) => {
-      git.getLastCommit(function(e,c) { res(c) })
+      git.getLastCommit(function (e, c) { res(c) })
     })
   },
-  
+
   /**
    * 
    * @param {*} n 
    * @returns 
    */
-  token: (n=48) => {
-    return new Promise((o,x) => {
+  token: (n = 48) => {
+    return new Promise((o, x) => {
       let format = 'MMmmYYHHDDmmss.SSS'
-      require('crypto').randomBytes(n, function(e, buff){
-        if(e) x(e)
+      require('crypto').randomBytes(n, function (e, buff) {
+        if (e) x(e)
         let t = buff.toString('hex')
         let m = moment().format(format);
         o(`${t}${m}`)
@@ -86,10 +120,10 @@ module.exports = {
    * @param {*} arr = [No WBS, Update, Oleh]
    * @returns 
    */
-  mailTemplate(subject = 'WBS Updates', body_msg = ``, arr = []){
+  mailTemplate(subject = 'WBS Updates', body_msg = ``, arr = []) {
     return new Promise(async (resolve) => {
       let tables = ``;
-      for(let i=0; i<arr.length; i++){
+      for (let i = 0; i < arr.length; i++) {
         tables += `<tr>
           <td>${arr[i].wbs}</td>
           <td>${arr[i].update}</td>

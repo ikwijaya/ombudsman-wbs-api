@@ -1,6 +1,7 @@
 const { models } = require('..');
 const { Sequelize, Op, DataTypes } = require('sequelize');
 const moment = require('moment');
+const { helper } = require('../../helper')
 const { API_URL } = require('../../config')
 
 module.exports = {
@@ -4101,6 +4102,11 @@ module.exports = {
       if (c instanceof models.clarification) {
         let user = await models.users.findOne({ attributes: ['fullname'], where: { idx_m_user: c.getDataValue('approver') } })
         c.setDataValue('approver_name', user instanceof models.users ? user.getDataValue('fullname') : '');
+        let meetday = helper.dayToIndo(moment(c.getDataValue('meet_date')).format('dddd'))
+        let meetdate = moment(c.getDataValue('meet_date')).format('DD MMM YYYY')
+        let meettime = moment(c.getDataValue('meet_time')).format('HH:mm:ss')
+        let meetagenda = c.getDataValue('agenda')
+        let meettempat = c.getDataValue('tempat')
 
         html += `
           <table border="0" class="letter" width="100%">
@@ -4160,8 +4166,26 @@ module.exports = {
                   Dalam rangka memperoleh informasi yang lebih jelas dan
                   komprehensif terkait pengaduan dimaksud, maka kepada Saudara
                   dan Keasistenan yang menangani diminta untuk hadir dalam
-                  pertemuan permintaan klarifikasi pengaduan pada: ${c.getDataValue('meet_date')}
+                  pertemuan permintaan klarifikasi pengaduan pada:
                 </p>
+                <table>
+                  <tr>
+                    <td>Hari dan Tanggal</td>
+                    <td>${meetday}, ${meetdate}</td>
+                  </tr>
+                  <tr>
+                    <td>Pukul</td>
+                    <td>${meettime}</td>
+                  </tr>
+                  <tr>
+                    <td>Agenda</td>
+                    <td>${meetagenda}</td>
+                  </tr>
+                  <tr>
+                    <td>Tempat</td>
+                    <td>${meettempat}</td>
+                  </tr>
+                </table>
               </td>
             </tr>
             <tr>
@@ -4188,11 +4212,8 @@ module.exports = {
         `
       }
 
-      return {
-        html: html
-      }
+      return { html: html.replace(/(null)/gm, '') }
     } catch (error) {
-
       throw (error)
     }
   },
@@ -4260,7 +4281,7 @@ module.exports = {
         for (let i = 0; i < cld.length; i++) {
           terperiksa += `
           <tr>
-            <td>${i + 1}</td>
+            <td cols="3">${i + 1}</td>
             <td>
               <tr>
                 <td>Name</td>
@@ -4306,24 +4327,15 @@ module.exports = {
                 "
               >
                 <div>
-                  <span class="title"
-                    >KEASISTENAN UTAMA MANAJEMEN MUTU</span
-                  >
+                  <span class="title">KEASISTENAN UTAMA MANAJEMEN MUTU</span>
                 </div>
                 <div>
-                  <span
-                    >Jl. HR. Rasuna Said Kav. C-19 Jakarta Selatan
-                    12940</span
-                  >
+                  <span>Jl. HR. Rasuna Said Kav. C-19 Jakarta Selatan 12940</span>
                 </div>
                 <div><span>Tel.(021) 52960894-95, 52960904-05</span></div>
                 <div>
-                  <span
-                    >Website:
-                    <a href="www.ombudsman.go.id" target="_blank"
-                      >www.ombudsman.go.id</a
-                    ></span
-                  >
+                  <span>Website:
+                    <a href="www.ombudsman.go.id" target="_blank">www.ombudsman.go.id</a></span>
                 </div>
               </center>
             </td>
@@ -4349,7 +4361,7 @@ module.exports = {
           <tr>
             <td colspan="4">
               <p>
-                Bahwa pada hari ini ${moment(c.getDataValue('dcreate')).format("dddd")} tanggal
+                Bahwa pada hari ini ${helper.dayToIndo(moment(c.getDataValue('dcreate')).format("dddd"))} tanggal
                 ${moment(c.getDataValue('dcreate')).format("DD")} bulan
                 ${moment(c.getDataValue('dcreate')).format("MMM")} tahun
                 ${moment(c.getDataValue('dcreate')).format("YYYY")} Telah dilakukan permintaan klarifikasi dalam rangka menindaklanjuti Aduan atas nama ${c.getDataValue('by')} selaku ... mengenai ${c.getDataValue('object')}
@@ -4400,9 +4412,8 @@ module.exports = {
         `
       }
 
-      return { html: html }
+      return { html: html.replace(/(null)/gm, '') }
     } catch (error) {
-
       throw (error)
     }
   },
