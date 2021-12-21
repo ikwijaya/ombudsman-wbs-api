@@ -4308,6 +4308,26 @@ module.exports = {
           `
         }
 
+        //   <td colspan="3">
+        //   <center class="ttd-grid">
+        //     <div v-for="(a,b) in item.clarification_details" :key="b" class="ttd-flex">
+        //       <div><b>{{ a['occupation'] }}</b></div>
+        //       <div><i>({{a['name']}})</i></div>
+        //     </div>
+        //   </center>
+        // </td>
+        let cdetail = c.getDataValue('clarification_detail')
+        let terperiksa_table = `<td colspan="3"><center class="ttd-grid">`
+        for (let i = 0; i < cdetail.length; i++) {
+          terperiksa_table += `
+            <div class="ttd-flex">
+              <div><b>${cdetail[i]['occupation']}</b></div>
+              <div><i>(${cdetail[i]['name']})</i></div>
+            </div>
+          `
+        }
+        terperiksa_table += `</center></td>`
+
         html += `
         <table border="0" class="letter" width="100%">
           <tr>
@@ -4387,23 +4407,7 @@ module.exports = {
                     </td>
                   </tr>
                   <tr><td colspan="3"><span style="font-weight: bold;">II. Terperiksa</span></td></tr>
-                  <tr>
-                    <td>
-                      <div style="text-align: center;"><b>(Jabatan)</b></div>
-                      <div><br /><br /><br /><br /></div>
-                      <div style="text-align: center;"><i>(Nama Lengkap)</i></div>
-                    </td>
-                    <td>
-                      <div style="text-align: center;"><b>(Jabatan)</b></div>
-                      <div><br /><br /><br /><br /></div>
-                      <div style="text-align: center;"><i>(Nama Lengkap)</i></div>
-                    </td>
-                    <td>
-                      <div style="text-align: center;"><b>(Jabatan)</b></div>
-                      <div><br /><br /><br /><br /></div>
-                      <div style="text-align: center;"><i>(Nama Lengkap)</i></div>
-                    </td>
-                  </tr>
+                  <tr>${terperiksa_table}</tr>
                 </table>
               </p>
             </td>
