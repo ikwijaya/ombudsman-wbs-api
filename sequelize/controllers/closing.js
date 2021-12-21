@@ -273,39 +273,39 @@ module.exports = {
         transaction: t
       }).catch(e => { throw (e) })
 
-      // let is_approved = await models.closing.count({
-      //   where: {
-      //     idx_t_closing: obj.closing.id,
-      //     approved_by: { [Op.ne]: null },
-      //     approved_date: { [Op.ne]: null }
-      //   },
-      //   transaction: t
-      // }).catch(e => { throw (e) })
+      let is_approved = await models.closing.count({
+        where: {
+          idx_t_closing: obj.closing.id,
+          approved_by: { [Op.ne]: null },
+          approved_date: { [Op.ne]: null }
+        },
+        transaction: t
+      }).catch(e => { throw (e) })
 
       if (is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
-      // if (is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
-      await models.closing.update(obj.closing, { where: { idx_t_closing: obj.closing.id }, transaction: t });
+      if (is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
+      await models.closing.update(obj.closing, { where: { idx_t_closing: obj.closing.id }, transaction: t }).catch(e => { throw (e) });
       await models.complaints.update(
         { idx_m_status: 17 },
         {
           transaction: t,
-          where: { idx_m_complaint: obj['idx_m_complaint'] }
+          where: { idx_m_complaint: obj.closing['idx_m_complaint'] }
         }
-      )
+      ).catch(e => { throw (e) })
 
       await models.clogs.create({
-        idx_m_complaint: obj['idx_m_complaint'],
+        idx_m_complaint: obj.closing['idx_m_complaint'],
         action: 'U',
         flow: '17',
         changes: JSON.stringify(obj),
         ucreate: sessions[0].user_id,
         notes: 'pengaduan berhasil di tutup'
-      }, { transaction: t, });
+      }, { transaction: t, }).catch(e => { throw (e) });
 
-      await t.commit()
+      await t.commit().catch(e => { throw (e) });
       return response.success('Penyetujuan penutupan pengaduan berhasil disimpan')
     } catch (error) {
-      await t.rollback()
+      await t.rollback().catch(e => { throw (e) });
       console.log('err', error)
       throw (error)
     }
