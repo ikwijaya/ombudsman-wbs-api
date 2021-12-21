@@ -4281,20 +4281,14 @@ module.exports = {
         for (let i = 0; i < cld.length; i++) {
           terperiksa += `
           <tr>
-            <td rowspan="4">${i + 1}</td>
-            <td colspan="3">
-              <tr>
-                <td>Name</td>
-                <td>:</td>
-                <td>${cld[i]['name']}</td>
-              </tr>
-              <tr>
-                <td>Jabatan</td>
-                <td>:</td>
-                <td>${cld[i]['occupation']}</td>
-              </tr>
-            </td>
-          </tr>`;
+            <td>Name</td>
+            <td>${cld[i]['name']}</td>
+          </tr>
+          <tr>
+            <td>Jabatan</td>
+            <td>${cld[i]['occupation']}</td>
+          </tr>
+          <tr><td colspan="2"><hr /></td></tr>`;
         }
 
         let team_html = `<td colspan="3"><center class="ttd-grid">`;
