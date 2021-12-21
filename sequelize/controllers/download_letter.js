@@ -4085,7 +4085,7 @@ module.exports = {
     try {
       let html = ``;
       let c = await models.clarification.findOne({
-        attributes: ['idx_t_clarification', 'date', 'teams', 'result', 'to', 'address', 'by', 'object', 'meet_date', 'approver'],
+        attributes: ['idx_t_clarification', 'date', 'teams', 'result', 'to', 'address', 'by', 'object', 'meet_date', 'approver', 'meet_time', 'agenda', 'tempat'],
         include: [
           {
             required: false,
@@ -4227,7 +4227,7 @@ module.exports = {
     try {
       let html = ``;
       let c = await models.clarification.findOne({
-        attributes: ['idx_t_clarification', 'date', 'teams', 'result', 'to', 'address', 'by', 'object', 'meet_date', 'approver', 'dcreate'],
+        attributes: ['idx_t_clarification', 'date', 'teams', 'result', 'to', 'address', 'by', 'object', 'meet_date', 'approver', 'dcreate', 'meet_time', 'agenda', 'tempat'],
         include: [
           {
             required: false,
