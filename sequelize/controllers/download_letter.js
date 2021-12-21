@@ -4285,10 +4285,12 @@ module.exports = {
             <td>
               <tr>
                 <td>Name</td>
+                <td>:</td>
                 <td>${cld[i]['name']}</td>
               </tr>
               <tr>
                 <td>Jabatan</td>
+                <td>:</td>
                 <td>${cld[i]['occupation']}</td>
               </tr>
             </td>
