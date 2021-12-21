@@ -4281,7 +4281,7 @@ module.exports = {
         for (let i = 0; i < cld.length; i++) {
           terperiksa += `
           <tr>
-            <td rowspan="4">${i + 1}</td>
+            <td rowspan="4" colspan="3">${i + 1}</td>
             <td>
               <tr>
                 <td>Name</td>
