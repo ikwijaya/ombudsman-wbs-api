@@ -4281,7 +4281,7 @@ module.exports = {
         for (let i = 0; i < cld.length; i++) {
           terperiksa += `
           <tr>
-            <td cols="3">${i + 1}</td>
+            <td rowspan="3">${i + 1}</td>
             <td>
               <tr>
                 <td>Name</td>
@@ -4316,7 +4316,7 @@ module.exports = {
         //     </div>
         //   </center>
         // </td>
-        let cdetail = c.getDataValue('clarification_detail')
+        let cdetail = c.getDataValue('clarification_details')
         let terperiksa_table = `<td colspan="3"><center class="ttd-grid">`
         for (let i = 0; i < cdetail.length; i++) {
           terperiksa_table += `
