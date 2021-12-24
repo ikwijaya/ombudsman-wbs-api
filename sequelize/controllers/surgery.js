@@ -20,15 +20,15 @@ module.exports = {
         return null;
 
       let users = []
-      let r = await core.checkRoles(sessions[0].user_id,[92]);
+      let r = await core.checkRoles(sessions[0].user_id, [92]);
       let is_void_checker = r.filter(a => a.idx_m_form == 92 && a.is_read).length > 0
       let m = await models.surgery.findOne({
         raw: true,
         attributes: [
           'idx_t_surgery', 'notes', 'pengampu_kumm', 'result',
-          [Sequelize.literal(`to_char(surgery.checked_date, 'DD-MM-YYYY HH24:MI:SS')`),'checked_date'], 'checked_by', 
-          [Sequelize.literal(`to_char(surgery.approved_date, 'DD-MM-YYYY HH24:MI:SS')`),'approved_date'], 'approved_by',
-          [Sequelize.literal(`to_char(surgery.arranged_date, 'DD-MM-YYYY HH24:MI:SS')`),'arranged_date'], 'arranged_by'
+          [Sequelize.literal(`to_char(surgery.checked_date, 'DD-MM-YYYY HH24:MI:SS')`), 'checked_date'], 'checked_by',
+          [Sequelize.literal(`to_char(surgery.approved_date, 'DD-MM-YYYY HH24:MI:SS')`), 'approved_date'], 'approved_by',
+          [Sequelize.literal(`to_char(surgery.arranged_date, 'DD-MM-YYYY HH24:MI:SS')`), 'arranged_date'], 'arranged_by'
         ],
         where: { idx_m_complaint: id, record_status: 'A' }
       })
@@ -37,21 +37,21 @@ module.exports = {
       m.arranged_by_name = users.filter(a => a['idx_m_user'] == m['arranged_by']).length > 0 ? users.filter(a => a['idx_m_user'] == m['arranged_by'])[0].name : null
       m.approved_by_name = users.filter(a => a['idx_m_user'] == m['approved_by']).length > 0 ? users.filter(a => a['idx_m_user'] == m['approved_by'])[0].name : null
       m.checked_by_name = users.filter(a => a['idx_m_user'] == m['checked_by']).length > 0 ? users.filter(a => a['idx_m_user'] == m['checked_by'])[0].name : null
-      
+
       /** SECURITY */
-      if(m.arranged_by == sessions[0].user_id || !m.arranged_date){
+      if (m.arranged_by == sessions[0].user_id || !m.arranged_date) {
         m.is_update = !m.checked_date || !m.arranged_date
         m.is_check = false
         m.is_approve = false
       }
 
-      if(m.checked_by == sessions[0].user_id || is_void_checker){
+      if (m.checked_by == sessions[0].user_id || is_void_checker) {
         m.is_update = !m.approved_date
         m.is_check = !m.approved_date
         m.is_approve = false
       }
 
-      if(m.approved_by == sessions[0].user_id){
+      if (m.approved_by == sessions[0].user_id) {
         m.is_update = true
         m.is_check = false
         m.is_approve = true
@@ -172,6 +172,12 @@ module.exports = {
             },
             {
               required: false,
+              attributes: ['pokok_aduan'],
+              model: models.validation,
+              where: { record_status: 'A' }
+            },
+            {
+              required: false,
               attributes: ['description'],
               model: models.study_lys,
               where: { record_status: 'A' }
@@ -266,7 +272,7 @@ module.exports = {
    * @param {*} obj 
    * @returns 
    */
-   async update(sid, obj = {}) {
+  async update(sid, obj = {}) {
     const t = await sequelize.transaction();
 
     try {
@@ -278,7 +284,7 @@ module.exports = {
       obj.data['dmodified'] = new Date();
       obj.data['arranged_by'] = sessions[0].user_id;
       obj.data['arranged_date'] = new Date()
-      
+
       await models.surgery.update(obj.data, {
         where: { idx_t_surgery: obj.data.id },
         transaction: t,
@@ -306,7 +312,7 @@ module.exports = {
    * @param {*} obj 
    * @returns 
    */
-   async check(sid, obj = {}) {
+  async check(sid, obj = {}) {
     const t = await sequelize.transaction();
 
     try {
@@ -329,8 +335,8 @@ module.exports = {
         transaction: t
       })
 
-      if(is_arranged > 0) return response.failed('Form belum dilakukan penyusunan, Silakan klik tombol SIMPAN untuk melakukan sign penyusunan.')
-      if(!obj.data['approved_by']) return response.failed('Kolom Disetujui Oleh TIDAK boleh kosong')
+      if (is_arranged > 0) return response.failed('Form belum dilakukan penyusunan, Silakan klik tombol SIMPAN untuk melakukan sign penyusunan.')
+      if (!obj.data['approved_by']) return response.failed('Kolom Disetujui Oleh TIDAK boleh kosong')
 
       await models.surgery.update(obj.data, {
         where: { idx_t_surgery: obj.data.id },
@@ -359,7 +365,7 @@ module.exports = {
    * @param {*} obj 
    * @returns 
    */
-   async approve(sid, obj = {}) {
+  async approve(sid, obj = {}) {
     const t = await sequelize.transaction();
 
     try {
@@ -385,20 +391,20 @@ module.exports = {
       let is_approved = await models.surgery.count({
         where: {
           idx_t_surgery: obj.data.id,
-          approved_by: {[Op.ne]: null},
-          approved_date: {[Op.ne]: null}
+          approved_by: { [Op.ne]: null },
+          approved_date: { [Op.ne]: null }
         },
         transaction: t
       })
 
-      if(is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
-      if(is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
+      if (is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
+      if (is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
       await models.surgery.update(obj.data, { where: { idx_t_surgery: obj.data.id }, transaction: t });
       await models.complaints.update({
         umodified: sessions[0].user_id,
         dmodified: new Date(),
         idx_m_status: 14
-      },{transaction:t, where: { idx_m_complaint: obj.data['idx_m_complaint'], }})
+      }, { transaction: t, where: { idx_m_complaint: obj.data['idx_m_complaint'], } })
 
       let c = await models.complaints.findOne({
         attributes: [
@@ -408,9 +414,9 @@ module.exports = {
         where: { idx_m_complaint: obj.data['idx_m_complaint'], }
       })
 
-      if(c instanceof models.complaints && c.getDataValue('idx_m_legal_standing') != -1){
-        let user = await models.users.findOne({ 
-          attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name'], 'idx_m_user'],  
+      if (c instanceof models.complaints && c.getDataValue('idx_m_legal_standing') != -1) {
+        let user = await models.users.findOne({
+          attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name'], 'idx_m_user'],
           where: { idx_m_user: c.getDataValue('ucreate') }
         })
         c.setDataValue('pengadu', user.getDataValue('name'))
