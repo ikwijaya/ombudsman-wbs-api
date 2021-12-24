@@ -18,17 +18,18 @@ module.exports = {
       let sessions = await core.checkSession(sid)
       if (sessions.length === 0)
         return null;
-    
-      let r = await core.checkRoles(sessions[0].user_id,[10]);
+
+      let r = await core.checkRoles(sessions[0].user_id, [10]);
       let m = await models.clarification.findOne({
         attributes: [
           'idx_t_clarification',
-          'date', 'teams', 'result',
-          'to', 'address', 'by','object', 
-          [Sequelize.literal(`cast(meet_date AS DATE)`), 'meet_date'], 
+          'teams', 'result',
+          [Sequelize.literal(`cast(date AS DATE)`), 'date'],
+          'to', 'address', 'by', 'object',
+          [Sequelize.literal(`cast(meet_date AS DATE)`), 'meet_date'],
           'meet_time', 'approver',
-          'agenda', 'tempat', 'letter_no', 
-          [Sequelize.literal(`cast(letter_date AS DATE)`),'letter_date'], 
+          'agenda', 'tempat', 'letter_no',
+          [Sequelize.literal(`cast(letter_date AS DATE)`), 'letter_date'],
           'filename', 'path', 'mime_type', 'filesize',
           [Sequelize.literal(`concat('${API_URL}/others/open/',filename)`), 'url']
         ],
