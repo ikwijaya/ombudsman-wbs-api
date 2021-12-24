@@ -11,7 +11,7 @@ module.exports = {
    * @param {*} sid 
    * @param {*} obj 
    */
-  async next(sid, obj = {}){
+  async next(sid, obj = {}) {
     const t = await sequelize.transaction();
 
     try {
@@ -22,22 +22,22 @@ module.exports = {
       let idx_m_complaint = obj.data.idx_m_complaint || [];
       delete obj.data.idx_m_complaint;
       await models.complaint_pleno.update(obj.data,
-        { 
+        {
           where: { idx_m_complaint: { [Op.in]: idx_m_complaint } },
-          transaction: t 
+          transaction: t
         })
 
       let where = {};
-      where['idx_m_complaint'] = {[Op.in]: idx_m_complaint};
+      where['idx_m_complaint'] = { [Op.in]: idx_m_complaint };
       where['date'] = { [Op.eq]: null };
 
       let count = await models.complaint_pleno.count({ where: where, transaction: t });
       if (count > 0) return response.failed(`<ul><li>` + ['Kolom tanggal rapat pleno TIDAK boleh kosong.'].join('</li><li>') + `</li></ul>`)
 
       // to Penyampaian Tindak Lanjut
-      await models.complaints.update({ idx_m_status: 15 }, { transaction: t, where: { idx_m_complaint: {[Op.in]: idx_m_complaint} } })
+      await models.complaints.update({ idx_m_status: 15 }, { transaction: t, where: { idx_m_complaint: { [Op.in]: idx_m_complaint } } })
       let logs = []
-      for(let i=0; i<idx_m_complaint.length; i++){
+      for (let i = 0; i < idx_m_complaint.length; i++) {
         logs.push({
           idx_m_complaint: idx_m_complaint[i],
           action: 'U',
@@ -104,7 +104,7 @@ module.exports = {
         }
       }
 
-      await models.clogs.bulkCreate(logs,{ transaction: t })
+      await models.clogs.bulkCreate(logs, { transaction: t })
       await t.commit()
       return response.success('Berhasil ke proses selanjutnya')
     } catch (error) {
@@ -119,7 +119,7 @@ module.exports = {
    * @param {*} id 
    * @returns 
    */
-  async get(sid = null, id = null){
+  async get(sid = null, id = null) {
     try {
       let sessions = await core.checkSession(sid)
       if (sessions.length === 0)
@@ -147,7 +147,7 @@ module.exports = {
       if (sessions.length === 0)
         return [];
 
-      let r = await core.checkRoles(sessions[0].user_id,[14]);
+      let r = await core.checkRoles(sessions[0].user_id, [14]);
       let users = []
       let complaint = await models.complaints.findAll(
         {
@@ -268,6 +268,12 @@ module.exports = {
               where: { record_status: 'A' }
             },
             {
+              required: false,
+              attributes: ['pokok_aduan'],
+              model: models.validation,
+              where: { record_status: 'A' }
+            },
+            {
               required: true,
               model: models.surgery,
               where: { approved_date: { [Op.ne]: null } }
@@ -299,7 +305,7 @@ module.exports = {
         }
       })
 
-      return { 
+      return {
         items: complaint,
         is_insert: r.filter((a) => a.idx_m_form == 14 && a.is_insert).length > 0
       };
