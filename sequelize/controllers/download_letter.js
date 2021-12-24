@@ -4878,7 +4878,7 @@ module.exports = {
               </div>
             </span>
             <span>
-              <div class="title">C. KRONOLOAGI ADUAN</div>
+              <div class="title">C. KRONOLOGI ADUAN</div>
               <div>
                 <table>
                   <thead>
