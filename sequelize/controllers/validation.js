@@ -22,7 +22,7 @@ module.exports = {
         return null;
 
       let arranged_by, approved_by, checked_by;
-      let r = await core.checkRoles(sessions[0].user_id,[92]);
+      let r = await core.checkRoles(sessions[0].user_id, [92]);
       let is_void_checker = r.filter(a => a.idx_m_form == 92 && a.is_read).length > 0
       let validation = await models.validation.findOne(
         {
@@ -33,6 +33,7 @@ module.exports = {
             'product',
             'step',
             'date',
+            'pokok_aduan',
             'result_obtained',
             'conclusion',
             'action_plan',
@@ -217,24 +218,24 @@ module.exports = {
         where: { idx_m_complaint: obj.validation.idx_m_complaint }
       })
 
-      if(dcs instanceof models.complaint_decisions){
-        if(obj.idx_m_violation && obj.idx_m_violation != dcs.getDataValue('idx_m_violation')){
+      if (dcs instanceof models.complaint_decisions) {
+        if (obj.idx_m_violation && obj.idx_m_violation != dcs.getDataValue('idx_m_violation')) {
           await models.complaint_decisions.update({
             idx_m_violation: obj.idx_m_violation,
             dmodified: new Date(),
             umodified: sessions[0].user_id
           }, {
             transaction: t,
-            where: { 
+            where: {
               idx_m_complaint: obj.validation.idx_m_complaint,
               idx_t_complaint_decision: dcs.getDataValue('idx_t_complaint_decision')
             }
           })
 
           let changes = ``;
-          if([5,9].includes(obj.idx_m_violation)) changes = `Merubah dari TPA ke MDP`
+          if ([5, 9].includes(obj.idx_m_violation)) changes = `Merubah dari TPA ke MDP`
           else changes = `Merubah dari MDP ke TPA`
-          
+
           // ===============> LOGS
           await models.clogs.create({
             idx_m_complaint: obj.validation.idx_m_complaint,
@@ -321,24 +322,24 @@ module.exports = {
         where: { idx_m_complaint: v.getDataValue('idx_m_complaint') }
       })
 
-      if(dcs instanceof models.complaint_decisions){
-        if(obj.idx_m_violation && obj.idx_m_violation != dcs.getDataValue('idx_m_violation')){
+      if (dcs instanceof models.complaint_decisions) {
+        if (obj.idx_m_violation && obj.idx_m_violation != dcs.getDataValue('idx_m_violation')) {
           await models.complaint_decisions.update({
             idx_m_violation: obj.idx_m_violation,
             dmodified: new Date(),
             umodified: sessions[0].user_id
           }, {
             transaction: t,
-            where: { 
+            where: {
               idx_m_complaint: v.getDataValue('idx_m_complaint'),
               idx_t_complaint_decision: dcs.getDataValue('idx_t_complaint_decision')
             }
           })
 
           let changes = ``;
-          if([5,9].includes(obj.idx_m_violation)) changes = `Merubah dari TPA ke MDP`
+          if ([5, 9].includes(obj.idx_m_violation)) changes = `Merubah dari TPA ke MDP`
           else changes = `Merubah dari MDP ke TPA`
-          
+
           // ===============> LOGS
           await models.clogs.create({
             idx_m_complaint: v.getDataValue('idx_m_complaint'),
@@ -401,8 +402,8 @@ module.exports = {
         transaction: t
       })
 
-      if(is_arranged > 0) return response.failed('Form belum dilakukan penyusunan, Silakan klik tombol SIMPAN untuk melakukan sign penyusunan.')
-      
+      if (is_arranged > 0) return response.failed('Form belum dilakukan penyusunan, Silakan klik tombol SIMPAN untuk melakukan sign penyusunan.')
+
       // delete heula before create, bisa pake beforeDestroy tp belom paham cuy
       await models.validation_checklists.destroy({ transaction: t, where: { idx_t_validation: obj.validation.id } })
       await models.validation_comm.destroy({ transaction: t, where: { idx_t_validation: obj.validation.id } })
@@ -424,24 +425,24 @@ module.exports = {
         where: { idx_m_complaint: v.getDataValue('idx_m_complaint') }
       })
 
-      if(dcs instanceof models.complaint_decisions){
-        if(obj.idx_m_violation && obj.idx_m_violation != dcs.getDataValue('idx_m_violation')){
+      if (dcs instanceof models.complaint_decisions) {
+        if (obj.idx_m_violation && obj.idx_m_violation != dcs.getDataValue('idx_m_violation')) {
           await models.complaint_decisions.update({
             idx_m_violation: obj.idx_m_violation,
             dmodified: new Date(),
             umodified: sessions[0].user_id
           }, {
             transaction: t,
-            where: { 
+            where: {
               idx_m_complaint: v.getDataValue('idx_m_complaint'),
               idx_t_complaint_decision: dcs.getDataValue('idx_t_complaint_decision')
             }
           })
 
           let changes = ``;
-          if([5,9].includes(obj.idx_m_violation)) changes = `Merubah dari TPA ke MDP`
+          if ([5, 9].includes(obj.idx_m_violation)) changes = `Merubah dari TPA ke MDP`
           else changes = `Merubah dari MDP ke TPA`
-          
+
           // ===============> LOGS
           await models.clogs.create({
             idx_m_complaint: v.getDataValue('idx_m_complaint'),
@@ -507,14 +508,14 @@ module.exports = {
       let is_approved = await models.validation.count({
         where: {
           idx_t_validation: obj.validation.id,
-          approved_by: {[Op.ne]: null},
-          approved_date: {[Op.ne]: null}
+          approved_by: { [Op.ne]: null },
+          approved_date: { [Op.ne]: null }
         },
         transaction: t
       })
 
-      if(is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
-      if(is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
+      if (is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
+      if (is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
 
       // delete heula before create, bisa pake beforeDestroy tp belom paham cuy
       await models.validation_checklists.destroy({ transaction: t, where: { idx_t_validation: obj.validation.id } })
@@ -539,24 +540,24 @@ module.exports = {
         where: { idx_m_complaint: v.getDataValue('idx_m_complaint') }
       })
 
-      if(dcs instanceof models.complaint_decisions){
-        if(obj.idx_m_violation && obj.idx_m_violation != dcs.getDataValue('idx_m_violation')){
+      if (dcs instanceof models.complaint_decisions) {
+        if (obj.idx_m_violation && obj.idx_m_violation != dcs.getDataValue('idx_m_violation')) {
           await models.complaint_decisions.update({
             idx_m_violation: obj.idx_m_violation,
             dmodified: new Date(),
             umodified: sessions[0].user_id
           }, {
             transaction: t,
-            where: { 
+            where: {
               idx_m_complaint: v.getDataValue('idx_m_complaint'),
               idx_t_complaint_decision: dcs.getDataValue('idx_t_complaint_decision')
             }
           })
 
           let changes = ``;
-          if([5,9].includes(obj.idx_m_violation)) changes = `Merubah dari TPA ke MDP`
+          if ([5, 9].includes(obj.idx_m_violation)) changes = `Merubah dari TPA ke MDP`
           else changes = `Merubah dari MDP ke TPA`
-          
+
           // ===============> LOGS
           await models.clogs.create({
             idx_m_complaint: v.getDataValue('idx_m_complaint'),
@@ -571,7 +572,7 @@ module.exports = {
 
       // is_next = true adalah pengaduan dilanjutkan ke Pemeriksaan
       // is_next = false adalah pengaduan dihentikan ke form_status = '100'
-      if(obj.is_next){
+      if (obj.is_next) {
         let d = await models.complaint_decisions.findOne({ where: { idx_m_complaint: v.getDataValue('idx_m_complaint') } })
         let next = null;
         if (d instanceof models.complaint_decisions) {
@@ -647,7 +648,7 @@ module.exports = {
         ], { transaction: t, });
       } else {
         await models.complaints.update(
-          { 
+          {
             form_status: '100',
             cancel_by: sessions[0].user_id,
             cancel_date: new Date()

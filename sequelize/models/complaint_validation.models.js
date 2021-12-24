@@ -18,6 +18,7 @@ module.exports = (sq) => {
     product: DataTypes.TEXT(),
     step: DataTypes.TEXT(),
     date: DataTypes.DATE,
+    pokok_aduan: DataTypes.TEXT(),
     result_obtained: DataTypes.TEXT(),
     conclusion: DataTypes.TEXT(),
     action_plan: DataTypes.TEXT(),
