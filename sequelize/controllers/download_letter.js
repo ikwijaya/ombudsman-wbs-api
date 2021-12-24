@@ -4015,7 +4015,7 @@ module.exports = {
                           <tr>
                             <td>
                               <div>Pemeriksaan Laporan</div>
-                              <div>Laporan Nomor: <i>${s.getDataValue('simpel_app_no')}</i></div>
+                              <div>Laporan Nomor: <i>${s.getDataValue('simple_app_no')}</i></div>
                             </td>
                             <td>
                               <div>Pencegahan</div>
@@ -4081,8 +4081,7 @@ module.exports = {
 
       html += `</div>`;
       return {
-        html: html.replace(/(null)/gm, ''),
-        others: s
+        html: html.replace(/(null)/gm, '')
       }
     } catch (error) {
       throw (error)
