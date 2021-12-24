@@ -2339,6 +2339,7 @@ module.exports = {
               'product',
               'step',
               'date',
+              'pokok_aduan',
               'result_obtained',
               'conclusion',
               'action_plan',
@@ -2469,7 +2470,7 @@ module.exports = {
               </tr>
               <tr>
                 <td>Pokok Aduan</td>
-                <td>${sl instanceof models.study_lys ? sl.getDataValue('description') : ''}</td>
+                <td>${v.getDataValue('pokok_aduan')}</td>
               </tr>
               <tr>
                 <td>Ruang Lingkup Aduan</td>
