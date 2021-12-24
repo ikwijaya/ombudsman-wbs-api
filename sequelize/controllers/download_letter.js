@@ -3783,6 +3783,7 @@ module.exports = {
           attributes: [
             'idx_t_complaint_study',
             'notes',
+            'simple_app_no'
           ],
           include: [
             {
@@ -4014,7 +4015,7 @@ module.exports = {
                           <tr>
                             <td>
                               <div>Pemeriksaan Laporan</div>
-                              <div>Laporan Nomor: <i>${sl.getDataValue('simpel_app_no')}</i></div>
+                              <div>Laporan Nomor: <i>${s.getDataValue('simpel_app_no')}</i></div>
                             </td>
                             <td>
                               <div>Pencegahan</div>
