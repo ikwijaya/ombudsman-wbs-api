@@ -584,6 +584,11 @@ module.exports = {
           include: [
             {
               required: false,
+              attributes: ['pokok_aduan'],
+              model: models.validation,
+            },
+            {
+              required: false,
               attributes: ['idx_m_legal_standing', 'name'],
               model: models.legal_standing,
             },
@@ -769,7 +774,7 @@ module.exports = {
                   </tr>
                   <tr>
                     <td>Pokok Aduan</td>
-                    <td>-</td>
+                    <td>${c ? c.getDataValue('validation')['pokok_aduan'] : null}</td>
                   </tr>
                   <tr>
                     <td>Harapan Pengadu</td>
@@ -4636,6 +4641,12 @@ module.exports = {
         ],
         include: [
           {
+            required: false,
+            attributes: ['pokok_aduan'],
+            model: models.validation,
+            where: { record_status: 'A' }
+          },
+          {
             attributes: ['idx_m_legal_standing', 'name'],
             model: models.legal_standing
           },
@@ -4717,7 +4728,7 @@ module.exports = {
           e.alamat_pengadu = null
           e.layanan = complaint instanceof models.complaints ? complaint.getDataValue('source_complaint') : null
           e.harapan_pengadu = complaint instanceof models.complaints ? complaint.getDataValue('hopes') : null
-          e.pokok_aduan = complaint instanceof models.complaints ? complaint.getDataValue('complaint_decisions') : []
+          // e.pokok_aduan = complaint instanceof models.complaints ? complaint.getDataValue('complaint_decisions') : []
           e.teradu = studies instanceof models.complaint_studies ? studies.getDataValue('complaint_study_reporteds') : []
           e.terperiksa = null;
           e.legal_standing = complaint instanceof models.complaints ? complaint.getDataValue('legal_standing') : null
@@ -4831,11 +4842,6 @@ module.exports = {
           <td colspan="2">${m[i].pengadu}</td>
         </tr>
         <tr>
-          <td width="20%">Alamat Pengadu</td>
-          <td width="2%">:</td>
-          <td colspan="2">${m[i].alamat_pengadu ? m[i].alamat_pengadu : ''}</td>
-        </tr>
-        <tr>
           <td width="20%">Teradu</td>
           <td width="2%">:</td>
           <td colspan="2">
@@ -4919,7 +4925,7 @@ module.exports = {
                   </tr>
                   <tr>
                     <td>Pokok Aduan</td>
-                    <td>${m[i].pokok_aduan}</td>
+                    <td>${complaint ? complaint.getDataValue('validation')['pokok_aduan'] : null}</td>
                   </tr>
                   <tr>
                     <td>Harapan Pengadu</td>
@@ -4966,8 +4972,10 @@ module.exports = {
               </tr>
             `
           }
+
+          act += `</tbody></table>`
         }
-        act += `</tbody></table>`
+
         html += act + `</td>
         </tr>
         <tr>
@@ -5059,7 +5067,7 @@ module.exports = {
       `
       }
 
-      return { html: html }
+      return { html: html.replace(/(null)/gm, '') }
     } catch (error) {
       throw (error)
     }
@@ -5259,9 +5267,9 @@ module.exports = {
         `
       }
 
-      html += `</div > `;
+      html += `</div> `;
       return {
-        html: html
+        html: html.replace(/(null)/gm, '')
       }
     } catch (error) {
 
