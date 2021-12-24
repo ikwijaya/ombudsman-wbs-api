@@ -4386,10 +4386,10 @@ module.exports = {
           <tr>
             <td colspan="4">
               <p>
-                Bahwa pada hari ini ${helper.dayToIndo(moment(c.getDataValue('dcreate')).format("dddd"))} tanggal
-                ${moment(c.getDataValue('dcreate')).format("DD")} bulan
-                ${moment(c.getDataValue('dcreate')).format("MMM")} tahun
-                ${moment(c.getDataValue('dcreate')).format("YYYY")} Telah dilakukan permintaan klarifikasi dalam rangka menindaklanjuti Aduan atas nama ${c.getDataValue('by')} selaku ... mengenai ${c.getDataValue('object')}
+                Bahwa pada hari ini ${helper.dayToIndo(moment(c.getDataValue('date')).format("dddd"))} tanggal
+                ${moment(c.getDataValue('date')).format("DD")} bulan
+                ${moment(c.getDataValue('date')).format("MMM")} tahun
+                ${moment(c.getDataValue('date')).format("YYYY")} Telah dilakukan permintaan klarifikasi dalam rangka menindaklanjuti Aduan atas nama ${c.getDataValue('by')} selaku ... mengenai ${c.getDataValue('object')}
               </p>
               <p>
                 Tim pemeriksa berdasarkan Surat Tugas Kepala Keasistenan
