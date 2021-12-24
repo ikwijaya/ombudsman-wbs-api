@@ -23,8 +23,8 @@ module.exports = {
       let m = await models.confirmation.findAll({
         attributes: [
           'idx_t_confirmation',
-          'value', 'head_of_kumm', 'via', 
-          [Sequelize.literal(`cast(date AS DATE)`),'date'], 
+          'value', 'head_of_kumm', 'via',
+          [Sequelize.literal(`cast(date AS DATE)`), 'date'],
           'by', 'media', 'notes',
           'response', 'to', 'address', 'by', 'object', 'desc',
           [Sequelize.literal(`case when 1=${r.filter(a => a.idx_m_form == 11 && a.is_update).length > 0 ? 1 : 0} then true else false end`), 'is_update'],
@@ -560,7 +560,7 @@ module.exports = {
             by: null,
             idx_t_lhpa: lhpa_02.getDataValue('idx_t_lhpa')
           }], { transaction: t });
-        
+
         // get tim pemeriksa
         let pemeriksa = await models.complaint_determination_users.findAll(
           {
@@ -587,17 +587,17 @@ module.exports = {
           }
         )
         let getPemeriksa = ``;
-        for (let i = 0; i < pemeriksa.length; i++) { getPemeriksa += `<li>${pemeriksa[i]['user.fullname']}</li>`}
+        for (let i = 0; i < pemeriksa.length; i++) { getPemeriksa += `<li>${pemeriksa[i]['user.fullname']}</li>` }
 
         let konfirmasi = await models.confirmation.findAll({
           transaction: t,
-          attributes: [[Sequelize.literal(`cast(date AS DATE)`),'date'], 'by', 'media', 'notes',],
+          attributes: [[Sequelize.literal(`cast(date AS DATE)`), 'date'], 'by', 'media', 'notes',],
           where: { idx_m_complaint: id }
         })
-        
+
         let konfirmasiPengadu = ``, konfirmasiTeradu = ``
-        for(let i=0; i<konfirmasi.length; i++){
-          if(konfirmasi[i].by == 'PENGADU'){
+        for (let i = 0; i < konfirmasi.length; i++) {
+          if (konfirmasi[i].by == 'PENGADU') {
             konfirmasiPengadu += `
               <li>
                 <div>Pada ${konfirmasi[i].date}</div>
@@ -640,13 +640,13 @@ module.exports = {
 
         let vc = JSON.parse(JSON.stringify(validasi.getDataValue('validation_checklists')))
         let val_docs = `Dokumen yang diperiksa yaitu: <ul>`;
-        for(let i=0; i<vc.length; i++){ val_docs += `<li>${vc[i]['checklist']}</li>` }
+        for (let i = 0; i < vc.length; i++) { val_docs += `<li>${vc[i]['checklist']}</li>` }
 
         lhpa_02EDetail = [
           {
             sort: 1,
             step: 'Penetapan Tim Pemeriksa',
-            notes: '<ul>'+getPemeriksa+'</ul>',
+            notes: '<ul>' + getPemeriksa + '</ul>',
             idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
           {
@@ -737,58 +737,58 @@ module.exports = {
           },
           {
             sort: 14,
-            step: 'Telaah dan Analisis - BA Hasil Mediasi',
+            step: 'Telaah dan Analisis - BA Hasil Klarifikasi',
             notes: ``,
             idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
           },
-          {
-            sort: 15,
-            step: 'Pra Konsiliasi',
-            notes: ``,
-            idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
-          },
-          {
-            sort: 16,
-            step: 'Konsiliasi',
-            notes: ``,
-            idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
-          },
-          {
-            sort: 17,
-            step: 'BA Konsiliasi',
-            notes: ``,
-            idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
-          },
-          {
-            sort: 18,
-            step: 'Ajudikasi',
-            notes: ``,
-            idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
-          },
-          {
-            sort: 19,
-            step: 'Rekomendasi - Clearence oleh KUMM',
-            notes: ``,
-            idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
-          },
-          {
-            sort: 20,
-            step: 'Rekomendasi - Clearance oleh Anggota',
-            notes: ``,
-            idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
-          },
-          {
-            sort: 21,
-            step: 'Rekomendasi - Penandatanganan',
-            notes: ``,
-            idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
-          },
-          {
-            sort: 22,
-            step: 'Monitoring',
-            notes: ``,
-            idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
-          },
+          // {
+          //   sort: 15,
+          //   step: 'Pra Konsiliasi',
+          //   notes: ``,
+          //   idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
+          // },
+          // {
+          //   sort: 16,
+          //   step: 'Konsiliasi',
+          //   notes: ``,
+          //   idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
+          // },
+          // {
+          //   sort: 17,
+          //   step: 'BA Konsiliasi',
+          //   notes: ``,
+          //   idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
+          // },
+          // {
+          //   sort: 18,
+          //   step: 'Ajudikasi',
+          //   notes: ``,
+          //   idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
+          // },
+          // {
+          //   sort: 19,
+          //   step: 'Rekomendasi - Clearence oleh KUMM',
+          //   notes: ``,
+          //   idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
+          // },
+          // {
+          //   sort: 20,
+          //   step: 'Rekomendasi - Clearance oleh Anggota',
+          //   notes: ``,
+          //   idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
+          // },
+          // {
+          //   sort: 21,
+          //   step: 'Rekomendasi - Penandatanganan',
+          //   notes: ``,
+          //   idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
+          // },
+          // {
+          //   sort: 22,
+          //   step: 'Monitoring',
+          //   notes: ``,
+          //   idx_t_lhpa_action: lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan').length > 0 ? lhpa_02F.filter(e => e.type == 'F' && e.title == '1. Proses Pemeriksaan Aduan')[0].getDataValue('idx_t_lhpa_action') : null
+          // },
         ]
 
         await models.lhpa_act_detail.bulkCreate(lhpa_02EDetail.filter(e => e['idx_t_lhpa_action'] !== null), { transaction: t });
