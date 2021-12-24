@@ -2348,7 +2348,8 @@ module.exports = {
               'approved_date',
               'approved_by',
               'arranged_by',
-              'arranged_date'
+              'arranged_date',
+              'dmodified'
             ],
             include: [
               {
@@ -2371,6 +2372,14 @@ module.exports = {
             where: { record_status: 'A', idx_m_complaint: id }
           }
         )
+
+        let checklist_docs = [], cdocs = `<ul>`;
+        if (v.getDataValue('validation_checklists') && v.getDataValue('validation_checklists').length > 0) {
+          checklist_docs = v.getDataValue('validation_checklists')
+          let cd = checklist_docs.map(e => e.checklist)
+          cdocs += `<li>` + cd.join(`</li><li>`) + `</li>`
+        }
+        cdocs += `</ul>`
 
         let comms = v.getDataValue('validation_comms') || [];
         let terlapor = comms.filter(e => e.by == 'TERLAPOR');
@@ -2499,8 +2508,8 @@ module.exports = {
                   <tbody>
                     <tr style="padding: 5px;">
                       <td>a. Memastikan dokumen pengaduan yang diteruskan oleh inspektorat</td>
-                      <td></td>
-                      <td></td>
+                      <td>${cdocs}</td>
+                      <td>${v.getDataValue('dmodified') ? moment(v.getDataValue('dmodified')).format('DD MMM YYYY') : moment(v.getDataValue('arranged_date')).format('DD MMM YYYY')}</td>
                     </tr>
                     <tr style="padding: 5px;">
                       <td>b. Komunikasi dengan Pengadu</td>
