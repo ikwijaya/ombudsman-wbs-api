@@ -3829,7 +3829,7 @@ module.exports = {
               where: { record_status: 'A' }
             },
           ],
-          where: { record_status: 'A', idx_m_complaint: c instanceof models.complaints ? c.getDataValue('idx_m_complaint') : null }
+          where: { record_status: 'A', idx_m_complaint: id }
         }
       );
 
@@ -4081,7 +4081,8 @@ module.exports = {
 
       html += `</div>`;
       return {
-        html: html.replace(/(null)/gm, '')
+        html: html.replace(/(null)/gm, ''),
+        others: s
       }
     } catch (error) {
       throw (error)
