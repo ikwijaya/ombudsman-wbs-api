@@ -23,6 +23,7 @@ module.exports = {
             'description',
             'hopes',
             ['source_complaint', 'source_name'],
+            [Sequelize.literal(`case when complaints.idx_m_legal_standing = -1 then true else false end`), 'is_kuasa_pelapor'],
             'ucreate'
           ],
           where: { idx_m_complaint: id },
@@ -241,6 +242,9 @@ module.exports = {
           rekom_tindaklanjut = s.getDataValue('disposition')['name']
         }
 
+        let is_kuasa_pelapor = c.getDataValue('is_kuasa_pelapor')
+        let manpower = c.getDataValue('manpower')
+        let fpengadu = pengadu instanceof models.users ? pengadu.getDataValue('fullname') : null
         html += `<div>
           <center style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">
             <img height="50px" width="175px" src="${API_URL}/others/logo/logo.png"></img>
@@ -263,7 +267,7 @@ module.exports = {
             </tr>
             <tr>
               <td>Pengadu</td>
-              <td>${pengadu instanceof models.users ? pengadu.getDataValue('fullname') : null}</td>
+              <td>${is_kuasa_pelapor ? manpower : fpengadu}</td>
             </tr>
             <tr>
               <td>Legal Standing Pengadu</td>
@@ -357,6 +361,7 @@ module.exports = {
             'description',
             'hopes',
             ['source_complaint', 'source_name'],
+            [Sequelize.literal(`case when complaints.idx_m_legal_standing = -1 then true else false end`), 'is_kuasa_pelapor'],
             'ucreate'
           ],
           where: { idx_m_complaint: id },
@@ -492,6 +497,10 @@ module.exports = {
           })
         }
 
+        let is_kuasa_pelapor = c.getDataValue('is_kuasa_pelapor')
+        let manpower = c.getDataValue('manpower')
+        let fpengadu = pengadu instanceof models.users ? pengadu.getDataValue('fullname') : null
+
         html += `<div>
           <center style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">
             <img height="50px" width="175px" src="${API_URL}/others/logo/logo.png"></img>
@@ -508,7 +517,7 @@ module.exports = {
             </tr>
             <tr>
               <td>Pengadu</td>
-              <td>${pengadu instanceof models.users ? pengadu.getDataValue('fullname') : null}</td>
+              <td>${is_kuasa_pelapor ? manpower : fpengadu}</td>
             </tr>
             <tr>
               <td>Teradu</td>
@@ -578,6 +587,7 @@ module.exports = {
             'description',
             'hopes',
             ['source_complaint', 'source_name'],
+            [Sequelize.literal(`case when complaints.idx_m_legal_standing = -1 then true else false end`), 'is_kuasa_pelapor'],
             'ucreate'
           ],
           where: { idx_m_complaint: id },
@@ -637,6 +647,10 @@ module.exports = {
         })
         let cladet = clarification instanceof models.clarification ? clarification.getDataValue('clarification_details') : [];
         cladet = cladet.map(e => e.name);
+
+        let is_kuasa_pelapor = c.getDataValue('is_kuasa_pelapor')
+        let manpower = c.getDataValue('manpower')
+        let fpengadu = pengadu instanceof models.users ? pengadu.getDataValue('fullname') : null
         html += `
           <table border="1" class="letter" width="100%">
             <tr>
@@ -652,7 +666,7 @@ module.exports = {
             <tr>
               <td width="20%">Pengadu</td>
               <td width="2%">:</td>
-              <td>${pengadu.getDataValue('fullname')}</td>
+              <td>${is_kuasa_pelapor ? manpower : fpengadu}</td>
             </tr>
             <tr>
               <td width="20%">Kontak Pengadu</td>
@@ -1441,6 +1455,7 @@ module.exports = {
             'description',
             'hopes',
             ['source_complaint', 'source_name'],
+            [Sequelize.literal(`case when complaints.idx_m_legal_standing = -1 then true else false end`), 'is_kuasa_pelapor'],
             'ucreate'
           ],
           where: { idx_m_complaint: id },
@@ -1495,6 +1510,10 @@ module.exports = {
         })
         let cladet = clarification instanceof models.clarification ? clarification.getDataValue('clarification_details') : [];
         cladet = cladet.map(e => e.name);
+
+        let is_kuasa_pelapor = c.getDataValue('is_kuasa_pelapor')
+        let manpower = c.getDataValue('manpower')
+        let fpengadu = pengadu instanceof models.users ? pengadu.getDataValue('fullname') : null
         html += `
           <table border="1" class="letter" width="100%">
             <tr>
@@ -1510,7 +1529,7 @@ module.exports = {
             <tr>
               <td width="20%">Pengadu</td>
               <td width="2%">:</td>
-              <td>${pengadu.getDataValue('fullname')}</td>
+              <td>${is_kuasa_pelapor ? manpower : fpengadu}</td>
             </tr>
             <tr>
               <td width="20%">Kontak Pengadu</td>
@@ -2265,6 +2284,7 @@ module.exports = {
             'description',
             'hopes',
             ['source_complaint', 'source_name'],
+            [Sequelize.literal(`case when complaints.idx_m_legal_standing = -1 then true else false end`), 'is_kuasa_pelapor'],
             'ucreate'
           ],
           where: { idx_m_complaint: id },
@@ -2463,6 +2483,10 @@ module.exports = {
           where: { idx_m_complaint: id, record_status: 'A' }
         })
 
+        let is_kuasa_pelapor = c.getDataValue('is_kuasa_pelapor')
+        let manpower = c.getDataValue('manpower')
+        let fpengadu = pengadu instanceof models.users ? pengadu.getDataValue('fullname') : null
+
         html += `
           <p style = "font-weight: bold;" > A.Informasi Aduan</p>
             <table border="1" class="letter" width="100%">
@@ -2472,7 +2496,7 @@ module.exports = {
               </tr>
               <tr>
                 <td>Pengadu</td>
-                <td>${pengadu instanceof models.users ? pengadu.getDataValue('fullname') : null}</td>
+                <td>${is_kuasa_pelapor ? manpower : fpengadu}</td>
               </tr>
               <tr>
                 <td>Legal Standing Pengadu</td>
@@ -3770,6 +3794,7 @@ module.exports = {
             'description',
             'hopes',
             ['source_complaint', 'source_name'],
+            [Sequelize.literal(`case when complaints.idx_m_legal_standing = -1 then true else false end`), 'is_kuasa_pelapor'],
             'ucreate'
           ],
           where: { idx_m_complaint: id },
@@ -3978,7 +4003,11 @@ module.exports = {
             <td>${sl_event[i].notes}</td>
           </tr> `
         }
-        hevent += `</table> `
+        hevent += `</table>`
+
+        let is_kuasa_pelapor = c.getDataValue('is_kuasa_pelapor')
+        let manpower = c.getDataValue('manpower')
+        let fpengadu = pengadu instanceof models.users ? pengadu.getDataValue('fullname') : null
 
         html += `
           <p style="font-weight: bold;">A.Informasi Aduan</p>
@@ -3993,7 +4022,7 @@ module.exports = {
               </tr>
               <tr>
                 <td>Pengadu</td>
-                <td>${pengadu instanceof models.users ? pengadu.getDataValue('fullname') : null}</td>
+                <td>${is_kuasa_pelapor ? manpower : fpengadu}</td>
               </tr>
               <tr>
                 <td>Teradu</td>
@@ -4724,7 +4753,7 @@ module.exports = {
           e.checked_by_name = users.filter(a => a['idx_m_user'] == e['checked_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['checked_by'])[0].name : null
           e.form_no = form_no;
           e.date = complaint instanceof models.complaints ? complaint.getDataValue('date') : null
-          e.pengadu = is_kuasa ? complaint.getDataValue('man_power') : complaint.getDataValue('ucreate')
+          e.pengadu = is_kuasa ? complaint.getDataValue('manpower') : complaint.getDataValue('ucreate')
           e.alamat_pengadu = null
           e.layanan = complaint instanceof models.complaints ? complaint.getDataValue('source_complaint') : null
           e.harapan_pengadu = complaint instanceof models.complaints ? complaint.getDataValue('hopes') : null
@@ -5096,6 +5125,7 @@ module.exports = {
             'description',
             'hopes',
             ['source_complaint', 'source_name'],
+            [Sequelize.literal(`case when complaints.idx_m_legal_standing = -1 then true else false end`), 'is_kuasa_pelapor'],
             'ucreate'
           ],
           where: { idx_m_complaint: id },
@@ -5150,6 +5180,12 @@ module.exports = {
         })
         let cladet = clarification instanceof models.clarification ? clarification.getDataValue('clarification_details') : [];
         cladet = cladet.map(e => e.name);
+
+
+        let is_kuasa_pelapor = c.getDataValue('is_kuasa_pelapor')
+        let manpower = c.getDataValue('manpower')
+        let fpengadu = pengadu instanceof models.users ? pengadu.getDataValue('fullname') : null
+
         html += `
           <table border="1" class="letter" width="100%">
             <tr>
@@ -5165,7 +5201,7 @@ module.exports = {
             <tr>
               <td width="20%">Pengadu</td>
               <td width="2%">:</td>
-              <td>${pengadu.getDataValue('fullname')}</td>
+              <td>${is_kuasa_pelapor ? manpower : fpengadu}</td>
             </tr>
             <tr>
               <td width="20%">Kontak Pengadu</td>
@@ -5300,6 +5336,7 @@ module.exports = {
             'description',
             'hopes',
             ['source_complaint', 'source_name'],
+            [Sequelize.literal(`case when complaints.idx_m_legal_standing = -1 then true else false end`), 'is_kuasa_pelapor'],
             'ucreate'
           ],
           where: { idx_m_complaint: id },
@@ -5354,6 +5391,10 @@ module.exports = {
         })
         let cladet = clarification instanceof models.clarification ? clarification.getDataValue('clarification_details') : [];
         cladet = cladet.map(e => e.name);
+
+        let is_kuasa_pelapor = c.getDataValue('is_kuasa_pelapor')
+        let manpower = c.getDataValue('manpower')
+        let fpengadu = pengadu instanceof models.users ? pengadu.getDataValue('fullname') : null
         html += `
           <table border="1" class="letter" width="100%">
             <tr>
@@ -5369,7 +5410,7 @@ module.exports = {
             <tr>
               <td width="20%">Pengadu</td>
               <td width="2%">:</td>
-              <td>${pengadu.getDataValue('fullname')}</td>
+              <td>${is_kuasa_pelapor ? manpower : fpengadu}</td>
             </tr>
             <tr>
               <td width="20%">Kontak Pengadu</td>
