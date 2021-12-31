@@ -4604,6 +4604,7 @@ module.exports = {
         }
       }
 
+      let test = [];
       let studies = await models.complaint_studies.findOne(
         {
           attributes: ['idx_t_complaint_study', 'notes', 'simple_app_no'],
@@ -5031,6 +5032,7 @@ module.exports = {
                 </thead>
                 <tbody>`;
           let itf = lhpa_action_f[j]['lhpa_act_details'].sort((a, b) => a['sort'] - b['sort'])
+          test.push(lhpa_action_f[j]['lhpa_act_details'].sort((a, b) => a['sort'] - b['sort']))
           for (let k = 0; k < itf.length; k++) {
             act += `<tr>
                 <td>${itf[k]['sort']}</td>
@@ -5098,7 +5100,7 @@ module.exports = {
 
       return {
         html: html.replace(/(null)/gm, ''),
-        debug: m
+        debug: test
       }
     } catch (error) {
       throw (error)
