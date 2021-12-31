@@ -5047,7 +5047,7 @@ module.exports = {
           }
         }
         act += `</tbody></table>`
-        html += `<div>
+        html += act + `<div>
               <span class="text-caption">Fakta yang terungkap</span> ${m[i].fakta ? m[i].fakta : ''}
             </div>
           </td>
@@ -5100,7 +5100,7 @@ module.exports = {
 
       return {
         html: html.replace(/(null)/gm, ''),
-        debug: test
+        // debug: test
       }
     } catch (error) {
       throw (error)
