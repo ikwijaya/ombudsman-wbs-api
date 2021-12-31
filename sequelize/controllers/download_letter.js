@@ -5096,7 +5096,10 @@ module.exports = {
       `
       }
 
-      return { html: html.replace(/(null)/gm, '') }
+      return {
+        html: html.replace(/(null)/gm, ''),
+        debug: m
+      }
     } catch (error) {
       throw (error)
     }
