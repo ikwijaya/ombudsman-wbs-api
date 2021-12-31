@@ -5013,7 +5013,7 @@ module.exports = {
         act = ``;
         lhpa_action_e = m[i].lhpa_actions.filter((e) => e.type == 'F').sort((x, y) => x['idx_t_lhpa_action'] - y['idx_t_lhpa_action']);
 
-        lhpa_action_e = lhpa_action_e.sort((a, b) => a['sort'] - b['sort']);
+        //lhpa_action_e = lhpa_action_e.sort((a, b) => a['sort'] - b['sort']);
         for (let j = 0; j < lhpa_action_e.length; j++) {
           act += `
                   <div>${lhpa_action_e[j]['title']}</div>
