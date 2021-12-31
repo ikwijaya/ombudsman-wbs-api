@@ -5048,7 +5048,7 @@ module.exports = {
         }
         act += `</tbody></table>`
         html += act + `<div>
-              <span class="text-caption">Fakta yang terungkap</span> ${m[i].fakta ? m[i].fakta : ''}
+              <span class="text-caption" style="font-size: 16px; font-weight: bold;">Fakta yang terungkap</span> ${m[i].fakta ? m[i].fakta : ''}
             </div>
           </td>
         </tr>
