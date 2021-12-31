@@ -5011,13 +5011,13 @@ module.exports = {
           <td colspan="4">
             <div class="title">F. PEMERIKSAAN ADUAN OLEH TIM PEMERIKSA</div>`;
         act = ``;
-        lhpa_action_e = m[i].lhpa_actions.filter((e) => e.type == 'F').sort((x, y) => x['idx_t_lhpa_action'] - y['idx_t_lhpa_action']);
+        let lhpa_action_f = m[i].lhpa_actions.filter((e) => e.type == 'F').sort((x, y) => x['idx_t_lhpa_action'] - y['idx_t_lhpa_action']);
 
         //lhpa_action_e = lhpa_action_e.sort((a, b) => a['sort'] - b['sort']);
-        for (let j = 0; j < lhpa_action_e.length; j++) {
+        for (let j = 0; j < lhpa_action_f.length; j++) {
           act += `
-                  <div>${lhpa_action_e[j]['title']}</div>
-                  <div>oleh ${lhpa_action_e[j]['by'] ? lhpa_action_e[j]['by'] : ''}</div>`;
+                  <div>${lhpa_action_f[j]['title']}</div>
+                  <div>oleh ${lhpa_action_f[j]['by'] ? lhpa_action_f[j]['by'] : ''}</div>`;
 
           act += `<table>
                 <thead style="font-weight: bold;">
@@ -5030,16 +5030,16 @@ module.exports = {
                   </tr>          
                 </thead>
                 <tbody>`;
-          it = lhpa_action_e[j]['lhpa_act_details'].sort((a, b) => a['sort'] - b['sort'])
-          for (let k = 0; k < it.length; k++) {
+          let itf = lhpa_action_f[j]['lhpa_act_details'].sort((a, b) => a['sort'] - b['sort'])
+          for (let k = 0; k < itf.length; k++) {
             act += `<tr>
-                <td>${it[k]['sort']}</td>
-                <td>${it[k]['step']}</td>
-                <td>${it[k]['date']
-                ? moment(it[k]['date']).format('DD MMM YYYY')
+                <td>${itf[k]['sort']}</td>
+                <td>${itf[k]['step']}</td>
+                <td>${itf[k]['date']
+                ? moment(itf[k]['date']).format('DD MMM YYYY')
                 : ''}</td>
-                <td>${it[k]['notes'] ? it[k]['notes'] : ''}</td>
-                <td>${it[k]['step'] == true ? '[X]' : '[]'}</td>
+                <td>${itf[k]['notes'] ? itf[k]['notes'] : ''}</td>
+                <td>${itf[k]['step'] == true ? '[X]' : '[]'}</td>
               </tr>
             `
           }
