@@ -21,7 +21,7 @@ module.exports = {
 
       let work_units = await models.work_units.findAll({
         attributes: [
-          [Sequelize.literal(`cast(work_units.idx_m_work_unit AS VARCHAR)`),'idx_m_work_unit'],
+          [Sequelize.literal(`cast(work_units.idx_m_work_unit AS VARCHAR)`), 'idx_m_work_unit'],
           [Sequelize.literal(`concat(case when work_units.regional is null then null else concat('Reg. ', work_units.regional, ' - ') end, work_units.name)`), 'name'],
           'regional'
         ],
@@ -30,7 +30,7 @@ module.exports = {
 
       let region_cities = await models.cities.findAll({
         attributes: [
-          [Sequelize.literal(`cast(cities.idx_m_city AS VARCHAR)`), 'idx_m_city'], 
+          [Sequelize.literal(`cast(cities.idx_m_city AS VARCHAR)`), 'idx_m_city'],
           'name'
         ],
         include: [{
@@ -157,7 +157,7 @@ module.exports = {
 
       let work_units = await models.work_units.findAll({
         attributes: [
-          [Sequelize.literal(`cast(work_units.idx_m_work_unit AS VARCHAR)`),'idx_m_work_unit'],
+          [Sequelize.literal(`cast(work_units.idx_m_work_unit AS VARCHAR)`), 'idx_m_work_unit'],
           [Sequelize.literal(`concat(case when work_units.regional is null then null else concat('Reg. ', work_units.regional, ' - ') end, work_units.name)`), 'name'],
           'regional'
         ],
@@ -166,7 +166,7 @@ module.exports = {
 
       let region_cities = await models.cities.findAll({
         attributes: [
-          [Sequelize.literal(`cast(cities.idx_m_city AS VARCHAR)`), 'idx_m_city'], 
+          [Sequelize.literal(`cast(cities.idx_m_city AS VARCHAR)`), 'idx_m_city'],
           'name'
         ],
         include: [{
@@ -414,6 +414,17 @@ module.exports = {
         }
       )
 
+      let scopes = [
+        {
+          text: "Pemeriksaan Laporan",
+          value: 1,
+        },
+        {
+          text: "Pencegahan",
+          value: 2,
+        },
+      ]
+
       return {
         steps: steps,
         checklists: checklists,
@@ -422,7 +433,8 @@ module.exports = {
         head_regional: head_regional,
         head_kumm: head_kumm,
         product: product,
-        violations: violations
+        violations: violations,
+        scopes: scopes
       }
     } catch (err) {
       throw (error)

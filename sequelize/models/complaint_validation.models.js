@@ -14,6 +14,7 @@ module.exports = (sq) => {
       allowNull: false
     },
     simple_app_no: DataTypes.TEXT(),
+    scope: DataTypes.TEXT(),  // ruang lingkup aduan (1: Pemeriksaan Aduan, 2: Pencegahan)
     prevention: DataTypes.TEXT(),
     product: DataTypes.TEXT(),
     step: DataTypes.TEXT(),
