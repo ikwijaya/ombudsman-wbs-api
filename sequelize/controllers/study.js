@@ -309,6 +309,8 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Your session has been expired, please relogin')
 
+      console.log(`disini cek obj ====> `, obj)
+
       obj.complaint['form_status'] = is_submit ? 1 : 0
       obj.complaint['umodified'] = sessions[0].user_id
       obj.complaint['dmodified'] = new Date()
@@ -316,22 +318,39 @@ module.exports = {
       if (obj['violations'] == 0 && is_submit)
         return response.failed('Dugaan pelanggaran Tidak boleh kosong')
 
-      await models.complaint_study_violations.destroy({
-        transaction: t,
-        where: { idx_t_complaint_study: obj.complaint['idx_t_complaint_study'] }
-      })
-      let violations = obj['violations'].map(e => {
+      let f = await models.complaint_study_violations.findAll({
+        raw: true,
+        attributes: ['idx_m_violation'],
+        where: {
+          idx_t_complaint_study: obj.complaint['idx_t_complaint_study'],
+          idx_m_violation: {
+            [Op.in]: obj['violations']
+          }
+        },
+        transaction: t
+      });
+      console.log(`f => `, f)
+
+      // await models.complaint_study_violations.destroy({
+      //   transaction: t,
+      //   where: { idx_t_complaint_study: obj.complaint['idx_t_complaint_study'] }
+      // }).catch(e => { throw (e) })
+      f = f.map(e => e['idx_m_violation'])
+      let violations = obj['violations'].filter(e => !f.includes(e))
+      violations = violations.map(e => {
         return {
           idx_m_violation: e,
           idx_t_complaint_study: obj.complaint['idx_t_complaint_study']
         }
       })
 
-      await models.complaint_study_violations.bulkCreate(violations, { transaction: t, })
+      if (violations && violations.length > 0)
+        await models.complaint_study_violations.bulkCreate(violations, { transaction: t, }).catch(e => { throw (e) })
 
       if (is_submit) {
         let incidents = await models.complaint_study_incidents.count(
           {
+            transaction: t,
             where: {
               idx_t_complaint_study: obj.complaint['idx_t_complaint_study'],
               [Op.or]: [
@@ -346,6 +365,7 @@ module.exports = {
 
         let reporteds = await models.complaint_study_reported.count(
           {
+            transaction: t,
             where: {
               idx_t_complaint_study: obj.complaint['idx_t_complaint_study'],
               [Op.or]: [
@@ -360,7 +380,7 @@ module.exports = {
           return response.failed('Tempat Kejadian Kolom Unit Kerja dan Waktu Kejadian TIDAK boleh kosong.')
 
         if (reporteds > 0)
-          return response.failed('Terlapor Kolom Nama Terlapor dan Unit Kerja TIDAK boleh kosong.')
+          return response.failed('Teradu Kolom Perwakilan/Unit Kerja TIDAK boleh kosong.')
       }
 
       await models.complaint_studies.update(obj.complaint, {
@@ -375,7 +395,8 @@ module.exports = {
           attributes: ['idx_m_complaint'],
           where: {
             idx_t_complaint_study: obj.complaint['idx_t_complaint_study']
-          }
+          },
+          transaction: t
         }
       )
 
@@ -400,7 +421,7 @@ module.exports = {
       await t.commit()
       return response.success(`Edit data telaah pengaduan berhasil ${is_submit ? 'di submit' : 'di simpan'}.`)
     } catch (error) {
-
+      console.log(`error => `, error)
       await t.rollback()
       throw (error)
     }
@@ -587,7 +608,7 @@ module.exports = {
         return response.failed('Session expired, please relogin.')
 
       obj['ucreate'] = sessions[0].user_id
-      if(!obj['idx_m_work_unit'])
+      if (!obj['idx_m_work_unit'])
         return response.failed('Kolom Unit Kerja TIDAK boleh kosong.')
 
       await models.complaint_study_reported.create(obj, { transaction: t, });
@@ -615,9 +636,9 @@ module.exports = {
 
       obj['umodified'] = sessions[0].user_id
       obj['dmodified'] = new Date()
-      if(!obj['idx_m_work_unit'])
+      if (!obj['idx_m_work_unit'])
         return response.failed('Kolom Unit Kerja TIDAK boleh kosong.')
-        
+
       await models.complaint_study_reported.update(obj, {
         transaction: t,
         where: { idx_t_complaint_study_reported: obj['idx_t_complaint_study_reported'] }
