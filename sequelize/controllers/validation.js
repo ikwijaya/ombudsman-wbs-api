@@ -43,11 +43,12 @@ module.exports = {
             'approved_by',
             'arranged_by',
             'arranged_date',
-            [Sequelize.literal(`case 
-              when validation.scope = '1' then 'Pemeriksaan Aduan' 
-              when validation.scope = '2' then 'Pencegahan' 
-              else null end`
-            ), 'scope']
+            'scope'
+            // [Sequelize.literal(`case 
+            //   when validation.scope = '1' then 'Pemeriksaan Aduan' 
+            //   when validation.scope = '2' then 'Pencegahan' 
+            //   else null end`
+            // ), 'scope']
           ],
           include: [
             {
