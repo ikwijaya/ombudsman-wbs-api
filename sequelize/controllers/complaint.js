@@ -637,14 +637,14 @@ module.exports = {
             [Sequelize.literal(`case when 
                 complaints.form_status IN ('1','99', '100') 
                 and complaint_verification.idx_m_complaint is not null 
-                and 1=${[0, 1, 3, 4, 5].includes(typeId) ? 1 : 0}
+                and 1=${[0, 1, 3, 4, 5, 7].includes(typeId) ? 1 : 0}
               then true 
               else false 
             end`), 'is_inspektorat'],
             [Sequelize.literal(`case when 
                 complaints.form_status IN ('1','99', '100')
                 and complaint_verification.idx_m_complaint is not null 
-                and 1=${[0, 2, 3, 4, 5].includes(typeId) ? 1 : 0}
+                and 1=${[0, 2, 3, 4, 5, 7].includes(typeId) ? 1 : 0}
                 and complaint_decision.idx_m_violation IN (5,9,10)
               then true 
               else false 
