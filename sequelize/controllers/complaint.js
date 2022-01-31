@@ -80,13 +80,13 @@ module.exports = {
 
       if (
         violationNo instanceof models.complaint_decisions
-        && [5,9].includes(parseInt(violationNo.getDataValue('violation')))
+        && [5, 9].includes(parseInt(violationNo.getDataValue('violation')))
       ) {
         dcode = {
           name: 'MDP',
           color: 'purple lighten-2'
         }
-      } else if(violationNo instanceof models.complaint_decisions
+      } else if (violationNo instanceof models.complaint_decisions
         && [10].includes(parseInt(violationNo.getDataValue('violation')))) {
         dcode = {
           name: 'TPA',
@@ -264,13 +264,13 @@ module.exports = {
         include: [
           {
             model: models.complaints,
-            where: { form_status: { [Op.notIn]: ['99','100'] } }
+            where: { form_status: { [Op.notIn]: ['99', '100'] } }
           }
         ],
         where: { record_status: 'A', idx_m_complaint: id }
       })
 
-      if(dtr instanceof models.complaint_determinations) durasi = dtr.getDataValue('date')
+      if (dtr instanceof models.complaint_determinations) durasi = dtr.getDataValue('date')
 
       /**
        * 5: maladministrasi
@@ -324,7 +324,7 @@ module.exports = {
       });
 
       let mon = await models.monitoring.findOne({ where: { idx_m_complaint: id, record_status: 'A', form_status: '0' } });
-      let lhpa = await models.lhpa.findAll({ where: {idx_m_complaint: id, record_status: 'A'} })
+      let lhpa = await models.lhpa.findAll({ where: { idx_m_complaint: id, record_status: 'A' } })
       let clo = await models.closing.findOne({ where: { idx_m_complaint: id, record_status: 'A', form_status: '1' } })
 
       if (!c) return null;
@@ -482,6 +482,7 @@ module.exports = {
       let where = {}; let whereCode = {}; let whereDUsers = {}
       let sessions = await core.checkSession(sid)
       let users = []; let typeId = null; let isRequiredST = false;
+      where['record_status'] = 'A'
 
       if (sessions.length === 0)
         return [];
@@ -539,21 +540,21 @@ module.exports = {
        * 3. MINE
        * 4. LAST EDITED
        */
-      if(others && others.custom_filter){
-        if(others.custom_filter == 999) where[Op.and] = [Sequelize.literal(`DATE(complaints.dcreate) BETWEEN CAST('${others.date_range[0]}' AS DATE) AND CAST('${others.date_range[1]}' AS DATE)`)]
-        if(others.custom_filter == 1) where[Op.and] = [Sequelize.literal(`DATE(complaints.dcreate)=CURRENT_DATE`)]
-        if(others.custom_filter == 2) where[Op.and] = [Sequelize.literal(`date_part('month', DATE(complaints.dcreate))=date_part('month', (SELECT current_timestamp))`)]
-        if(others.custom_filter == 3) where['ucreate'] = sessions[0].user_id.toString()
-        if(others.custom_filter == 4) {
+      if (others && others.custom_filter) {
+        if (others.custom_filter == 999) where[Op.and] = [Sequelize.literal(`DATE(complaints.dcreate) BETWEEN CAST('${others.date_range[0]}' AS DATE) AND CAST('${others.date_range[1]}' AS DATE)`)]
+        if (others.custom_filter == 1) where[Op.and] = [Sequelize.literal(`DATE(complaints.dcreate)=CURRENT_DATE`)]
+        if (others.custom_filter == 2) where[Op.and] = [Sequelize.literal(`date_part('month', DATE(complaints.dcreate))=date_part('month', (SELECT current_timestamp))`)]
+        if (others.custom_filter == 3) where['ucreate'] = sessions[0].user_id.toString()
+        if (others.custom_filter == 4) {
           let clogs = await models.clogs.findAll({
             attributes: ['idx_m_complaint'],
-            where: {[Op.and]: [Sequelize.literal(`DATE(dcreate)=CURRENT_DATE`)]},
+            where: { [Op.and]: [Sequelize.literal(`DATE(dcreate)=CURRENT_DATE`)] },
             group: ['idx_m_complaint']
           })
 
           where['idx_m_complaint'] = { [Op.in]: clogs.map(e => e['idx_m_complaint']) }
         }
-        if(others.custom_filter == 5) {
+        if (others.custom_filter == 5) {
           let clogs = await models.clogs.findAll({
             attributes: ['idx_m_complaint'],
             where: {
@@ -565,7 +566,7 @@ module.exports = {
 
           where['idx_m_complaint'] = { [Op.in]: clogs.map(e => e['idx_m_complaint']) }
         }
-        if(others.custom_filter == 6) {
+        if (others.custom_filter == 6) {
           whereDUsers['idx_m_user'] = sessions[0].user_id
           isRequiredST = true
         }
@@ -1208,11 +1209,11 @@ module.exports = {
       if (obj['violations'] == 0 && is_submit)
         return response.failed('Dugaan pelanggaran Tidak boleh kosong')
 
-      if (obj.complaint['idx_m_legal_standing'] == -1 
-        && is_submit 
+      if (obj.complaint['idx_m_legal_standing'] == -1
+        && is_submit
         && (!obj.complaint['source_complaint'] || obj.complaint['source_complaint'] == '')
       ) return response.failed('Dugaan pelanggaran Tidak boleh kosong')
-      
+
       await models.complaint_violations.destroy({
         transaction: t,
         where: { idx_m_complaint: obj.complaint['idx_m_complaint'] }
