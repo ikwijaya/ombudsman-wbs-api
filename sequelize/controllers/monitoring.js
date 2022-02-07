@@ -18,7 +18,7 @@ module.exports = {
       if (sessions.length === 0)
         return null;
 
-      let r = await core.checkRoles(sessions[0].user_id,[16]);
+      let r = await core.checkRoles(sessions[0].user_id, [16]);
       let m = await models.monitoring.findAll(
         {
           attributes: [
@@ -48,8 +48,8 @@ module.exports = {
         }
       )
 
-      return { 
-        items: m, 
+      return {
+        items: m,
         is_insert: r.filter(a => a.is_insert && a.idx_m_form == 16).length > 0
       }
     } catch (err) {
@@ -73,7 +73,7 @@ module.exports = {
 
       obj.monitoring['ucreate'] = sessions[0].user_id;
       await models.monitoring.create(obj.monitoring, { transaction: t });
-      
+
       await t.commit();
       return response.success('Monitoring berhasi di simpan', []);
     } catch (err) {
@@ -330,7 +330,7 @@ module.exports = {
           action: 'I',
           flow: '17',
           changes: JSON.stringify({}),
-          ucreate: 'auto-wbs',
+          ucreate: sessions[0].user_id,
           notes: 'penutupan flow auto generate by system'
         }
       ], { transaction: t, });
