@@ -170,12 +170,12 @@ module.exports = {
 
       // prevent when user is checker and KEPALA KEASISTENAN REGIONAL, umodified is not changed
       if (!is_void_checker && !is_allow) {
-        obj.closing['umodified'] = sessions[0].user_id;
-        obj.closing['dmodified'] = new Date();
+        obj.closing['arranged_by'] = sessions[0].user_id;
+        obj.closing['arranged_date'] = new Date()
       }
 
-      obj.closing['arranged_by'] = sessions[0].user_id;
-      obj.closing['arranged_date'] = new Date()
+      obj.closing['umodified'] = sessions[0].user_id;
+      obj.closing['dmodified'] = new Date();
 
       await models.closing.update(obj.closing, {
         where: { idx_t_closing: obj.closing.id },
@@ -212,8 +212,8 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
-      // obj.closing['umodified'] = sessions[0].user_id;
-      // obj.closing['dmodified'] = new Date();
+      obj.closing['umodified'] = sessions[0].user_id;
+      obj.closing['dmodified'] = new Date();
       obj.closing['checked_date'] = new Date();
 
       let is_arranged = await models.closing.count({
