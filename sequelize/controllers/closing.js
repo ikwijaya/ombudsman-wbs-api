@@ -164,8 +164,16 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
-      obj.closing['umodified'] = sessions[0].user_id;
-      obj.closing['dmodified'] = new Date();
+      const r = await core.checkRoles(sessions[0].user_id, [17, 92]);
+      const is_void_checker = r.filter(a => a.idx_m_form == 92 && a.is_read).length > 0
+      const is_allow = sessions[0]['idx_m_user_type'] == 4  // is KEPALA KEASISTENAN REGIONAL
+
+      // prevent when user is checker and KEPALA KEASISTENAN REGIONAL, umodified is not changed
+      if (!is_void_checker && !is_allow) {
+        obj.closing['umodified'] = sessions[0].user_id;
+        obj.closing['dmodified'] = new Date();
+      }
+
       obj.closing['arranged_by'] = sessions[0].user_id;
       obj.closing['arranged_date'] = new Date()
 
