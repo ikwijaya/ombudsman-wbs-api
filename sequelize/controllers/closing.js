@@ -212,8 +212,8 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
-      obj.closing['umodified'] = sessions[0].user_id;
-      obj.closing['dmodified'] = new Date();
+      // obj.closing['umodified'] = sessions[0].user_id;
+      // obj.closing['dmodified'] = new Date();
       obj.closing['checked_date'] = new Date();
 
       let is_arranged = await models.closing.count({
@@ -239,6 +239,7 @@ module.exports = {
         idx_m_complaint: obj.closing['idx_m_complaint'],
         action: 'U',
         flow: '14',
+        notes: `Pemeriksaan berhasil disimpan.`,
         changes: JSON.stringify(obj),
         ucreate: sessions[0].user_id
       }, { transaction: t, });
