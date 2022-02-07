@@ -51,7 +51,7 @@ module.exports = {
       })
 
       if (m.length > 0) {
-        ucreate = m.map(e => e.ucreate ? parseInt(e.ucreate) : null)
+        ucreate = m.filter(e => typeof (e.ucreate) == 'number').map(e => e.ucreate ? parseInt(e.ucreate) : null)
         let getUsers = await models.users.findAll({
           attributes: [
             'idx_m_user',
