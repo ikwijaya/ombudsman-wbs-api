@@ -44,7 +44,9 @@ module.exports = {
           'user_kumm',
           'head_of_wbs',
           'to', 'by', 'object', 'reason',
-          'ba_no', 'ba_date', 'closing_no', 'closing_date',
+          'ba_no', 'closing_no',
+          [Sequelize.literal(`to_char(closing.ba_date, 'YYYY-MM-DD')`), 'ba_date'],
+          [Sequelize.literal(`to_char(closing.closing_date, 'YYYY-MM-DD')`), 'closing_date'],
           [Sequelize.literal(`to_char(closing.checked_date, 'DD-MM-YYYY HH24:MI:SS')`), 'checked_date'], 'checked_by',
           [Sequelize.literal(`to_char(closing.approved_date, 'DD-MM-YYYY HH24:MI:SS')`), 'approved_date'], 'approved_by',
           [Sequelize.literal(`to_char(closing.arranged_date, 'DD-MM-YYYY HH24:MI:SS')`), 'arranged_date'], 'arranged_by'
