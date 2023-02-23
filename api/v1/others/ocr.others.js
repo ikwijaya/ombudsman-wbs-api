@@ -5,7 +5,10 @@ const { helper } = require('../../../helper')
 const CPM = require('connect-multiparty')
 const multiparty = CPM();
 const { createWorker, PSM, OEM } = require('tesseract.js')
-const worker = createWorker({ logger: ev => console.log('[running] ocr => ', ev) })
+const worker = createWorker({ 
+  // logger: ev => console.log('[running] ocr => ', ev),
+  errorHandler: (err) => { return err }
+})
 
 router.post('/', multiparty, async (req, res, next) => {
   try {
@@ -14,18 +17,30 @@ router.post('/', multiparty, async (req, res, next) => {
     let filename = upload.originalFilename
 
     if(!url) res.status(200).send(response.failed(`Image ${filename} not found!`))
+    else if(upload.size/1000 > 2000) res.status(200).send(response.failed(`Gambar Tidak lebih dari 1MB`))
     else {
-      await worker.load()
-      await worker.loadLanguage('eng')
-      await worker.initialize('eng', OEM.LSTM_ONLY)
+      await worker.load().catch(e => {throw (e) })
+      await worker.loadLanguage('ind').catch(e => {throw (e) })
+      await worker.initialize('ind', OEM.LSTM_ONLY).catch(e => {throw (e) })
       await worker.setParameters({
         tessedit_pageseg_mode: PSM.SINGLE_BLOCK,
-      })
-      let { data: { text }} = await worker.recognize(url)
-      res.status(200).send(response.success('OCR generated!', {
-        filename: filename,
-        ocr_text: text
-      }))
+      }).catch(e => {throw (e) })
+      let { data: { text }} = await worker.recognize(url).catch(e => {throw (e) })
+
+      /**
+       * final
+       */
+      if(!text.match(/NIK/g) && !text.match(/warganegara/g)) res.status(200).send(response.failed(`Mohon meng-upload hanya KTP.`))
+      else {
+        const arr = !text ? null : text.split("\n") 
+        res.status(200).send(response.success('OCR generated!', {
+          filename: filename,
+          ocr: {
+            // text: text,
+            data: await extract(arr), 
+          }
+        }))
+      }
     }
   } catch (err) {
     res.status(401).send(response.failed(err, []))
@@ -33,3 +48,24 @@ router.post('/', multiparty, async (req, res, next) => {
 });
 
 module.exports = router
+
+/**
+ * 
+ * @param {*} arr 
+ * @returns 
+ */
+const extract = async (arr=[]) => {
+  return new Promise((ok) => {
+    if(arr.length == 0) return ok(null)
+
+    let o = {}
+    arr.forEach(e => {
+      if(e.includes('NIK')) o['identityType'] = 'KTP'
+      else if(e.includes('DRIVING LICENSE')) o['identityType'] = 'SIM'
+
+      if(e.includes('NIK')) o['nik'] = e.replace(/([A-Za-z])|(\s+)|([:?\-:&*%^()$#@!_+=~`])/g,'');
+    });
+
+    return ok(o)
+  })
+}

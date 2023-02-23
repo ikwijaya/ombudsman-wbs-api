@@ -3,3 +3,5 @@ images/
 upload/
 *.env
 builds
+.token*
+letter_template/*sample*

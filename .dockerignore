@@ -10,3 +10,5 @@ junk
 *.sql
 .git
 builds
+.token*
+letter_template/*sample*
