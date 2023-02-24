@@ -2,6 +2,7 @@
 const router = require('express').Router()
 const { response } = require('../../../models')
 const { helper } = require('../../../helper')
+const { UPLOAD_PATH } = require('../../../config')
 const CPM = require('connect-multiparty')
 const multiparty = CPM();
 const { createWorker, PSM, OEM } = require('tesseract.js')
@@ -16,8 +17,6 @@ router.post('/', multiparty, async (req, res, next) => {
     let url = upload.path;
     let filename = upload.originalFilename
 
-    // console.log(` ${upload.size / 1000}`)
-
     if (!url) res.status(200).send(response.failed(`Image ${filename} not found!`))
     else if (upload.size / 1000 > 5000) res.status(200).send(response.failed(`Gambar Tidak lebih dari 1MB`))
     else {
@@ -30,21 +29,24 @@ router.post('/', multiparty, async (req, res, next) => {
       let { data: { text } } = await worker.recognize(url).catch(e => { throw (e) })
 
       /**
-       * final
+       * final upload file terlebih dahulu, 
+       * need batch job for delete unused files base on data in database.
        */
       const arr = !text ? null : text.split("\n")
       const c = await extract(arr);
       if (!c) res.status(200).send(response.failed(`Kami TIDAK dapat memindai gambar dengan baik, karena pencahayaan pada gambar kurang.`))
       else if (!c.nik) res.status(200).send(response.failed(`Kami TIDAK dapat memindai gambar dengan baik, karena pencahayaan pada gambar kurang.`))
       else {
-        res.status(200).send(response.success('OCR generated!', {
-          filename: filename,
-          ocr: {
-            // text: text,
-            arr:  process.env.NODE_ENV.match(/dev/g) ? arr : [],
-            data: await extract(arr),
-          }
-        }))
+        await helper.uploadFile(upload, upload.path, UPLOAD_PATH)
+          .then(async (r) => res.status(200).send(response.success('OCR generated!', {
+            filename: filename,
+            ocr: {
+              // text: text,
+              arr: process.env.NODE_ENV.match(/dev/g) ? arr : [],
+              data: await extract(arr),
+            }
+          }))
+        ).catch(e => { throw (e) })
       }
     }
   } catch (err) {
@@ -71,7 +73,7 @@ const extract = async (arr = []) => {
       if (e.match(/(NIK|nik)/g)) {
         const nik = e.replace(/([A-Za-z])|(\s+)|([:?\-:&*%^()$#@!_+=~`])/g, '');
         o['nik'] = nik
-        console.log(`nik`, nik) 
+        console.log(`nik`, nik)
       }
     });
 

@@ -16,8 +16,8 @@ app.use(compression({ filter: shouldCompress }))
 app.use(express.json())
 app.use((req, res, next) => {
     req.log = log.child({ req_id: new Date() }, true)
-    req.log.info({ req })
-    res.on('finish', () => req.log.info({ res }))
+    // req.log.info({ req })
+    // res.on('finish', () => req.log.info({ res }))
     next()
 })
 app.use((err, req, res, next) => {

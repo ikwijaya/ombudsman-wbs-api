@@ -1,7 +1,8 @@
 node_modules
 images/
-upload/
-*.env
+upload/*
+*.env*
 builds
 .token*
 letter_template/*sample*
+.local*

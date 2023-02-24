@@ -12,3 +12,6 @@ junk
 builds
 .token*
 letter_template/*sample*
+.local*
+upload/*
+*env
