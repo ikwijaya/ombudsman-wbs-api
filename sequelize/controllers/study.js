@@ -170,6 +170,19 @@ module.exports = {
             ],
             where: { record_status: 'A' }
           },
+          {
+            required: false,
+            attributes: [
+              // 'idx_m_complaint_attachment',
+              'description',
+              'filename',
+              'path',
+              'mime_type',
+              'filesize',
+              [Sequelize.literal(`concat('${API_URL}/others/open/',complaint_attachments.filename)`), 'url']
+            ],
+            model: models.complaint_attachments
+          },
         ]
       })
 

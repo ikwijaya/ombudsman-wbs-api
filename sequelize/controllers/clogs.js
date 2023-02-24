@@ -35,6 +35,7 @@ module.exports = {
               when action = 'D' then 'Menghapus'
               when action = 'I' then 'Membuat'
               when action = 'V' then 'Memverifikasi'
+              when action = 'RB' then 'Melakukan rollback ke tahapan sebelumnya'
               else '-' end
           `), 'action_name'],
           [Sequelize.literal(`
@@ -43,6 +44,7 @@ module.exports = {
               when action = 'U' then 'green'
               when action = 'D' then 'red'
               when action = 'I' then 'black'
+              when action = 'RB' then 'purple darken-1'
               else 'grey' end
           `), 'action_color']
         ],

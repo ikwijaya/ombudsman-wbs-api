@@ -24,9 +24,24 @@ module.exports = {
       let expires = moment().add(h, 'h').format('YYYY-MM-DD HH:mm:ss');
       let md5 = crypto.createHash('md5').update(password).digest('hex');
 
+      let verify = await models.users.count({
+        transaction: t,
+        where: {
+          email: username,
+          is_verify: true,
+          record_status: 'A'
+        }
+      });
+      if (verify == 0) return response.failed(`
+        Anda belum melakukan verifikasi. Silakan cek email. 
+        Jika belom mendapatkan email dari Kami, 
+        silahkan hubungi admin@ombudsman.go.id, untuk mengirimkan kembali verifikasi email.
+      `);
+
       let users = await models.users.findOne(
         {
           raw: true,
+          transaction: t,
           attributes: [
             'idx_m_user',
             'fullname',
