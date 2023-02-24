@@ -1,5 +1,5 @@
 'use strict'
-const { NODE_ENV, DEFAULT_PASSWD, APP_LOGO } = require('../../config')
+const { NODE_ENV, DEFAULT_PASSWD, APP_LOGO, API_URL } = require('../../config')
 const opt = require('../connection')[NODE_ENV]
 const knex = require('knex')
 const { gen } = require('n-digit-token')
@@ -115,6 +115,76 @@ class Users {
               resolve({
                 items: output,
                 is_insert: is_insert
+              })
+            }
+          } else {
+            resolve(null)
+          }
+        })
+        .catch(e => reject(e))
+    });
+  }
+
+  /**
+   * 
+   * @param {*} sid 
+   * @param {*} keyword 
+   * @returns 
+   */
+  getExternal(sid = null, keyword = null) {
+    let db = knex(opt);
+    let idx_m_user = null;
+    let user_type = null;
+    let is_update = true;
+    let output = [];
+
+    return new Promise(async (resolve, reject) => {
+      await core.checkSession(sid)
+        .then(async (r) => {
+          if (r.status) {
+            idx_m_user = r.user_id;
+            user_type = r.user_type;
+
+            if (user_type === 'PUBLIC') {
+              resolve(null)
+            } else {
+              await db('m_user AS mu')
+                .select(
+                  'mu.idx_m_user',
+                  'mu.fullname',
+                  'mu.identity_no',
+                  'mu.phone_no',
+                  'mu.email',
+                  'ut.name AS user_type_name',
+                  db.raw(`case when mu.record_status = 'N' then 'red darken-1' else 'green lighten-1' end AS dcolor`),
+                  db.raw(`case when mu.record_status = 'N' then true else false end AS disabled`),
+                  db.raw(`ut.idx_m_user_type AS idx_m_user_type`, []),
+                  'mu.remarks',
+                  'mu.is_login',
+                  'mu.is_verify',
+                  'mu.verify_date',
+                  'mu.expires', 'mu.ucreate', 'mu.filename', 'mu.dcreate',
+                  db.raw(`? as base_url`, [API_URL+'/others/open/']),
+                  db.raw(`case when ut.idx_m_user_type=? AND true=? AND mu.is_verify = ? then true else false end AS is_resend`, [-1, is_update, false])
+                )
+                .leftJoin(`m_user_type AS ut`, `mu.idx_m_user_type`, `ut.idx_m_user_type`)
+                .where((builder) => {
+                  if (keyword) {
+                    builder.whereRaw("mu.fullname LIKE CONCAT('%',COALESCE(?,''),'%')", [keyword])
+                      .orWhereRaw("mu.identity_no LIKE CONCAT('%',COALESCE(?,''),'%')", [keyword])
+                      .orWhereRaw("mu.phone_no LIKE CONCAT('%',COALESCE(?,''),'%')", [keyword])
+                      .orWhereRaw("ut.name LIKE CONCAT('%',COALESCE(?,''),'%')", [keyword])
+                      .orWhereRaw("mu.email LIKE CONCAT('%',COALESCE(?,''),'%')", [keyword])
+                      .orWhereRaw("mu.remarks LIKE CONCAT('%',COALESCE(?,''),'%')", [keyword])
+                  }
+                })
+                .andWhere(`mu.idx_m_user_type`,'=','-1')
+                .orderBy('mu.email', 'asc')
+                .then((r) => output = JSON.parse(JSON.stringify(r)))
+                .catch(e => { reject(e) });
+
+              resolve({
+                items: output
               })
             }
           } else {
