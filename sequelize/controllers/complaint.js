@@ -131,7 +131,7 @@ module.exports = {
           e.next_status = r.filter(a => a.idx_m_form == 5 && (a.is_read)).length > 0 ? 'SELANJUTNYA' : 'TIDAK DI IZINKAN'
         } else {
           e.next_color = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'blue' : 'red';
-        e.next_status = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'SELANJUTNYA' : 'TIDAK DI IZINKAN'
+          e.next_status = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'SELANJUTNYA' : 'TIDAK DI IZINKAN'
         }
 
         e.is_rollback = 
@@ -233,7 +233,7 @@ module.exports = {
 
       let r = await core.checkRoles(
         sessions[0].user_id,
-        [91, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+        [91, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, RollbackProcedure]
       );
       let s = []; let dcode = null; let durasi = null;
       let c = await models.complaints.findOne(
@@ -345,6 +345,7 @@ module.exports = {
         let value = e.value
 
         if (code == '6') code = '7';
+        e.real_status_code = c.getDataValue('status_code')
         e.is_active = code === value
         e.value = parseInt(value)
         e.idx_m_complaint = id
@@ -354,6 +355,10 @@ module.exports = {
         e.name_color = 'black';
         e.next_color = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'blue' : 'red';
         e.next_status = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'SELANJUTNYA' : 'TIDAK DI IZINKAN'
+        e.is_rollback = 
+          r.filter(a => a.idx_m_form == RollbackProcedure && a.is_read).length > 0 &&
+          parseInt(c.getDataValue('status_code')) == parseInt(e.value) && 
+          parseInt(c.getDataValue('status_code')) > 7
 
         switch (parseInt(value)) {
           case 6: //penetapan tim pemeriksa

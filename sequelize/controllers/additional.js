@@ -26,7 +26,7 @@ module.exports = {
           [Sequelize.literal(`concat(case when work_units.regional is null then null else concat('Reg. ', work_units.regional, ' - ') end, work_units.name)`), 'name'],
           'regional'
         ],
-        where: { record_status: 'A' }
+        where: { record_status: 'A', regional: { [Op.ne]: null } }
       })
 
       let region_cities = await models.cities.findAll({
@@ -162,7 +162,7 @@ module.exports = {
           [Sequelize.literal(`concat(case when work_units.regional is null then null else concat('Reg. ', work_units.regional, ' - ') end, work_units.name)`), 'name'],
           'regional'
         ],
-        where: { record_status: 'A' }
+        where: { record_status: 'A', regional: { [Op.ne]: null } }
       })
 
       let region_cities = await models.cities.findAll({
@@ -232,7 +232,7 @@ module.exports = {
    * 2: anggota kumm
    * 4: kepala keasistenan regional
    */
-  async determinationAdditional(idx_m_complaint=null) {
+  async determinationAdditional(idx_m_complaint = null) {
     try {
       const users = await models.users.findAll({
         raw: true,
@@ -241,7 +241,7 @@ module.exports = {
           [Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']
         ],
         where: { record_status: 'A', idx_m_user_type: { [Op.in]: [4, 2, 1] } }
-      }).catch(e => { throw(e) });
+      }).catch(e => { throw (e) });
 
       const wbs = await models.users.findAll({
         attributes: [
@@ -249,11 +249,11 @@ module.exports = {
           [Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']
         ],
         where: { record_status: 'A', idx_m_user_type: 6 }
-      }).catch(e => { throw(e) });
+      }).catch(e => { throw (e) });
 
       const decisions = await models.complaint_decision_attachments.findOne({
         attributes: [
-          'filename','path','mime_type',
+          'filename', 'path', 'mime_type',
           [Sequelize.literal(`concat('${API_URL}/others/open/',filename)`), 'url']
         ],
         include: [
@@ -267,7 +267,7 @@ module.exports = {
             },
           }
         ],
-      }).catch(e => { throw(e) });
+      }).catch(e => { throw (e) });
 
       return {
         users: users,
