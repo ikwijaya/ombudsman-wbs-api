@@ -13,7 +13,7 @@ const development = {
   client: DB_CLIENT,
   connection: pg,
   searchPath: ['knex', DB_SCHEMA],
-  acquireConnectionTimeout: 10000,
+  acquireConnectionTimeout: 100000,
   useNullAsDefault: true,
   debug: false,
   pool: {
@@ -26,7 +26,7 @@ const production = {
   client: DB_CLIENT,
   connection: pg,
   searchPath: ['knex', DB_SCHEMA],
-  acquireConnectionTimeout: 10000,
+  acquireConnectionTimeout: 100000,
   useNullAsDefault: true,
   debug: true,
   pool: {

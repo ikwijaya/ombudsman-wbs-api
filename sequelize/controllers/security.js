@@ -31,7 +31,8 @@ module.exports = {
           is_verify: true,
           record_status: 'A'
         }
-      });
+      }).catch(e => { throw(e) });
+
       if (verify == 0) return response.failed(`
         Anda belum melakukan verifikasi. Silakan cek email. 
         Jika belom mendapatkan email dari Kami, 
@@ -63,7 +64,7 @@ module.exports = {
             }
           ]
         }
-      );
+      ).catch(e => { throw(e) });
 
       if (!users) return response.failed('Kesalahan pada username atau password.');
       let update = await models.sessions.update(
@@ -78,7 +79,7 @@ module.exports = {
           record_status: 'A',
           type: users.user_type
         },
-      });
+      }).catch(e => { throw(e) });
 
       if (!update || (update.length === 0 && update[0] > 0))
         await models.users.update(
@@ -87,7 +88,7 @@ module.exports = {
             transaction: t,
             where: { idx_m_user: users.idx_m_user }
           }
-        );
+        ).catch(e => { throw(e) });
 
       await models.sessions.create(
         {
@@ -102,7 +103,7 @@ module.exports = {
         },
         {
           transaction: t
-        });
+        }).catch(e => { throw(e) });
 
       await t.commit();
       return response.success('Sukses login', [{
@@ -115,6 +116,7 @@ module.exports = {
     } catch (err) {
       console.log('err', err)
       await t.rollback()
+      throw(err)
     }
   },
 

@@ -24,4 +24,6 @@ INSERT INTO m_form (idx_m_form,form_name,form_url,form_color,form_icon,form_sort
 	 (200,'Master Users','/MasterUsers',NULL,'mdi-cog','100',9998,false);
 INSERT INTO m_form (idx_m_form,form_name,form_url,form_color,form_icon,form_sort,idx_m_form_parent,is_read_only) VALUES
 	 (201,'Roles Management',NULL,NULL,NULL,'7',200,true),
-	 (9998,'Module','/ModulApps','red','mdi-chart-donut','999',NULL,true);
+	 (203,'External Users','/ExternalUsers',NULL,'mdi-user-groups','101',NULL,true),
+	 (9998,'Module','/Master','red','mdi-chart-donut','999',NULL,true),
+	 (300,'Rollback Procedure',NULL,NULL,NULL,NULL,1,true);

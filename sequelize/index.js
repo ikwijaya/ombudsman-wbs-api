@@ -5,23 +5,24 @@
 const { SQ_LOG, DB_SSL, DB_URL, DB_CLIENT } = require('../config')
 const { Sequelize } = require('sequelize')
 const { applyExtraSetup } = require('./extraSetup')
-const bunyan = require('bunyan')
-const log = bunyan.createLogger({ name: 'api-v2.ombudsman' })
-const logger = (msg) => { log.info(msg) }
+// const bunyan = require('bunyan')
+// const log = bunyan.createLogger({ name: 'api-v2.ombudsman' })
+// const logger = (msg) => { log.info(msg) }
 const _DB_SSL = DB_SSL == '1' ? true : false
 
 const sequelize = new Sequelize(DB_URL, {
+  logging: false,
   dialect: DB_CLIENT,
   dialectOptions: { 
     ssl: _DB_SSL ? { require: true, rejectUnauthorized: false } : null,
-    connectTimeout: 60000 
+    connectTimeout: 100000 
   },
   pool: {
     max: 500,
     min: 0,
-    acquire: 10000
+    acquire: 60000
   },
-  logging: SQ_LOG == 'bunyan' ? logger : SQ_LOG == '1' ? true : false
+  // logging: SQ_LOG == 'bunyan' ? logger : SQ_LOG == '1' ? true : false
 });
 
 const modelDefiners = [

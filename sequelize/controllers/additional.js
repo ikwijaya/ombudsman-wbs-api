@@ -1,6 +1,7 @@
 const { models } = require('..');
 const { Sequelize, Op } = require('sequelize')
 const core = require('./core')
+const { API_URL } = require('../../config')
 
 module.exports = {
   /**
@@ -231,31 +232,50 @@ module.exports = {
    * 2: anggota kumm
    * 4: kepala keasistenan regional
    */
-  async determinationAdditional() {
+  async determinationAdditional(idx_m_complaint=null) {
     try {
-      let users = await models.users.findAll({
+      const users = await models.users.findAll({
         raw: true,
         attributes: [
           'idx_m_user',
           [Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']
         ],
         where: { record_status: 'A', idx_m_user_type: { [Op.in]: [4, 2, 1] } }
-      });
+      }).catch(e => { throw(e) });
 
-      let wbs = await models.users.findAll({
+      const wbs = await models.users.findAll({
         attributes: [
           'idx_m_user',
           [Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']
         ],
         where: { record_status: 'A', idx_m_user_type: 6 }
-      });
+      }).catch(e => { throw(e) });
+
+      const decisions = await models.complaint_decision_attachments.findOne({
+        attributes: [
+          'filename','path','mime_type',
+          [Sequelize.literal(`concat('${API_URL}/others/open/',filename)`), 'url']
+        ],
+        include: [
+          {
+            required: true,
+            attributes: ['approved_by', 'approved_date'],
+            model: models.complaint_decisions,
+            where: {
+              idx_m_complaint: idx_m_complaint,
+              record_status: 'A'
+            },
+          }
+        ],
+      }).catch(e => { throw(e) });
 
       return {
         users: users,
-        wbs: wbs
+        wbs: wbs,
+        decisions: decisions
       }
     } catch (err) {
-      throw (error)
+      throw (err)
     }
   },
 

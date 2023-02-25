@@ -180,7 +180,7 @@ module.exports = {
       let dc = await models.complaint_decisions.findOne({
         attributes: ['idx_t_complaint_decision'],
         where: { idx_m_complaint: obj.approval['idx_m_complaint'] }
-      })
+      }).catch(e => { throw(e) })
 
       if (dc instanceof models.complaint_decisions) {
         let attchment = obj.attachment.map(e => {
@@ -194,6 +194,7 @@ module.exports = {
         })
 
         await models.complaint_decision_attachments.bulkCreate(attchment, { transaction: t, })
+          .catch(e => { throw(e) })
         await models.complaint_decisions.update(
           {
             approved_by: sessions[0].e_name,
@@ -205,15 +206,22 @@ module.exports = {
               form_status: 1
             }
           }
-        );
+        ).catch(e => { throw(e) });
 
+        /// destroy last determination id belongs to compalint
+        await models.complaint_determinations.destroy({
+          transaction: t,
+          where: {idx_m_complaint: obj.approval['idx_m_complaint']}
+        }).catch(e => { throw(e) })
+
+        /// update complaints forms
         await models.complaints.update(
           { idx_m_status: 6 },
           {
             transaction: t,
             where: { idx_m_complaint: obj.approval['idx_m_complaint'] }
           }
-        );
+        ).catch(e => { throw(e) });
       }
 
       // ===============> LOGS
@@ -224,7 +232,8 @@ module.exports = {
         changes: JSON.stringify(obj),
         ucreate: sessions[0].user_id,
         notes: 'telaah meng-upload Surat Tugas pengaduan'
-      }, { transaction: t, });
+      }, { transaction: t, })
+      .catch(e => { throw(e) });
 
       await t.commit();
       return response.success('Penyetujuan telah dilakukan')

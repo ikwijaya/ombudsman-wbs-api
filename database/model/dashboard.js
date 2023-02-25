@@ -208,9 +208,6 @@ class Dashboard {
                 e['penugasan'] = r2.filter(a => a['idx_m_complaint'] == e['idx_m_complaint'])
               })
 
-              console.log('r', r)
-              console.log('r2', r2)
-
               return r
             }))
         })

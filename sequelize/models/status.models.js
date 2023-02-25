@@ -23,6 +23,9 @@ module.exports = (sq) => {
       allowNull: false,
       unique: true
     },
+    module_ui: {
+      type: DataTypes.STRING,
+    },
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,

@@ -124,11 +124,16 @@ module.exports = {
         e.name_color = value === 2 && is_verify > 0 ? 'green'
           : value === 2 && is_verify === 0 ? 'red' : 'black'
 
+        ///// security Tahapan
         e.value = parseInt(value)
-        e.next_color = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'blue' : 'red';
+        if(value == 5) {
+          e.next_color = r.filter(a => a.idx_m_form == 5 && (a.is_read)).length > 0 ? 'blue' : 'red';
+          e.next_status = r.filter(a => a.idx_m_form == 5 && (a.is_read)).length > 0 ? 'SELANJUTNYA' : 'TIDAK DI IZINKAN'
+        } else {
+          e.next_color = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'blue' : 'red';
         e.next_status = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'SELANJUTNYA' : 'TIDAK DI IZINKAN'
-        // e.next_color = r.filter(a => a.idx_m_form == 5 && (a.is_read)).length > 0 ? 'blue' : 'red';
-        // e.next_status = r.filter(a => a.idx_m_form == 5 && (a.is_read)).length > 0 ? 'SELANJUTNYA' : 'TIDAK DI IZINKAN'
+        }
+
         e.is_rollback = 
           r.filter(a => a.idx_m_form == RollbackProcedure && a.is_read).length > 0 &&
           parseInt(c.getDataValue('status_code')) == parseInt(e.value) && parseInt(c.getDataValue('status_code')) > 3

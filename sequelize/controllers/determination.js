@@ -56,31 +56,23 @@ module.exports = {
       );
 
       // attachment
-      let d = await models.complaint_decisions.findOne(
-        {
-          attributes: [
-            'idx_t_complaint_decision',
-            'notes', 'approved_by', 'approved_date',
-            [Sequelize.literal(`case when approved_by is not null then true else false end`), 'is_approve']
-          ],
-          include: [
-            {
-              attributes: [
-                'idx_t_complaint_decision',
-                'idx_t_decision_attachment',
-                'description',
-                'filename',
-                'path',
-                'mime_type',
-                'filesize',
-                [Sequelize.literal(`concat('${API_URL}/others/open/',filename)`), 'url']
-              ],
-              model: models.complaint_decision_attachments
-            }
-          ],
-          where: { record_status: 'A', idx_m_complaint: complaintId }
-        }
-      )
+      const decisions = await models.complaint_decision_attachments.findOne({
+        attributes: [
+          'filename','path','mime_type',
+          [Sequelize.literal(`concat('${API_URL}/others/open/',filename)`), 'url']
+        ],
+        include: [
+          {
+            required: true,
+            attributes: ['approved_by', 'approved_date'],
+            model: models.complaint_decisions,
+            where: {
+              idx_m_complaint: complaintId,
+              record_status: 'A'
+            },
+          }
+        ],
+      }).catch(e => { throw(e) });
 
       if (v instanceof models.complaint_determinations) {
         determination_by = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: v.getDataValue('determination_by') } })
@@ -90,7 +82,7 @@ module.exports = {
 
       return {
         item: v,
-        item2: d
+        item2: decisions
       };
     } catch (error) {
       throw (error)
@@ -111,12 +103,14 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Your session has been expired, please relogin')
 
+      if (obj.users.length == 0)
+        return response.failed('Daftar Tim TIDAK boleh kosong.')
+      if (!obj.determination['determination_by'])
+        return response.failed('Kolom Penetapan Oleh TIDAK boleh kosong.')
+
       obj.determination['ucreate'] = sessions[0].user_id;
       // obj.determination['determination_by'] = sessions[0].e_name;
       obj.users['ucreate'] = sessions[0].user_id;
-
-      if (obj.users.length == 0)
-        return response.failed('Daftar Tim TIDAK boleh kosong.')
 
       let v = await models.complaint_determinations.create(obj.determination)
       if (v instanceof models.complaint_determinations) {
