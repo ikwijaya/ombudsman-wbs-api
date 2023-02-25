@@ -10,7 +10,7 @@ router.post('/', async (req, res, next) => {
   console.log(req.body)
 
   try {
-    let o = await complaint.rollback(sid, id).catch(e => { throw (e) })
+    let o = await complaint.rollbackKUMM(sid, id).catch(e => { throw (e) })
     res.status(200).send(o)
   } catch (err) {
     res.status(401).send(response.failed(err, []))

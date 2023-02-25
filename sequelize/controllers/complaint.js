@@ -126,7 +126,7 @@ module.exports = {
 
         ///// security Tahapan
         e.value = parseInt(value)
-        if(value == 5) {
+        if (value == 5) {
           e.next_color = r.filter(a => a.idx_m_form == 5 && (a.is_read)).length > 0 ? 'blue' : 'red';
           e.next_status = r.filter(a => a.idx_m_form == 5 && (a.is_read)).length > 0 ? 'SELANJUTNYA' : 'TIDAK DI IZINKAN'
         } else {
@@ -134,7 +134,7 @@ module.exports = {
           e.next_status = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'SELANJUTNYA' : 'TIDAK DI IZINKAN'
         }
 
-        e.is_rollback = 
+        e.is_rollback =
           r.filter(a => a.idx_m_form == RollbackProcedure && a.is_read).length > 0 &&
           parseInt(c.getDataValue('status_code')) == parseInt(e.value) && parseInt(c.getDataValue('status_code')) > 3
 
@@ -355,9 +355,9 @@ module.exports = {
         e.name_color = 'black';
         e.next_color = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'blue' : 'red';
         e.next_status = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'SELANJUTNYA' : 'TIDAK DI IZINKAN'
-        e.is_rollback = 
+        e.is_rollback =
           r.filter(a => a.idx_m_form == RollbackProcedure && a.is_read).length > 0 &&
-          parseInt(c.getDataValue('status_code')) == parseInt(e.value) && 
+          parseInt(c.getDataValue('status_code')) == parseInt(e.value) &&
           parseInt(c.getDataValue('status_code')) > 7
 
         switch (parseInt(value)) {
@@ -1604,7 +1604,7 @@ module.exports = {
    * @param {*} sid 
    * @param {*} id 
    */
-  async rollback(sid, id) {
+  async rollbackInspektorat(sid, id) {
     const t = await sequelize.transaction()
 
     try {
@@ -1656,6 +1656,94 @@ module.exports = {
           idx_m_status: c.getDataValue('status_code')
         }
       })
+
+      // added history
+      await models.clogs.create({
+        idx_m_complaint: id,
+        action: 'RB',  //rollback
+        flow: c.getDataValue('status_code'),    //pengaduan
+        changes: JSON.stringify(c),
+        ucreate: sessions[0].user_id
+      }, { transaction: t, });
+
+      await t.commit()
+      return response.success(`Pengaduan nomor ${c.getDataValue('form_no')} berhasil di kembalikan ke tahapan ${status.getDataValue('name')}`)
+    } catch (error) {
+      await t.rollback()
+      throw (error)
+    }
+  },
+
+  /**
+   * 
+   * @param {*} sid 
+   * @param {*} id 
+   */
+  async rollbackKUMM(sid, id) {
+    const t = await sequelize.transaction()
+
+    try {
+      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      if (sessions.length === 0)
+        return response.failed('Session expired, please relogin.')
+
+      const c = await models.complaints.findOne(
+        {
+          transaction: t,
+          where: {
+            idx_m_complaint: id,
+            record_status: 'A'
+          },
+          attributes: [
+            'idx_m_complaint',
+            'form_no',
+            'date',
+            [Sequelize.literal(`status.code`), 'status_code'],
+            [Sequelize.literal(`status.name`), 'status_name'],
+          ],
+          include: [
+            {
+              required: false,
+              attributes: ['code', 'name'],
+              model: models.status,
+            },
+          ]
+        }
+      );
+
+      const back_code = parseInt(c.getDataValue('status_code')) - 1;
+      const status = await models.status.findOne({
+        transaction: t,
+        attributes: ['idx_m_status', 'name'],
+        where: {
+          code: back_code.toString()
+        }
+      })
+
+      await models.complaints.update({
+        idx_m_status: status.getDataValue('idx_m_status'),
+        dmodified: new Date(),
+        umodified: sessions[0].user_id
+      }, {
+        transaction: t,
+        where: {
+          idx_m_complaint: id,
+          idx_m_status: c.getDataValue('status_code')
+        }
+      })
+
+      ////// remove some row data for tahapan (permintaan data dan dokumen)
+      if (parseInt(c.getDataValue('status_code')) == 8) {
+        //// rollback rm approved_date
+        await models.validation.update({ approved_date: null }, { 
+          transaction: t, 
+          where: { idx_m_complaint: id } 
+        }).catch(e => { throw (e) })
+        
+        //// destroy auto generation rows
+        await models.request.destroy({ transaction: t, where: { idx_m_complaint: id }})
+        .catch(e => { throw (e) })
+      }
 
       // added history
       await models.clogs.create({
