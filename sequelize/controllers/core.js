@@ -23,6 +23,16 @@ module.exports = {
             [Sequelize.literal(`users.idx_m_user`), 'user_id'],
             [Sequelize.literal(`case when usertype.idx_m_user_type=-1 then 'PUBLIC' else 'INTERNAL' end`), 'user_type'],
             [Sequelize.literal(`case when usertype.idx_m_user_type=0 then true else false end`), 'is_sa'],
+            [Sequelize.literal(`
+              case 
+                when usertype.idx_m_user_type=-1 then 'public' 
+                when usertype.idx_m_user_type=0 then 'superadmin' 
+                when usertype.idx_m_user_type=1 then 'inspektorat'
+                when usertype.idx_m_user_type=2 then 'kumm'
+                when usertype.idx_m_user_type=3 then 'kkumm' 
+                when usertype.idx_m_user_type=4 then 'kkr' 
+              else null end`
+            ), 'user_code'],
             [Sequelize.literal(`sessions.sid`), 'sid'],
             'idx_m_user_type',
           ],

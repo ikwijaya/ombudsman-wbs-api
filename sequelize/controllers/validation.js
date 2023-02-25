@@ -5,6 +5,7 @@ const core = require('./core')
 const sequelize = require('..');
 const { response } = require('../../models/index')
 const { API_URL } = require('../../config')
+const FORM_ID = 7
 
 module.exports = {
   /**
@@ -17,13 +18,15 @@ module.exports = {
    */
   async get(sid = null, complaintId = null) {
     try {
-      let sessions = await core.checkSession(sid)
+      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
       if (sessions.length === 0)
         return null;
 
+      const who = sessions[0].user_code;
       let arranged_by, approved_by, checked_by;
-      let r = await core.checkRoles(sessions[0].user_id, [92]);
-      let is_void_checker = r.filter(a => a.idx_m_form == 92 && a.is_read).length > 0
+      let r = await core.checkRoles(sessions[0].user_id, [FORM_ID]);
+
+      ///// next todos
       let validation = await models.validation.findOne(
         {
           attributes: [
@@ -171,7 +174,9 @@ module.exports = {
       if (validation instanceof models.validation) {
         // security
         is_approve = validation.getDataValue('approved_by') == sessions[0].user_id;
-        is_check = validation.getDataValue('checked_by') == sessions[0].user_id || is_void_checker;
+        is_check = validation.getDataValue('checked_by') == sessions[0].user_id;
+        is_update = validation.getDataValue('checked_date') == null
+          && r.filter(a => a.idx_m_form == FORM_ID && a.is_update).length > 0
 
         arranged_by = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: validation.getDataValue('arranged_by') } })
         approved_by = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: validation.getDataValue('approved_by') } })
@@ -182,10 +187,20 @@ module.exports = {
         validation.setDataValue('checked_by_name', checked_by instanceof models.users ? checked_by.getDataValue('name') : null)
       }
 
+      //// security yg sangat kusut, 
+      //// kejebak oleh kementrian, s**l**
       return {
         is_insert: !validation,
-        is_update: validation instanceof models.validation && validation.getDataValue('checked_date') == null,
-        is_check: is_check,
+        // is_update: who == 'kkr' && validation.getDataValue('checked_by') != null && is_update ? true
+        //   : who == 'kkumm' && validation.getDataValue('approved_by') != null && is_update ? true 
+        //   : who == 'kumm' && !validation.getDataValue('checked_by') 
+        //     && !validation.getDataValue('checked_by') && is_update ? true 
+        //   : who == 'inspektorat' && !validation.getDataValue('checked_by') 
+        //     && !validation.getDataValue('checked_by') && is_update ? true 
+        //   : false,
+        is_update: ['kkumm', 'kkr'].includes(who) ? false
+          : is_update && !validation.getDataValue('checked_by') && !validation.getDataValue('approved_by'),
+        is_check: is_check && !validation.getDataValue('approved_by'),
         is_approve: is_approve,
         item: validation,
         item2: studies,
@@ -487,6 +502,60 @@ module.exports = {
    * @param {*} obj 
    * @returns 
    */
+  async checkCancel(sid = null, obj = {}) {
+    const t = await sequelize.transaction();
+
+    try {
+      let sessions = await core.checkSession(sid);
+      if (sessions.length === 0)
+        return response.failed('Session TIDAK ditemukan');
+
+      obj.validation['umodified'] = sessions[0].user_id;
+      obj.validation['dmodified'] = new Date();
+      obj.validation['approved_by'] = null
+      obj.validation['approved_date'] = null
+      obj.validation['checked_by'] = null
+      obj.validation['checked_date'] = null
+
+      let is_arranged = await models.validation.count({
+        where: {
+          idx_t_validation: obj.validation.id,
+          [Op.or]: [
+            { arranged_by: null, },
+            { arranged_date: null }
+          ]
+        },
+        transaction: t
+      })
+
+      if (is_arranged > 0) return response.failed('Form belum dilakukan penyusunan, Silakan klik tombol SIMPAN untuk melakukan sign penyusunan.')
+      await models.validation.update(obj.validation, { transaction: t, where: { idx_t_validation: obj.validation.id } })
+      let v = await models.validation.findOne({ attributes: ['idx_m_complaint'], where: { idx_t_validation: obj.validation.id } })
+
+      //// LOGS
+      await models.clogs.create({
+        idx_m_complaint: v.getDataValue('idx_m_complaint'),
+        action: 'U',
+        flow: '7',
+        changes: JSON.stringify(obj),
+        ucreate: sessions[0].user_id,
+        notes: 'telah melakukan CANCEL PEMERIKSAAN pada validasi'
+      }, { transaction: t, });
+
+      await t.commit();
+      return response.success('Cancel pemeriksaan validasi berhasil disimpan', [])
+    } catch (err) {
+      await t.rollback()
+      throw new Error(err)
+    }
+  },
+
+  /**
+   * 
+   * @param {*} sid 
+   * @param {*} obj 
+   * @returns 
+   */
   async approve(sid = null, obj = {}) {
     const t = await sequelize.transaction();
 
@@ -676,6 +745,74 @@ module.exports = {
 
       await t.commit();
       return response.success(`Penyetujuan validasi berhasil disimpan`, [])
+    } catch (err) {
+      await t.rollback()
+      throw new Error(err)
+    }
+  },
+
+  /**
+   * 
+   * @param {*} sid 
+   * @param {*} obj 
+   * @returns 
+   */
+  async approveCancel(sid = null, obj = {}) {
+    const t = await sequelize.transaction();
+
+    try {
+      let sessions = await core.checkSession(sid);
+      if (sessions.length === 0)
+        return response.failed('Session TIDAK ditemukan');
+
+      obj.validation['umodified'] = sessions[0].user_id;
+      obj.validation['dmodified'] = new Date();
+      obj.validation['approved_by'] = null
+      obj.validation['approved_date'] = null
+
+      let is_checked = await models.validation.count({
+        where: {
+          idx_t_validation: obj.validation.id,
+          [Op.or]: [
+            { checked_by: null, },
+            { checked_date: null }
+          ]
+        },
+        transaction: t
+      })
+
+      let is_approved = await models.validation.count({
+        where: {
+          idx_t_validation: obj.validation.id,
+          approved_by: { [Op.ne]: null },
+          approved_date: { [Op.ne]: null }
+        },
+        transaction: t
+      })
+
+      if (is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
+      if (is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
+
+      //// cancel penyetujuan
+      await models.validation.update(
+        obj.validation,
+        { transaction: t, where: { idx_t_validation: obj.validation.id } }
+      )
+
+      // LOGS
+      await models.clogs.bulkCreate([
+        {
+          idx_m_complaint: v.getDataValue('idx_m_complaint'),
+          action: 'U',
+          flow: '7',
+          changes: JSON.stringify(obj),
+          ucreate: sessions[0].user_id,
+          notes: 'telah melakukan CANCEL PENYETUJUAN validasi'
+        }
+      ], { transaction: t, });
+
+      await t.commit();
+      return response.success(`Cancel penyetujuan validasi berhasil disimpan`, [])
     } catch (err) {
       await t.rollback()
       throw new Error(err)
