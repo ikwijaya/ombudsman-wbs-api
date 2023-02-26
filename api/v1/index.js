@@ -315,4 +315,12 @@ fs.readdir(`api/v1/master_usertype`, async function (err, files) {
   });
 });
 
+fs.readdir(`api/v1/report`, async function (err, files) {
+  if (err) { return console.log(`Unable to scan directory (api/v1/report) : ` + err); }
+  files.forEach(async function (file) {
+    let name = await helper.createRouteName(file).catch(e => { throw (e) })
+    router.use(`/report/${name}`, receive.rules(), receive.validate, require(`./report/${file}`))
+  });
+});
+
 module.exports = router

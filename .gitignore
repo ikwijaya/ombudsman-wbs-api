@@ -6,3 +6,4 @@ builds
 .token*
 letter_template/*sample*
 .local*
+reports/*

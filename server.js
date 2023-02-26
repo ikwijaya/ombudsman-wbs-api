@@ -11,6 +11,8 @@ const log = bunyan.createLogger({
     name: APP_CODE,
     serializers: bunyan.stdSerializers
 })
+const sequelize = require('./sequelize')
+const { helper } = require('./helper')
 
 app.use(compression({ filter: shouldCompress }))
 app.use(express.json())
@@ -40,8 +42,6 @@ app.get('/version', async (req, res, next) => {
 })
 
 // authenticate
-const sequelize = require('./sequelize')
-const { helper } = require('./helper')
 const authenticate = async () => {
     try {
         await sequelize.authenticate();

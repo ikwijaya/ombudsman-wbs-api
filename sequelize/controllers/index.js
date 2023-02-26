@@ -12,6 +12,7 @@ const determination = require('./determination')
 const monitoring = require('./monitoring')
 const closing = require('./closing')
 const download_letter = require('./download_letter')
+const download_docx = require('./download_docx')
 const request = require('./request')
 const clarification = require('./clarification')
 const confirmation = require('./confirmation')
@@ -32,7 +33,7 @@ module.exports = {
   complaint, status, validation,
   verification, study, decision,
   action, determination, monitoring,
-  closing, download_letter,
+  closing, download_letter, download_docx,
   request, clarification, confirmation,
   study_lys, lhpa, surgery, pleno, delivery,
   users, letters, clogs, userregion, region,

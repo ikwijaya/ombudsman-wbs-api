@@ -15,6 +15,7 @@ const mailer = require('nodemailer')
 const fs = require('fs')
 const mv = require('mv')
 const git = require('git-last-commit')
+const mt = require('mime-types')
 const email_auth = EMAIL_AUTH
 const email_pass = EMAIL_PASS
 const email_host = EMAIL_HOST
@@ -437,6 +438,22 @@ module.exports = {
 
       resolve(found.length > 0 ? `${found[0].type}/${extension}` : null);
     })
+  },
+
+  /**
+   * 
+   * @param {*} path 
+   * @returns 
+   */
+  readFolder: (path) => {
+    let o = []
+    fs.readdirSync(path).forEach(async (e) => {
+      const created_at = fs.statSync(path + e).mtime
+      const ext = mt.lookup(e)
+      o.push({ name: e, created_at: created_at, ext: mt.extension(ext) })
+    })
+  
+    return o
   },
 
   /**

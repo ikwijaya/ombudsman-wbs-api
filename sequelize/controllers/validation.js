@@ -147,7 +147,7 @@ module.exports = {
       let ucreate;
       let complaint = await models.complaints.findOne({
         attributes: [
-          'idx_m_complaint', 'manpower', 'description', 'ucreate', 'hopes',
+          'idx_m_complaint', 'manpower', 'description', 'ucreate', 'hopes', 'form_no',
           [Sequelize.literal(`case when complaints.idx_m_legal_standing = -1 then true else false end`), 'is_kuasa_pelapor']
         ],
         include: [

@@ -132,7 +132,7 @@ module.exports = {
       where[Op.or] = {
         'letter_no': { [Op.eq]: null },
         'letter_date': { [Op.eq]: null },
-        'filename': { [Op.eq]: null }
+        // 'filename': { [Op.eq]: null }
       }
 
       let count = await models.request.count({ where: where, transaction: t });
