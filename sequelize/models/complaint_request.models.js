@@ -34,6 +34,14 @@ module.exports = (sq) => {
     path: DataTypes.STRING(),
     mime_type: DataTypes.STRING(),
     filesize: DataTypes.STRING(),
+
+    // as req nadia
+    checked_date: DataTypes.DATE,
+    checked_by: DataTypes.BIGINT,
+    approved_date: DataTypes.DATE,
+    approved_by: DataTypes.BIGINT,
+    arranged_date: DataTypes.DATE,
+    arranged_by: DataTypes.BIGINT,
     
     dcreate: {
       type: DataTypes.DATE,

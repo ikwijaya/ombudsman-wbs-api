@@ -6,13 +6,14 @@ const { helper } = require('../../../helper')
 const { API_URL } = require('../../../config')
 const fs = require('fs')
 const { createReport } = require('docx-templates')
+const fname = '14F9'
 
 /**
  * 
  * @param {*} id 
  * @returns 
  */
-const letter_06F2 = async (id) => {
+const letter_14F9 = async (id) => {
 	try {
 		let buffer;
 		const c = await models.complaints.findOne(
@@ -110,7 +111,7 @@ const letter_06F2 = async (id) => {
 				
 				for (let i in ckl) {
 					const v = ckl[i].getDataValue('value')
-					checklist.push({ is: cl.includes(v) ? '✔' : '', value: v })
+					checklist.push({ is: cl.includes(v) ? 'X' : '', value: v })
 				}
 			}
 
@@ -121,10 +122,11 @@ const letter_06F2 = async (id) => {
 			let hteradu = []
 
 			for (let i in terlapor) {
-				hterlapor.push({
+				hteradu.push({
 					time: `Melalui: ${terlapor[i].media} pada ${moment(terlapor[i].date).format('DD MMM YYYY | HH:mm:ss')}`,
 					notes: terlapor[i].notes
 				})
+				hterlapor.push(w)
 			}
 
 			for (let i in teradu) {
@@ -158,14 +160,14 @@ const letter_06F2 = async (id) => {
 			let stepHtml = []
 			for (let i in baseSteps) {
 				const v = baseSteps[i].getDataValue('value')
-				stepHtml.push({ is: vstep.includes(v) ? '✔' : '', value: v })
+				stepHtml.push({ is: vstep.includes(v) ? 'X' : '', value: v })
 			}
 
 			const is_kuasa_pelapor = c.getDataValue('is_kuasa_pelapor')
 			const manpower = c.getDataValue('manpower')
 			const fpengadu = pengadu instanceof models.users ? pengadu.getDataValue('fullname') : null
 
-			const template = fs.readFileSync('./templates/06F2.docx')
+			const template = fs.readFileSync(`./templates/${fname}.docx`)
 			buffer = await createReport({
 				template,
 				cmdDelimiter: ['{{', '}}'],
@@ -178,13 +180,13 @@ const letter_06F2 = async (id) => {
 					tahapan: stepHtml,
 					simple_no: std.getDataValue('simple_app_no'),
 					is_pemeriksaan: !v.getDataValue('scope') ? '' 
-						: v.getDataValue('scope').toLowerCase() == '1' ? '✔' : '',
+						: v.getDataValue('scope').toLowerCase() == '1' ? 'X' : '',
 					is_pencegahan: !v.getDataValue('scope') ? '' 
-						: v.getDataValue('scope').toLowerCase() == '2' ? '✔' : '',
+						: v.getDataValue('scope').toLowerCase() == '2' ? 'X' : '',
 					pencegahan: v.getDataValue('prevention'),
-					is_substansi: product.includes('substansi') ? '✔' : '',
-					is_prosedur: product.includes('prosedur') ? '✔' : '',
-					is_produk: product.includes('produk') ? '✔' : '',
+					is_substansi: product.includes('substansi') ? 'X' : '',
+					is_prosedur: product.includes('prosedur') ? 'X' : '',
+					is_produk: product.includes('produk') ? 'X' : '',
 					hope: c.getDataValue('hopes'),
 					ckls: checklist,
 					hpengadu: hterlapor,
@@ -205,7 +207,7 @@ const letter_06F2 = async (id) => {
 				}
 			})
 
-			const filename = `${c.getDataValue('form_no')}_06F2.docx`
+			const filename = `${c.getDataValue('form_no')}_${fname}.docx`
 			fs.writeFileSync(`./reports/${filename}`, buffer);
 			return response.success('Your file has been generated. Click preview for check file.', {
 				filename,
@@ -219,4 +221,4 @@ const letter_06F2 = async (id) => {
 	}
 }
 
-module.exports = letter_06F2
+module.exports = letter_14F9

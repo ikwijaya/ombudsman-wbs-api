@@ -7,9 +7,11 @@ router.post('/', async (req, res, next) => {
   let idx = req.body.id || null;
   let letter = req.body.letter || null;
   let flag = req.body.flag || null;
+
+  console.log(`letter => `, letter)
   
   try {
-    let o = await download_docx[`letter_${letter}`](idx).catch(e => { throw (e) })
+    let o = await download_docx[`letter_${letter}`](idx, flag).catch(e => { throw (e) })
     res.send(o)
   } catch (err) {
     console.log(`err`, err)
