@@ -437,11 +437,11 @@ module.exports = {
       let scopes = [
         {
           text: "Pemeriksaan Laporan",
-          value: 1,
+          value: '1',
         },
         {
           text: "Pencegahan",
-          value: 2,
+          value: '2',
         },
       ]
 

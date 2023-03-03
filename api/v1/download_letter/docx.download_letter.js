@@ -12,7 +12,9 @@ router.post('/', async (req, res, next) => {
     let o = await download_docx[`letter_${letter}`](idx).catch(e => { throw (e) })
     res.send(o)
   } catch (err) {
+    console.log(`err`, err)
     res.status(401).send(response.failed(err, []))
+    throw (err)
   }
 });
 

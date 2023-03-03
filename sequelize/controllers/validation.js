@@ -530,7 +530,7 @@ module.exports = {
 
       if (is_arranged > 0) return response.failed('Form belum dilakukan penyusunan, Silakan klik tombol SIMPAN untuk melakukan sign penyusunan.')
       await models.validation.update(obj.validation, { transaction: t, where: { idx_t_validation: obj.validation.id } })
-      let v = await models.validation.findOne({ attributes: ['idx_m_complaint'], where: { idx_t_validation: obj.validation.id } })
+      const v = await models.validation.findOne({ attributes: ['idx_m_complaint'], where: { idx_t_validation: obj.validation.id } })
 
       //// LOGS
       await models.clogs.create({
@@ -798,6 +798,12 @@ module.exports = {
         obj.validation,
         { transaction: t, where: { idx_t_validation: obj.validation.id } }
       )
+
+      const v = await models.validation.findOne({
+        transaction: t,
+        attributes: ['idx_m_complaint'],
+        where: { idx_t_validation: obj.validation.id }
+      });
 
       // LOGS
       await models.clogs.bulkCreate([
