@@ -1713,8 +1713,8 @@ module.exports = {
       );
 
       const status_code = c instanceof models.complaints ? c.getDataValue('status_code') : null;
-      if(!status_code) return response.failed(`Gagal melakukan rollback karena status TIDAK tersedia.`)
-      if(PREVENT_ROLLBACK.includes(parseInt(status_code))) 
+      if (!status_code) return response.failed(`Gagal melakukan rollback karena status TIDAK tersedia.`)
+      if (PREVENT_ROLLBACK.includes(parseInt(status_code)))
         return response.failed(`Forbidden rollback untuk tahapan ini.`)
 
       const back_code = parseInt(status_code) - 1;
@@ -1741,44 +1741,55 @@ module.exports = {
       ////// remove some row data for tahapan (permintaan data dan dokumen)
       if (parseInt(status_code) == 8) {
         //// rollback rm approved_date
-        await models.validation.update({ approved_date: null }, { 
-          transaction: t, 
-          where: { idx_m_complaint: id } 
+        await models.validation.update({ approved_date: null }, {
+          transaction: t,
+          where: { idx_m_complaint: id }
         }).catch(e => { throw (e) })
-        
+
         //// destroy auto generation rows
-        await models.request.destroy({ transaction: t, where: { idx_m_complaint: id }})
-        .catch(e => { throw (e) })
+        await models.request.destroy({ transaction: t, where: { idx_m_complaint: id } })
+          .catch(e => { throw (e) })
       }
 
       ////// remove kertas kerja klarifikasi when rollback from KKK (9)
-      if(parseInt(status_code) == 9) {
+      if (parseInt(status_code) == 9) {
         const lys = await models.study_lys
-          .findOne({ attributes:['idx_t_study_lys'], transaction: t, where: { idx_m_complaint: id }})
+          .findOne({ attributes: ['idx_t_study_lys'], transaction: t, where: { idx_m_complaint: id } })
           .catch(e => { throw (e) })
-        await models.study_lys_event
-          .destroy({ transaction: t, where: { idx_t_study_lys: lys.getDataValue('idx_t_study_lys')}})
+
+        //// remove on telaah analisis event
+        await models.complaint_study_events
+          .destroy({ transaction: t, where: { idx_t_study_lys: lys.getDataValue('idx_t_study_lys') } })
           .catch(e => { throw (e) })
+
         await models.study_lys
-          .destroy({ transaction: t, where: { idx_m_complaint: id }})
+          .destroy({ transaction: t, where: { idx_m_complaint: id } })
           .catch(e => { throw (e) })
       }
 
       ////// update to kku kertas kerja klarifikasi when rollback from Klarifikasi Terperiksa (10)
-      if(parseInt(status_code) == 10) {
+      if (parseInt(status_code) == 10) {
         const lys = await models.study_lys
-          .findOne({ attributes:['idx_t_study_lys'], transaction: t, where: { idx_m_complaint: id }})
+          .findOne({ attributes: ['idx_t_study_lys'], transaction: t, where: { idx_m_complaint: id } })
           .catch(e => { throw (e) })
-        
+
         ///// remind kku when task is back!
-        await models.study_lys.update({ head_of_kumm_date: null }, 
+        await models.study_lys.update({ head_of_kumm_date: null },
           {
             transaction: t,
             where: { idx_t_study_lys: lys.getDataValue('idx_t_study_lys') }
           }).catch(e => { throw (e) })
-        
+
         /// remove last creations
-        await models.clarification.destroy({ transaction: t, where: { idx_m_complaint: id }}).catch(e => { throw (e) })
+        await models.clarification.destroy({ transaction: t, where: { idx_m_complaint: id } }).catch(e => { throw (e) })
+      }
+
+      ///// remove konfirmasi pengadu when rollback from Konfirmasi Pengadu (11)
+      if (parseInt(status_code) == 11) {
+        await models.confirmation.destroy({
+          transaction: t,
+          where: { idx_m_complaint: id, record_status: 'A' }
+        }).catch(e => { throw (e) })
       }
 
       // added history
