@@ -177,6 +177,7 @@ module.exports = {
         is_approve = validation.getDataValue('approved_by') == sessions[0].user_id;
         is_check = validation.getDataValue('checked_by') == sessions[0].user_id;
         is_update = validation.getDataValue('checked_date') == null
+          && validation.getDataValue('arranged_date') == null
           && r.filter(a => a.idx_m_form == FORM_ID && a.is_update).length > 0
 
         arranged_by = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: validation.getDataValue('arranged_by') } })
@@ -199,13 +200,13 @@ module.exports = {
         //   : who == 'inspektorat' && !validation.getDataValue('checked_by') 
         //     && !validation.getDataValue('checked_by') && is_update ? true 
         //   : false,
-        is_update: ['kkumm', 'kkr'].includes(who) ? false
-          : is_update && !validation.getDataValue('checked_by') && !validation.getDataValue('approved_by'),
-        is_check: is_check && !validation.getDataValue('approved_by'),
+        is_update: ['kkumm', 'kkr'].includes(who) ? false : is_update,
+        is_check: is_check && !validation.getDataValue('approved_by') && validation.getDataValue('arranged_date') != null,
         is_approve: is_approve,
         item: validation,
         item2: studies,
-        item3: complaint
+        item3: complaint,
+        who: who
       }
     } catch (err) {
       throw (err)
@@ -229,8 +230,7 @@ module.exports = {
 
       obj.validation['ucreate'] = sessions[0].user_id;
       obj.validation['arranged_by'] = sessions[0].user_id;
-      obj.validation['arranged_date'] = new Date();
-
+      
       let v = await models.validation.create(obj.validation, { transaction: t });
       let checklists = obj.checklists;
       let communication = obj.communication;
@@ -322,6 +322,13 @@ module.exports = {
 
       obj.validation['umodified'] = sessions[0].user_id;
       obj.validation['dmodified'] = new Date();
+      if(obj.validation['checked_by']) obj.validation['arranged_date'] = new Date();
+      if(obj.validation['checked_by'])
+        user = await models.users.findOne({
+          transaction: t,
+          attributes: ['fullname', 'email'],
+          where: { record_status: 'A', idx_m_user: obj.validation['checked_by'] }
+        }).catch(e => { throw(e) })
 
       // delete heula before create, bisa pake beforeDestroy tp belom paham cuy
       await models.validation_checklists.destroy({ transaction: t, where: { idx_t_validation: obj.validation.id } })
@@ -386,6 +393,7 @@ module.exports = {
       }
 
       await t.commit();
+      if(obj.validation['checked_by']) return response.success(`Sukses melakukan assign ke ${user.getDataValue('fullname')} `, [])
       return response.success('Sukses meng-update validasi', [])
     } catch (err) {
       await t.rollback()
@@ -411,7 +419,13 @@ module.exports = {
       obj.validation['umodified'] = sessions[0].user_id;
       obj.validation['dmodified'] = new Date();
       obj.validation['checked_by'] = sessions[0].user_id;
-      obj.validation['checked_date'] = new Date();
+      if(obj.validation['approved_by']) obj.validation['checked_date'] = new Date();
+      if(obj.validation['approved_by'])
+        user = await models.users.findOne({
+          transaction: t,
+          attributes: ['fullname', 'email'],
+          where: { record_status: 'A', idx_m_user: obj.validation['approved_by'] }
+        }).catch(e => { throw(e) })
 
       let is_arranged = await models.validation.count({
         where: {
@@ -490,6 +504,7 @@ module.exports = {
       }
 
       await t.commit();
+      if(obj.validation['approved_by']) return response.success(`Sukses melakukan assign ke ${user.getDataValue('fullname')} `, [])
       return response.success('Pemeriksaan validasi berhasil disimpan', [])
     } catch (err) {
       await t.rollback()
@@ -513,6 +528,7 @@ module.exports = {
 
       obj.validation['umodified'] = sessions[0].user_id;
       obj.validation['dmodified'] = new Date();
+      obj.validation['arranged_date'] = null
       obj.validation['approved_by'] = null
       obj.validation['approved_date'] = null
       obj.validation['checked_by'] = null
@@ -768,6 +784,7 @@ module.exports = {
 
       obj.validation['umodified'] = sessions[0].user_id;
       obj.validation['dmodified'] = new Date();
+      obj.validation['checked_date'] = null
       obj.validation['approved_by'] = null
       obj.validation['approved_date'] = null
 
