@@ -606,6 +606,7 @@ module.exports = {
             'cancel_reason',
             'cancel_by',
             'is_secure',
+            'ucreate', 'dcreate',
             ['source_complaint', 'source_name'],
             [Sequelize.literal(`case when complaints.is_secure=true then 'RAHASIA' else NULL end`), 'secure_status'],
             [Sequelize.literal(`case when complaints.is_secure=true then 'red' else 'grey' end`), 'secure_color'],
