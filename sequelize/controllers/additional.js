@@ -687,7 +687,7 @@ module.exports = {
    */
   async requestAdditional(id) {
     try {
-      let media = await models.options.findAll(
+      const media = await models.options.findAll(
         {
           attributes: ['value', 'text'],
           where: {
@@ -699,7 +699,7 @@ module.exports = {
         }
       )
 
-      let approvers = await models.users.findAll({
+      const approvers = await models.users.findAll({
         attributes: [
           'idx_m_user',
           [Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name'],
@@ -708,7 +708,16 @@ module.exports = {
         where: { record_status: 'A', idx_m_user_type: 3 }
       });
 
-      let violations = await models.violations.findAll({
+      const wakilKetua = await models.users.findAll({
+        attributes: [
+          'idx_m_user',
+          [Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name'],
+          'occupation'
+        ],
+        where: { record_status: 'A', idx_m_user_type: 6 }
+      });
+
+      const violations = await models.violations.findAll({
         attributes: ['idx_m_violation', 'name'],
         where: { record_status: 'A' }
       })
@@ -741,7 +750,7 @@ module.exports = {
       //   ]
       // })
 
-      let regional = await models.work_units.findAll({
+      const regional = await models.work_units.findAll({
         raw: true,
         attributes: ['regional'],
         include: [
@@ -760,7 +769,7 @@ module.exports = {
         ]
       })
 
-      let head_regional = await models.users.findAll({
+      const head_regional = await models.users.findAll({
         attributes: [
           'idx_m_user',
           [Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']
@@ -773,7 +782,7 @@ module.exports = {
         where: { record_status: 'A', idx_m_user_type: 4 }
       });
 
-      let head_kumm = await models.users.findAll({
+      const head_kumm = await models.users.findAll({
         attributes: [
           'idx_m_user',
           [Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']
@@ -787,7 +796,8 @@ module.exports = {
         approvers: approvers,
         violations: violations,
         head_of_kumm: head_kumm,
-        head_of_regional: head_regional
+        head_of_regional: head_regional,
+        wakil_ketua: wakilKetua
       }
     } catch (err) {
       throw (err)

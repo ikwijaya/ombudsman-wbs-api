@@ -1776,6 +1776,9 @@ module.exports = {
             transaction: t,
             where: { idx_t_study_lys: lys.getDataValue('idx_t_study_lys') }
           }).catch(e => { throw (e) })
+        
+        /// remove last creations
+        await models.clarification.destroy({ transaction: t, where: { idx_m_complaint: id }}).catch(e => { throw (e) })
       }
 
       // added history
