@@ -13,6 +13,7 @@ module.exports = (sq) => {
       type: DataTypes.BIGINT,
       allowNull: false
     },
+    idx_t_study_lys: DataTypes.BIGINT,
     event: DataTypes.TEXT(),
     date: DataTypes.DATEONLY,
     notes: DataTypes.TEXT(),

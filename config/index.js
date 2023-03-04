@@ -32,5 +32,6 @@ module.exports = {
   DEFAULT_PASSWD: cfg["DEFAULT_PASSWORD"],
   EXPIRES_IN: cfg["EXPIRES_IN"],
   PRODUCT_MODE: [5, 9, 10],
+  PREVENT_ROLLBACK: [1,2,3,7],
   PERIODE: cfg['PERIODE']
 }

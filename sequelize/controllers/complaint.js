@@ -6,7 +6,7 @@ const status = require('./status');
 const { response } = require('../../models/index');
 const { helper } = require('../../helper')
 const sequelize = require('..');
-const { APP_CODE, PRODUCT_MODE, API_URL, PERIODE } = require('../../config')
+const { APP_CODE, PRODUCT_MODE, API_URL, PERIODE, PREVENT_ROLLBACK } = require('../../config')
 const appCode = APP_CODE
 const RollbackProcedure = 300
 
@@ -1696,6 +1696,7 @@ module.exports = {
           },
           attributes: [
             'idx_m_complaint',
+            'idx_m_status',
             'form_no',
             'date',
             [Sequelize.literal(`status.code`), 'status_code'],
@@ -1711,7 +1712,12 @@ module.exports = {
         }
       );
 
-      const back_code = parseInt(c.getDataValue('status_code')) - 1;
+      const status_code = c instanceof models.complaints ? c.getDataValue('status_code') : null;
+      if(!status_code) return response.failed(`Gagal melakukan rollback karena status TIDAK tersedia.`)
+      if(PREVENT_ROLLBACK.includes(parseInt(status_code))) 
+        return response.failed(`Forbidden rollback untuk tahapan ini.`)
+
+      const back_code = parseInt(status_code) - 1;
       const status = await models.status.findOne({
         transaction: t,
         attributes: ['idx_m_status', 'name'],
@@ -1728,12 +1734,12 @@ module.exports = {
         transaction: t,
         where: {
           idx_m_complaint: id,
-          idx_m_status: c.getDataValue('status_code')
+          idx_m_status: c.getDataValue('idx_m_status')
         }
       })
 
       ////// remove some row data for tahapan (permintaan data dan dokumen)
-      if (parseInt(c.getDataValue('status_code')) == 8) {
+      if (parseInt(status_code) == 8) {
         //// rollback rm approved_date
         await models.validation.update({ approved_date: null }, { 
           transaction: t, 
@@ -1743,6 +1749,33 @@ module.exports = {
         //// destroy auto generation rows
         await models.request.destroy({ transaction: t, where: { idx_m_complaint: id }})
         .catch(e => { throw (e) })
+      }
+
+      ////// remove kertas kerja klarifikasi when rollback from KKK (9)
+      if(parseInt(status_code) == 9) {
+        const lys = await models.study_lys
+          .findOne({ attributes:['idx_t_study_lys'], transaction: t, where: { idx_m_complaint: id }})
+          .catch(e => { throw (e) })
+        await models.study_lys_event
+          .destroy({ transaction: t, where: { idx_t_study_lys: lys.getDataValue('idx_t_study_lys')}})
+          .catch(e => { throw (e) })
+        await models.study_lys
+          .destroy({ transaction: t, where: { idx_m_complaint: id }})
+          .catch(e => { throw (e) })
+      }
+
+      ////// update to kku kertas kerja klarifikasi when rollback from Klarifikasi Terperiksa (10)
+      if(parseInt(status_code) == 10) {
+        const lys = await models.study_lys
+          .findOne({ attributes:['idx_t_study_lys'], transaction: t, where: { idx_m_complaint: id }})
+          .catch(e => { throw (e) })
+        
+        ///// remind kku when task is back!
+        await models.study_lys.update({ head_of_kumm_date: null }, 
+          {
+            transaction: t,
+            where: { idx_t_study_lys: lys.getDataValue('idx_t_study_lys') }
+          }).catch(e => { throw (e) })
       }
 
       // added history

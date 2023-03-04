@@ -171,6 +171,7 @@ module.exports = {
 
       let is_check = false;
       let is_approve = false;
+      let is_update = false;
       if (validation instanceof models.validation) {
         // security
         is_approve = validation.getDataValue('approved_by') == sessions[0].user_id;

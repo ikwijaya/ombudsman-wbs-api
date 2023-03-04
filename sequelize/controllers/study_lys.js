@@ -5,7 +5,12 @@ const core = require('./core');
 const { response } = require('../../models/index');
 const sequelize = require('..');
 const { API_URL } = require('../../config')
+const FORM_ID = 9
 
+
+/**
+ * Kertas Kerja Klarifikasi
+ */
 module.exports = {
   /**
    * 
@@ -19,14 +24,14 @@ module.exports = {
       if (sessions.length === 0)
         return null;
 
-      let r = await core.checkRoles(sessions[0].user_id, [92]);
-      let is_void_checker = r.filter(a => a.idx_m_form == 92 && a.is_read).length > 0
+      const who = sessions[0].user_code;
+      let r = await core.checkRoles(sessions[0].user_id, [FORM_ID]);
       let m = await models.study_lys.findOne({
         attributes: [
           'idx_t_study_lys', 'manpower', 'description',
           'scope', 'simpel_app_no', 'prevention', 'procedure',
           'product', 'hopes', 'scope_clarification', 'action',
-          'others_clarification', 'action', 'others_action',
+          'others_clarification', 'others_action',
           'checked', 'arranged_by', 'arranged_date',
           'head_of_reg', 'head_of_reg_date',
           'head_of_kumm', 'head_of_kumm_date'
@@ -41,6 +46,7 @@ module.exports = {
             required: false,
             attributes: ['idx_t_study_lys_event', 'event', 'date', 'notes'],
             model: models.study_lys_event,
+            order: ['date', 'ASC']
           },
           {
             required: false,
@@ -66,7 +72,8 @@ module.exports = {
               attributes: [
                 'idx_t_complaint_study_event',
                 'event', 'date', 'notes', 'simple_app_no',
-                'dcreate', 'ucreate', 'dmodified', 'umodified'
+                'dcreate', 'ucreate', 'dmodified', 'umodified',
+                'idx_t_study_lys'
               ],
               model: models.complaint_study_events,
               where: { record_status: 'A' }
@@ -109,7 +116,7 @@ module.exports = {
           ],
           where: { record_status: 'A', idx_m_complaint: complaintId }
         }
-      )
+      ).catch(e => { throw(e) })
 
       let ucreate;
       let complaint = await models.complaints.findOne({
@@ -134,9 +141,13 @@ module.exports = {
 
       let head_of_kumm, head_of_reg, arranged_by;
       let is_check = false; let is_approve = false;
+      let is_update = false;
       if (m instanceof models.study_lys) {
         is_approve = m.getDataValue('head_of_kumm') == sessions[0].user_id;
-        is_check = m.getDataValue('head_of_reg') == sessions[0].user_id || is_void_checker;
+        is_check = m.getDataValue('head_of_reg') == sessions[0].user_id;
+        is_update = m.getDataValue('head_of_reg_date') == null
+          && m.getDataValue('arranged_date') == null 
+          && r.filter(a => a.idx_m_form == FORM_ID && a.is_update).length > 0
 
         arranged_by = await models.users.findOne({ attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name']], where: { idx_m_user: m.getDataValue('arranged_by') } })
         head_of_kumm = await models.users.findOne({
@@ -155,15 +166,18 @@ module.exports = {
 
       return {
         is_insert: !m,
-        is_update: m instanceof models.study_lys && m.getDataValue('head_of_reg_date') == null,
-        is_check: is_check,
+        // is_update: m instanceof models.study_lys && m.getDataValue('head_of_reg_date') == null,
+        // is_check: is_check,
+        is_update: ['kkumm', 'kkr'].includes(who) ? false : is_update,
+        is_check: is_check && !m.getDataValue('head_of_kumm') && m.getDataValue('arranged_date') != null,
         is_approve: is_approve,
         item: m,
         item2: studies,
-        item3: complaint
+        item3: complaint,
+        who: who
       }
     } catch (error) {
-
+      console.log(error)
       throw (error)
     }
   },
@@ -181,26 +195,33 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session expires')
 
+      /////// using last data
+      const val = await models.validation.findOne({
+        transaction: t,
+        attributes: ['simple_app_no', 'scope', 'prevention', 'product'],
+        where: { idx_m_complaint: obj.study.idx_m_complaint }
+      }).catch(e => { throw(e) })
+
       obj.study['ucreate'] = sessions[0].user_id;
       obj.study['arranged_by'] = sessions[0].user_id;
-      obj.study['arranged_date'] = new Date();
+      
+      if(val instanceof models.validation) {
+        obj.study['simpel_app_no'] = val.getDataValue('simple_app_no');
+        obj.study['scope'] = val.getDataValue('scope');
+        obj.study['prevention'] = val.getDataValue('prevention');
+        obj.study['product'] = val.getDataValue('product');
+      }
 
-      let v = await models.study_lys.create(obj.study, { transaction: t, });
+      //////// insert data
+      const v = await models.study_lys.create(obj.study, { transaction: t, });
       if (v instanceof models.study_lys) {
-        // let events = obj.events;
-        // let violations = obj.violations;
-        // events.map(e => { e.idx_t_study_lys = v.getDataValue('idx_t_study_lys') })
-        // violations.map(e => { e.idx_t_study_lys = v.getDataValue('idx_t_study_lys') })
-
-        // await models.study_lys_event.bulkCreate(events, { transaction: t })
-        // await models.study_lys_violation.bulkCreate(violations, { transaction: t })
         await models.complaints.update(
           { idx_m_status: 9 }, // to study analisis
           {
             transaction: t,
             where: { idx_m_complaint: obj.study['idx_m_complaint'] }
           }
-        )
+        ).catch(e => { throw(e) })
 
         await models.clogs.create({
           idx_m_complaint: obj.study['idx_m_complaint'],
@@ -230,12 +251,20 @@ module.exports = {
     const t = await sequelize.transaction();
 
     try {
-      let sessions = await core.checkSession(sid);
+      const sessions = await core.checkSession(sid);
+      let user;
       if (sessions.length === 0)
         return response.failed('Session TIDAK ditemukan');
 
       obj.study['umodified'] = sessions[0].user_id;
       obj.study['dmodified'] = new Date();
+      if(obj.study['head_of_reg']) obj.study['arranged_date'] = new Date();
+      if(obj.study['head_of_reg'])
+        user = await models.users.findOne({
+          transaction: t,
+          attributes: ['fullname', 'email'],
+          where: { record_status: 'A', idx_m_user: obj.study['head_of_reg'] }
+        }).catch(e => { throw(e) })
 
       // delete heula
       // await models.study_lys_event.destroy({ transaction: t, where: { idx_t_study_lys: obj.study.id } })
@@ -260,10 +289,13 @@ module.exports = {
         ucreate: sessions[0].user_id
       }, { transaction: t, });
       await t.commit();
-      return response.success('Sukses meng-update kertas kerja klarifikasi', [])
-    } catch (error) {
 
+      if(obj.study['head_of_reg']) return response.success(`Sukses melakukan assign ke ${user.getDataValue('fullname')} `, [])
+      else return response.success('Sukses meng-update kertas kerja klarifikasi', [])
+    } catch (error) {
+      console.log(error)
       await t.rollback()
+      throw(error)
     }
   },
 
@@ -277,14 +309,21 @@ module.exports = {
     const t = await sequelize.transaction();
 
     try {
-      let sessions = await core.checkSession(sid);
+      const sessions = await core.checkSession(sid);
+      let user;
       if (sessions.length === 0)
         return response.failed('Session TIDAK ditemukan');
 
       obj.study['umodified'] = sessions[0].user_id;
       obj.study['dmodified'] = new Date();
       obj.study['head_of_reg'] = sessions[0].user_id;
-      obj.study['head_of_reg_date'] = new Date();
+      if(obj.study['head_of_kumm']) obj.study['head_of_reg_date'] = new Date();
+      if(obj.study['head_of_kumm'])
+        user = await models.users.findOne({
+          transaction: t,
+          attributes: ['fullname', 'email'],
+          where: { record_status: 'A', idx_m_user: obj.study['head_of_kumm'] }
+        }).catch(e => { throw(e) })
 
       let is_arranged = await models.study_lys.count({
         where: {
@@ -323,10 +362,64 @@ module.exports = {
         notes: 'telah melakukan pemeriksaan terhadap kertas kerja klarifikasi'
       }, { transaction: t, });
       await t.commit();
-      return response.success('Sukses memeriksa kertas kerja klarifikasi', [])
+
+      if(obj.study['head_of_kumm']) return response.success(`Sukses melakukan assign ke ${user.getDataValue('fullname')} `, [])
+      else return response.success('Sukses menyimpan kertas kerja klarifikasi', [])
     } catch (error) {
 
       await t.rollback()
+    }
+  },
+
+  /**
+   * 
+   * @param {*} sid 
+   * @param {*} obj 
+   * @returns 
+   */
+  async checkCancel(sid = null, obj = {}) {
+    const t = await sequelize.transaction();
+
+    try {
+      let sessions = await core.checkSession(sid);
+      if (sessions.length === 0)
+        return response.failed('Session TIDAK ditemukan');
+
+      obj.study['umodified'] = sessions[0].user_id;
+      obj.study['dmodified'] = new Date();
+      obj.study['head_of_reg'] = null;
+      obj.study['head_of_reg_date'] = null;
+      obj.study['arranged_date'] = null;
+
+      let is_arranged = await models.study_lys.count({
+        where: {
+          idx_t_study_lys: obj.study.id,
+          [Op.or]: [
+            { arranged_by: null, },
+            { arranged_date: null }
+          ]
+        },
+        transaction: t
+      })
+
+      if (is_arranged > 0) return response.failed('Form belum dilakukan penyusunan, Silakan klik tombol SIMPAN untuk melakukan sign penyusunan.')
+      await models.study_lys.update(obj.study, { where: { idx_t_study_lys: obj.study.id }, transaction: t })
+
+      // LOGS
+      await models.clogs.create({
+        idx_m_complaint: obj.study['idx_m_complaint'],
+        action: 'U',
+        flow: '9',
+        changes: JSON.stringify(obj),
+        ucreate: sessions[0].user_id,
+        notes: 'telah melakukan CANCEL pemeriksaan terhadap kertas kerja klarifikasi'
+      }, { transaction: t, });
+      await t.commit();
+      return response.success('Cancel pemeriksaan kertas kerja klarifikasi berhasil disimpan', [])
+    } catch (error) {
+      console.log(error)
+      await t.rollback()
+      throw(error)
     }
   },
 
@@ -485,5 +578,73 @@ module.exports = {
 
       await t.rollback()
     }
-  }
+  },
+
+  /**
+   * 
+   * @param {*} sid 
+   * @param {*} obj 
+   * @returns 
+   */
+  async approveCancel(sid = null, obj = {}) {
+    const t = await sequelize.transaction();
+
+    try {
+      let sessions = await core.checkSession(sid);
+      if (sessions.length === 0)
+        return response.failed('Session TIDAK ditemukan');
+
+      obj.study['umodified'] = sessions[0].user_id;
+      obj.study['dmodified'] = new Date();
+      obj.study['head_of_kumm'] = null;
+      obj.study['head_of_kumm_date'] = null;
+      obj.study['head_of_reg_date'] = null;
+
+      let is_checked = await models.study_lys.count({
+        where: {
+          idx_t_study_lys: obj.study.id,
+          [Op.or]: [
+            { head_of_reg: null, },
+            { head_of_reg_date: null }
+          ]
+        },
+        transaction: t
+      })
+
+      let is_approved = await models.study_lys.count({
+        where: {
+          idx_t_study_lys: obj.study.id,
+          head_of_kumm: { [Op.ne]: null },
+          head_of_kumm_date: { [Op.ne]: null }
+        },
+        transaction: t
+      })
+
+      if (is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
+      if (is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
+      await models.study_lys.update(obj.study, { where: { idx_t_study_lys: obj.study.id }, transaction: t })
+
+      //get, study lys
+      let v = await models.study_lys.findOne({ where: { idx_t_study_lys: obj.study.id } })
+      if (v instanceof models.study_lys) {
+        // LOGS
+        await models.clogs.bulkCreate([
+          {
+            idx_m_complaint: v.getDataValue('idx_m_complaint'),
+            action: 'U',
+            flow: '10',
+            changes: JSON.stringify(obj),
+            ucreate: sessions[0].user_id,
+            notes: 'telah melakukan CANCEL penyetujuan terhadap kertas kerja klarifikasi'
+          }
+        ], { transaction: t, });
+      }
+
+      await t.commit();
+      return response.success('Cancel penyetujuan klarifikasi berhasil disimpan', [])
+    } catch (error) {
+
+      await t.rollback()
+    }
+  },
 }

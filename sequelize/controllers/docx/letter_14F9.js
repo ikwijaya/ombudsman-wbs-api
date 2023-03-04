@@ -71,74 +71,29 @@ const letter_14F9 = async (id) => {
 
 			// validation
 			let arranged_by, approved_by, checked_by;
-			const v = await models.validation.findOne(
+			const v = await models.study_lys.findOne(
 				{
-					attributes: [
-						'prevention', 'product', 'step', 'date', 'pokok_aduan', 'result_obtained',
-						'conclusion', 'action_plan', 'checked_date', 'checked_by', 'approved_date',
-						'approved_by', 'arranged_by', 'arranged_date', 'dmodified', 'simple_app_no', 'scope'
-					],
-					include: [
-						{
-							required: false,
-							attributes: [
-								'idx_t_validation_checklist',
-								'checklist'
-							],
-							model: models.validation_checklists,
-						},
-						{
-							required: false,
-							attributes: [
-								'idx_t_validation_comm',
-								'by', 'media', 'notes', 'date'
-							],
-							model: models.validation_comm
-						}
+					attributes: [ 'idx_t_study_lys',
+						'manpower', 'prevention', 'description', 'scope', 'simpel_app_no',
+						'prevention', 'procedure', 'product', 'hopes', 'scope_clarification',
+						'action', 'others_clarification', 'others_action', 'checked',
+						'arranged_by', 'arranged_date', 'head_of_reg', 'head_of_reg_date',
+						'head_of_kumm', 'head_of_kumm_date'
 					],
 					where: { record_status: 'A', idx_m_complaint: id }
 				}
 			)
 
-			///// checklist document
-			const ckl = await models.options
-				.findAll({ attributes: ['value'], where: { option_id: '5' } })
-
-			let checklist = []
-			if (v.getDataValue('validation_checklists') && v.getDataValue('validation_checklists').length > 0) {
-				let cl = v.getDataValue('validation_checklists')
-				cl = cl.map(e => e.checklist)
-				
-				for (let i in ckl) {
-					const v = ckl[i].getDataValue('value')
-					checklist.push({ is: cl.includes(v) ? 'X' : '', value: v })
-				}
-			}
-
-			const comms = v.getDataValue('validation_comms') || [];
-			const terlapor = comms.filter(e => e.by == 'PENGADU');
-			const teradu = comms.filter(e => e.by == 'TERADU');
-			let hterlapor = []
-			let hteradu = []
-
-			for (let i in terlapor) {
-				hteradu.push({
-					time: `Melalui: ${terlapor[i].media} pada ${moment(terlapor[i].date).format('DD MMM YYYY | HH:mm:ss')}`,
-					notes: terlapor[i].notes
-				})
-				hterlapor.push(w)
-			}
-
-			for (let i in teradu) {
-				hteradu.push({
-					time: `Melalui: ${teradu[i].media} pada ${moment(teradu[i].date).format('DD MMM YYYY | HH:mm:ss')}`,
-					notes: teradu[i].notes
-				})
-			}
+			const kr = await models.study_lys_event.findAll({
+				raw: true,
+				attributes: ['event', 'date', 'notes'],
+				where: { idx_t_study_lys: v.getDataValue('idx_t_study_lys'), record_status: 'A' },
+				order: [['date', 'desc']]
+			})
 
 			arranged_by = await models.users.findOne({ where: { idx_m_user: v.getDataValue('arranged_by') } })
-			approved_by = await models.users.findOne({ where: { idx_m_user: v.getDataValue('approved_by') } })
-			checked_by = await models.users.findOne({ where: { idx_m_user: v.getDataValue('checked_by') } })
+			approved_by = await models.users.findOne({ where: { idx_m_user: v.getDataValue('head_of_reg') } })
+			checked_by = await models.users.findOne({ where: { idx_m_user: v.getDataValue('head_of_kumm') } })
 
 			v['arranged_by'] = arranged_by instanceof models.users ? arranged_by.getDataValue('email') : null
 			v['approved_by'] = approved_by instanceof models.users ? approved_by.getDataValue('email') : null
@@ -152,17 +107,6 @@ const letter_14F9 = async (id) => {
 				}
 			})
 
-			let vstep = v.getDataValue('step') ? JSON.parse(v.getDataValue('step')) : [];
-			vstep = vstep.map(e => e.value)
-			const baseSteps = await models.options
-				.findAll({ attributes: ['value'], where: { option_id: '4' } })
-
-			let stepHtml = []
-			for (let i in baseSteps) {
-				const v = baseSteps[i].getDataValue('value')
-				stepHtml.push({ is: vstep.includes(v) ? 'X' : '', value: v })
-			}
-
 			const is_kuasa_pelapor = c.getDataValue('is_kuasa_pelapor')
 			const manpower = c.getDataValue('manpower')
 			const fpengadu = pengadu instanceof models.users ? pengadu.getDataValue('fullname') : null
@@ -172,38 +116,38 @@ const letter_14F9 = async (id) => {
 				template,
 				cmdDelimiter: ['{{', '}}'],
 				data: {
-					form_no: c.getDataValue('form_no') +' pada '+ moment(c.getDataValue('date')).format('DD MMM YY'),
+					form_no: c.getDataValue('form_no'),
+					created_at: moment(c.getDataValue('date')).format('DD MMM YY'),
 					pengadu: is_kuasa_pelapor ? manpower : fpengadu,
 					legal_standing_pengadu: c.getDataValue('legal_standing')['name'],
 					teradu: reported,
-					pokok_aduan: v.getDataValue('pokok_aduan'),
-					tahapan: stepHtml,
+					pokok_aduan: null,
 					simple_no: std.getDataValue('simple_app_no'),
 					is_pemeriksaan: !v.getDataValue('scope') ? '' 
-						: v.getDataValue('scope').toLowerCase() == '1' ? 'X' : '',
+						: v.getDataValue('scope').toLowerCase() == '1' ? '✔' : '',
 					is_pencegahan: !v.getDataValue('scope') ? '' 
-						: v.getDataValue('scope').toLowerCase() == '2' ? 'X' : '',
+						: v.getDataValue('scope').toLowerCase() == '2' ? '✔' : '',
 					pencegahan: v.getDataValue('prevention'),
-					is_substansi: product.includes('substansi') ? 'X' : '',
-					is_prosedur: product.includes('prosedur') ? 'X' : '',
-					is_produk: product.includes('produk') ? 'X' : '',
+					is_substansi: product.includes('substansi') ? '✔' : '',
+					is_prosedur: product.includes('prosedur') ? '✔' : '',
+					is_produk: product.includes('produk') ? '✔' : '',
 					hope: c.getDataValue('hopes'),
-					ckls: checklist,
-					hpengadu: hterlapor,
-					hteradu: hteradu,
-					kesimpulan_validasi: v.getDataValue('conclusion'),
-					rencana_tindak_lanjut: v.getDataValue('action_plan'),
+					kronologi: kr,
+					pokok_klarifikasi: v.getDataValue('scope_clarification'),
+					klarifikasi_lainnya: v.getDataValue('others_clarification'),
+					opsi_tindak_lanjut: v.getDataValue('others_action'),
+					terperiksa: v.getDataValue('checked'),
 
 					////
 					arranged_by: v.getDataValue('arranged_by'),
 					arranged_date: v.getDataValue('arranged_date') 
 						? moment(v.getDataValue('arranged_date')).format('DD MMM YYYY | HH:mm:ss') : '',
-					checked_by: v.getDataValue('checked_by'),
-					checked_date: v.getDataValue('checked_date') 
-						? moment(v.getDataValue('checked_date')).format('DD MMM YYYY | HH:mm:ss') : '',
-					approved_by: v.getDataValue('approved_by'),
-					approved_date: v.getDataValue('approved_date') 
-						? moment(v.getDataValue('approved_date')).format('DD MMM YYYY | HH:mm:ss') : ''
+					checked_by: v.checked_by,
+					checked_date: v.getDataValue('head_of_reg_date') 
+						? moment(v.getDataValue('head_of_reg_date')).format('DD MMM YYYY | HH:mm:ss') : '',
+					approved_by: v.approved_by,
+					approved_date: v.getDataValue('head_of_kumm_date') 
+						? moment(v.getDataValue('head_of_kumm_date')).format('DD MMM YYYY | HH:mm:ss') : ''
 				}
 			})
 
