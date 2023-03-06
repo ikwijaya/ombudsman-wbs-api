@@ -179,7 +179,7 @@ class Users {
                   }
                 })
                 .andWhere(`mu.idx_m_user_type`,'=','-1')
-                .andWhereRaw(`1=case when ? is NULL then 1 else mu.idx_m_user=? end`, [id])
+                .andWhereRaw(`true=case when ?=null then true else mu.idx_m_user=? end`, [id,id])
                 .orderBy('mu.email', 'asc')
                 .then((r) => output = JSON.parse(JSON.stringify(r)))
                 .catch(e => { reject(e) });

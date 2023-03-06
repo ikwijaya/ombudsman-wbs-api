@@ -136,7 +136,7 @@ module.exports = {
       }
 
       let count = await models.request.count({ where: where, transaction: t });
-      if (count > 0) return response.failed(`<ul><li>` + [`Kolom Nomor Surat, Tanggal Surat dan Upload Dokumen Surat pada FORM KEPADA <b>${flag}</b> TIDAK boleh kosong.`].join('</li><li>') + `</li></ul>`)
+      if (count > 0) return response.failed(`<ul><li>` + [`Kolom Nomor Surat dan Tanggal Surat pada FORM KEPADA <b>${flag}</b> TIDAK boleh kosong.`].join('</li><li>') + `</li></ul>`)
 
       await models.complaints.update(
         { idx_m_status: 9 }, // to Telaah dan Analysis
