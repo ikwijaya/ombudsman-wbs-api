@@ -25,6 +25,13 @@ module.exports = {
           'idx_t_confirmation',
           'value', 'head_of_kumm', 'via',
           [Sequelize.literal(`cast(date AS DATE)`), 'date'],
+          [Sequelize.literal(`case 
+            when media = 'TELEPON' then 'mdi-phone'
+            when media = 'WHATSAPP' then 'mdi-whatsapp'
+            when media = 'SMS' then 'mdi-chat'
+            when media = 'EMAIL' then 'mdi-email'
+            else 'mdi-file-document' end
+          `), 'media_icon'],
           'by', 'media', 'notes',
           'response', 'to', 'address', 'by', 'object', 'desc',
           [Sequelize.literal(`case when 1=${r.filter(a => a.idx_m_form == 11 && a.is_update).length > 0 ? 1 : 0} then true else false end`), 'is_update'],
