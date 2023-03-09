@@ -1832,6 +1832,19 @@ module.exports = {
         }).catch(e => { throw (e) })
       }
 
+      /////// remove pleno data when rollback from Pleno (14)
+      if (parseInt(status_code) == 14) {
+        await models.pleno.destroy({
+          transaction: t,
+          where: { idx_m_complaint: id, record_status: 'A' }
+        }).catch(e => { throw (e) })
+
+        await models.surgery.update({ approved_date: null }, {
+          transaction: t,
+          where: { idx_m_complaint: id, record_status: 'A' }
+        }).catch(e => { throw (e) })
+      }
+
       // added history
       await models.clogs.create({
         idx_m_complaint: id,

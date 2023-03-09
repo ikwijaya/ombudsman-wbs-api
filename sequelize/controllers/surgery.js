@@ -5,6 +5,7 @@ const core = require('./core');
 const { response } = require('../../models/index');
 const sequelize = require('..');
 const { API_URL } = require('../../config')
+const FORM_ID = 13
 
 module.exports = {
   /**
@@ -15,13 +16,14 @@ module.exports = {
    */
   async get(sid, id = null) {
     try {
-      let sessions = await core.checkSession(sid)
+      const sessions = await core.checkSession(sid)
       if (sessions.length === 0)
         return null;
 
       let users = []
-      let r = await core.checkRoles(sessions[0].user_id, [92]);
-      let is_void_checker = r.filter(a => a.idx_m_form == 92 && a.is_read).length > 0
+      const who = sessions[0].user_code;
+      const r = await core.checkRoles(sessions[0].user_id, [FORM_ID]);
+      const is_update = r.filter(e => e.idx_m_form == FORM_ID && e.is_update).length > 0
       let m = await models.surgery.findOne({
         raw: true,
         attributes: [
@@ -38,24 +40,33 @@ module.exports = {
       m.approved_by_name = users.filter(a => a['idx_m_user'] == m['approved_by']).length > 0 ? users.filter(a => a['idx_m_user'] == m['approved_by'])[0].name : null
       m.checked_by_name = users.filter(a => a['idx_m_user'] == m['checked_by']).length > 0 ? users.filter(a => a['idx_m_user'] == m['checked_by'])[0].name : null
 
+      const uid = sessions[0].user_id
+      if (['inspektorat', 'kumm'].includes(who)) m.is_update = is_update && m.arranged_date == null && m.checked_date == null
+      if ('kkr' == who) m.is_update = m.checked_by == uid && !m.approved_by && m.arranged_date != null
+      if ('kkumm' == who) m.is_update = m.approved_by == uid
+
+      m.is_check = m.checked_by == uid && !m.approved_by && m.arranged_date != null
+      m.is_approve = m.approved_by == uid
+      m.who = who
+
       /** SECURITY */
-      if (m.arranged_by == sessions[0].user_id || !m.arranged_date) {
-        m.is_update = !m.checked_date || !m.arranged_date
-        m.is_check = false
-        m.is_approve = false
-      }
+      // if (m.arranged_by == sessions[0].user_id || !m.arranged_date) {
+      //   m.is_update = !m.checked_date || !m.arranged_date
+      //   m.is_check = false
+      //   m.is_approve = false
+      // }
 
-      if (m.checked_by == sessions[0].user_id || is_void_checker) {
-        m.is_update = !m.approved_date
-        m.is_check = !m.approved_date
-        m.is_approve = false
-      }
+      // if (m.checked_by == sessions[0].user_id || is_void_checker) {
+      //   m.is_update = !m.approved_date
+      //   m.is_check = !m.approved_date
+      //   m.is_approve = false
+      // }
 
-      if (m.approved_by == sessions[0].user_id) {
-        m.is_update = true
-        m.is_check = false
-        m.is_approve = true
-      }
+      // if (m.approved_by == sessions[0].user_id) {
+      //   m.is_update = true
+      //   m.is_check = false
+      //   m.is_approve = true
+      // }
       /** END -- SECURITY */
 
       let complaint = await models.complaints.findAll(
@@ -276,14 +287,21 @@ module.exports = {
     const t = await sequelize.transaction();
 
     try {
-      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      const sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      let user;
       if (sessions.length === 0)
         return response.failed('Session expires')
 
       obj.data['umodified'] = sessions[0].user_id;
       obj.data['dmodified'] = new Date();
       obj.data['arranged_by'] = sessions[0].user_id;
-      obj.data['arranged_date'] = new Date()
+      if(obj.data['checked_by']) obj.data['arranged_date'] = new Date()
+      if(obj.data['checked_by'])
+        user = await models.users.findOne({
+          transaction: t,
+          attributes: ['fullname', 'email'],
+          where: { record_status: 'A', idx_m_user: obj.data['checked_by'] }
+        }).catch(e => { throw(e) })
 
       await models.surgery.update(obj.data, {
         where: { idx_t_surgery: obj.data.id },
@@ -299,6 +317,7 @@ module.exports = {
       }, { transaction: t, });
 
       await t.commit()
+      if(obj.data['checked_by']) return response.success(`Sukses melakukan assign ke ${user.getDataValue('fullname')} `, [])
       return response.success('Update berhasil disimpan')
     } catch (error) {
       await t.rollback()
@@ -316,15 +335,22 @@ module.exports = {
     const t = await sequelize.transaction();
 
     try {
-      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      const sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      let user;
       if (sessions.length === 0)
         return response.failed('Session expires')
 
       obj.data['umodified'] = sessions[0].user_id;
       obj.data['dmodified'] = new Date();
-      obj.data['checked_date'] = new Date();
-
-      let is_arranged = await models.surgery.count({
+      if(obj.data['approved_by']) obj.data['checked_date'] = new Date();
+      if(obj.data['approved_by'])
+        user = await models.users.findOne({
+          transaction: t,
+          attributes: ['fullname', 'email'],
+          where: { record_status: 'A', idx_m_user: obj.data['approved_by'] }
+        }).catch(e => { throw(e) })
+      
+      const is_arranged = await models.surgery.count({
         where: {
           idx_t_surgery: obj.data.id,
           [Op.or]: [
@@ -336,8 +362,6 @@ module.exports = {
       })
 
       if (is_arranged > 0) return response.failed('Form belum dilakukan penyusunan, Silakan klik tombol SIMPAN untuk melakukan sign penyusunan.')
-      if (!obj.data['approved_by']) return response.failed('Kolom Disetujui Oleh TIDAK boleh kosong')
-
       await models.surgery.update(obj.data, {
         where: { idx_t_surgery: obj.data.id },
         transaction: t,
@@ -349,6 +373,51 @@ module.exports = {
         flow: '13',
         changes: JSON.stringify(obj),
         ucreate: sessions[0].user_id
+      }, { transaction: t, });
+
+      await t.commit()
+      if(obj.data['approved_by']) return response.success(`Sukses melakukan assign ke ${user.getDataValue('fullname')} `, [])
+      return response.success('Pemeriksaan bedah aduan berhasil disimpan')
+    } catch (error) {
+      await t.rollback()
+      console.log('err', error)
+      throw (error)
+    }
+  },
+  /**
+   * 
+   * @param {*} sid 
+   * @param {*} obj 
+   * @returns 
+   */
+  async checkCancel(sid, obj = {}) {
+    const t = await sequelize.transaction();
+
+    try {
+      const sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      if (sessions.length === 0)
+        return response.failed('Session expires')
+
+      obj.data['umodified'] = sessions[0].user_id;
+      obj.data['dmodified'] = new Date();
+      obj.data['arranged_date'] = null
+      obj.data['approved_by'] = null
+      obj.data['approved_date'] = null
+      obj.data['checked_by'] = null
+      obj.data['checked_date'] = null
+      
+      await models.surgery.update(obj.data, {
+        where: { idx_t_surgery: obj.data.id },
+        transaction: t,
+      });
+
+      await models.clogs.create({
+        idx_m_complaint: obj.data['idx_m_complaint'],
+        action: 'U',
+        flow: '13',
+        changes: JSON.stringify(obj),
+        ucreate: sessions[0].user_id,
+        notes: 'telah melakukan CANCEL PEMERIKSAAN pada LHPA'
       }, { transaction: t, });
 
       await t.commit()
@@ -376,6 +445,7 @@ module.exports = {
       obj.data['umodified'] = sessions[0].user_id;
       obj.data['dmodified'] = new Date();
       obj.data['approved_date'] = new Date();
+      obj.data['approved_by'] = sessions[0].user_id;
 
       let is_checked = await models.surgery.count({
         where: {
@@ -448,6 +518,71 @@ module.exports = {
           changes: JSON.stringify(obj),
           ucreate: 'auto',
           notes: 'telah melanjutkan ke flow selanjutnya (rapat pleno)'
+        }
+      ], { transaction: t, });
+
+      await t.commit()
+      return response.success('Penyetujuan bedah aduan berhasil disimpan')
+    } catch (error) {
+      await t.rollback()
+      console.log('err', error)
+      throw (error)
+    }
+  },
+
+  /**
+   * 
+   * @param {*} sid 
+   * @param {*} obj 
+   * @returns 
+   */
+  async approveCancel(sid, obj = {}) {
+    const t = await sequelize.transaction();
+
+    try {
+      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      if (sessions.length === 0)
+        return response.failed('Session expires')
+
+      obj.data['umodified'] = sessions[0].user_id;
+      obj.data['dmodified'] = new Date();
+      obj.data['checked_date'] = null
+      obj.data['approved_date'] = null
+      obj.data['approved_by'] = null
+
+      let is_checked = await models.surgery.count({
+        where: {
+          idx_t_surgery: obj.data.id,
+          [Op.or]: [
+            { checked_by: null, },
+            { checked_date: null }
+          ]
+        },
+        transaction: t
+      })
+
+      let is_approved = await models.surgery.count({
+        where: {
+          idx_t_surgery: obj.data.id,
+          approved_by: { [Op.ne]: null },
+          approved_date: { [Op.ne]: null }
+        },
+        transaction: t
+      })
+
+      if (is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
+      if (is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
+      await models.surgery.update(obj.data, { where: { idx_t_surgery: obj.data.id }, transaction: t });
+      
+      // to Bedah Pengaduan
+      await models.clogs.bulkCreate([
+        {
+          idx_m_complaint: obj.data['idx_m_complaint'],
+          action: 'U',
+          flow: '13',
+          changes: JSON.stringify(obj),
+          ucreate: sessions[0].user_id,
+          notes: 'telah cancel menyetujui bedah aduan'
         }
       ], { transaction: t, });
 
