@@ -412,7 +412,8 @@ module.exports = {
     const t = await sequelize.transaction();
 
     try {
-      let sessions = await core.checkSession(sid);
+      const sessions = await core.checkSession(sid);
+      let user;
       if (sessions.length === 0)
         return response.failed('Session TIDAK ditemukan');
 
@@ -577,7 +578,8 @@ module.exports = {
     const t = await sequelize.transaction();
 
     try {
-      let sessions = await core.checkSession(sid);
+      const sessions = await core.checkSession(sid);
+      let user;
       if (sessions.length === 0)
         return response.failed('Session TIDAK ditemukan');
 

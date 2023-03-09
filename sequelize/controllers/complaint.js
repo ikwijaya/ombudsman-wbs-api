@@ -1793,6 +1793,45 @@ module.exports = {
         }).catch(e => { throw (e) })
       }
 
+      ///// remove lhpa, lhpa_events & lhpa_action when rollback from LHPA (12)
+      if (parseInt(status_code) == 12) {
+        const lhpa = await models.lhpa.findOne({
+          attributes: ['idx_t_lhpa'],
+          transaction: t,
+          where: { idx_m_complaint: id, record_status: 'A' }
+        }).catch(e => { throw (e) })
+
+        if (lhpa instanceof models.lhpa) {
+          await models.lhpa_events.destroy({
+            transaction: t,
+            where: { idx_t_lhpa: lhpa.getDataValue('idx_t_lhpa'), record_status: 'A' }
+          }).catch(e => { throw (e) })
+
+          await models.lhpa_actions.destroy({
+            transaction: t,
+            where: { idx_t_lhpa: lhpa.getDataValue('idx_t_lhpa'), record_status: 'A' }
+          }).catch(e => { throw (e) })
+        }
+
+        await models.lhpa.destroy({
+          transaction: t,
+          where: { idx_m_complaint: id, record_status: 'A' }
+        }).catch(e => { throw (e) })
+      }
+
+      /////// remove surgery(bedah aduan) data when rollback from Bedah Aduan (13)
+      if (parseInt(status_code) == 13) {
+        await models.surgery.destroy({
+          transaction: t,
+          where: { idx_m_complaint: id, record_status: 'A' }
+        }).catch(e => { throw (e) })
+
+        await models.lhpa.update({ approved_date: null }, {
+          transaction: t,
+          where: { idx_m_complaint: id, record_status: 'A' }
+        }).catch(e => { throw (e) })
+      }
+
       // added history
       await models.clogs.create({
         idx_m_complaint: id,
@@ -1805,6 +1844,7 @@ module.exports = {
       await t.commit()
       return response.success(`Pengaduan nomor ${c.getDataValue('form_no')} berhasil di kembalikan ke tahapan ${status.getDataValue('name')}`)
     } catch (error) {
+      console.log(`ro => `, error)
       await t.rollback()
       throw (error)
     }

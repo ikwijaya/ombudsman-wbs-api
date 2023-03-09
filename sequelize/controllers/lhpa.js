@@ -5,6 +5,7 @@ const core = require('./core');
 const { response } = require('../../models/index');
 const sequelize = require('..');
 const { API_URL } = require('../../config')
+const FORM_ID = 12
 
 module.exports = {
   /**
@@ -15,16 +16,14 @@ module.exports = {
    */
   async get(sid, id = null) {
     try {
-      let sessions = await core.checkSession(sid)
+      const sessions = await core.checkSession(sid)
       if (sessions.length === 0)
         return null;
 
       // check roles
-      let r = await core.checkRoles(sessions[0].user_id,[12, 92]);
-      let is_void_checker = r.filter(a => a.idx_m_form == 92 && a.is_read).length > 0
-
-      // additional
-      let studies = await models.complaint_studies.findOne(
+      const who = sessions[0].user_code;
+      const r = await core.checkRoles(sessions[0].user_id,[FORM_ID]);
+      const studies = await models.complaint_studies.findOne(
         {
           attributes: ['idx_t_complaint_study', 'notes', 'simple_app_no'],
           include: [
@@ -77,13 +76,13 @@ module.exports = {
         }
       )
 
-      let determination = await models.complaint_determinations.findOne({
+      const determination = await models.complaint_determinations.findOne({
         attributes: ['date', 'st_number'],
         where: { record_status: 'A', idx_m_complaint: id }
       })
 
       let ucreate;
-      let complaint = await models.complaints.findOne({
+      const complaint = await models.complaints.findOne({
         attributes: [
           'idx_m_complaint', 'manpower', 'description', 'ucreate', 'hopes', 'source_complaint', 'form_no', 'date',
           [Sequelize.literal(`case when complaints.idx_m_legal_standing = -1 then true else false end`), 'is_kuasa_pelapor']
@@ -156,15 +155,15 @@ module.exports = {
         order: [['dcreate', 'asc']]
       })
 
-      let is_update = r.filter(a => a.idx_m_form == 12 && a.is_update).length > 0
-      let users = await models.users.findAll({ raw: true, attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name'], 'idx_m_user'], where: { idx_m_user_type: { [Op.ne]: -1 } } })
+      const is_update = r.filter(a => a.idx_m_form == FORM_ID && a.is_update).length > 0
+      const users = await models.users.findAll({ raw: true, attributes: [[Sequelize.literal(`concat(users.fullname,' - ', users.email)`), 'name'], 'idx_m_user'], where: { idx_m_user_type: { [Op.ne]: -1 } } })
       if (m.length > 0) {
         m = JSON.parse(JSON.stringify(m));
         m.map(async (e) => {
-          let st_date = determination instanceof models.complaint_determinations ? determination.getDataValue('date') : null;
-          let st_number = determination instanceof models.complaint_determinations ? determination.getDataValue('st_number') : null;
-          let is_kuasa = complaint instanceof models.complaints ? complaint.getDataValue('is_kuasa_pelapor') : false;
-          let form_no = complaint instanceof models.complaints ? complaint.getDataValue('form_no') : null;
+          const st_date = determination instanceof models.complaint_determinations ? determination.getDataValue('date') : null;
+          const st_number = determination instanceof models.complaint_determinations ? determination.getDataValue('st_number') : null;
+          const is_kuasa = complaint instanceof models.complaints ? complaint.getDataValue('is_kuasa_pelapor') : false;
+          const form_no = complaint instanceof models.complaints ? complaint.getDataValue('form_no') : null;
 
           e.form_no = form_no;
           e.date = complaint instanceof models.complaints ? complaint.getDataValue('date') : null
@@ -196,27 +195,36 @@ module.exports = {
           e.approved_by_name = users.filter(a => a['idx_m_user'] == e['approved_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['approved_by'])[0].name : null
           e.checked_by_name = users.filter(a => a['idx_m_user'] == e['checked_by']).length > 0 ? users.filter(a => a['idx_m_user'] == e['checked_by'])[0].name : null
           
+          const uid = sessions[0].user_id
+          if(['inspektorat', 'kumm'].includes(who)) e.is_update = is_update && e.arranged_date == null && e.checked_date == null
+          if('kkr' == who) e.is_update = e.checked_by == uid && !e.approved_by && e.arranged_date != null
+          if('kkumm' == who) e.is_update = e.approved_by == uid
+          
+          e.is_check = e.checked_by == uid && !e.approved_by && e.arranged_date != null
+          e.is_approve = e.approved_by == uid
+          e.who = who
+
           /** SECURITY */
-          if((e.arranged_by == sessions[0].user_id || !e.arranged_date) && is_update){
-            e.is_update = !e.checked_date
-            e.is_check = false
-            e.is_approve = false
-            e.is_update2 = !e.checked_date || !e.approved_date
-          }
+          // if((e.arranged_by == sessions[0].user_id || !e.arranged_date) && is_update){
+          //   e.is_update = !e.checked_date
+          //   e.is_check = false
+          //   e.is_approve = false
+          //   e.is_update2 = !e.checked_date || !e.approved_date
+          // }
 
-          if((e.checked_by == sessions[0].user_id || is_void_checker) && is_update){
-            e.is_update = !e.approved_date
-            e.is_check = !e.approved_date
-            e.is_approve = false
-            e.is_update2 = !e.approved_date
-          }
+          // if((e.checked_by == sessions[0].user_id || is_void_checker) && is_update){
+          //   e.is_update = !e.approved_date
+          //   e.is_check = !e.approved_date
+          //   e.is_approve = false
+          //   e.is_update2 = !e.approved_date
+          // }
 
-          if(e.approved_by == sessions[0].user_id && is_update){
-            e.is_update = true
-            e.is_check = false
-            e.is_approve = true
-            e.is_update2 = false
-          }
+          // if(e.approved_by == sessions[0].user_id && is_update){
+          //   e.is_update = true
+          //   e.is_check = false
+          //   e.is_approve = true
+          //   e.is_update2 = false
+          // }
           /** END -- SECURITY */
         })
 
@@ -224,6 +232,7 @@ module.exports = {
       }
 
       return {
+        who: who,
         items: m,
         item: complaint,    // complaint
         item2: studies      // studies
@@ -285,14 +294,21 @@ module.exports = {
     const t = await sequelize.transaction();
 
     try {
-      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      const sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      let user;
       if (sessions.length === 0)
         return response.failed('Session expires')
 
       obj.lhpa['umodified'] = sessions[0].user_id;
       obj.lhpa['dmodified'] = new Date();
       obj.lhpa['arranged_by'] = sessions[0].user_id;
-      obj.lhpa['arranged_date'] = new Date()
+      if(obj.lhpa['checked_by']) obj.lhpa['arranged_date'] = new Date()
+      if(obj.lhpa['checked_by'])
+        user = await models.users.findOne({
+          transaction: t,
+          attributes: ['fullname', 'email'],
+          where: { record_status: 'A', idx_m_user: obj.lhpa['checked_by'] }
+        }).catch(e => { throw(e) })
       
       await models.lhpa.update(obj.lhpa, {
         where: { idx_t_lhpa: obj.lhpa.id },
@@ -308,6 +324,7 @@ module.exports = {
       }, { transaction: t, });
 
       await t.commit()
+      if(obj.lhpa['checked_by']) return response.success(`Sukses melakukan assign ke ${user.getDataValue('fullname')}`)
       return response.success('Update berhasi disimpan')
     } catch (error) {
       await t.rollback()
@@ -325,15 +342,23 @@ module.exports = {
     const t = await sequelize.transaction();
 
     try {
-      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      const sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      let user;
       if (sessions.length === 0)
         return response.failed('Session expires')
 
       obj.lhpa['umodified'] = sessions[0].user_id;
       obj.lhpa['dmodified'] = new Date();
-      obj.lhpa['checked_date'] = new Date();
+      obj.lhpa['checked_by'] = sessions[0].user_id
+      if(obj.lhpa['approved_by']) obj.lhpa['checked_date'] = new Date();
+      if(obj.lhpa['approved_by'])
+        user = await models.users.findOne({
+          transaction: t,
+          attributes: ['fullname', 'email'],
+          where: { record_status: 'A', idx_m_user: obj.lhpa['approved_by'] }
+        }).catch(e => { throw(e) })
 
-      let is_arranged = await models.lhpa.count({
+      const is_arranged = await models.lhpa.count({
         where: {
           idx_t_lhpa: obj.lhpa.id,
           [Op.or]: [
@@ -345,8 +370,7 @@ module.exports = {
       })
 
       if(is_arranged > 0) return response.failed('Form belum dilakukan penyusunan, Silakan klik tombol SIMPAN untuk melakukan sign penyusunan.')
-      if(!obj.lhpa['approved_by']) return response.failed('Kolom Disetujui Oleh TIDAK boleh kosong')
-
+      
       await models.lhpa.update(obj.lhpa, {
         where: { idx_t_lhpa: obj.lhpa.id },
         transaction: t,
@@ -361,7 +385,54 @@ module.exports = {
       }, { transaction: t, });
 
       await t.commit()
+      if(obj.lhpa['approved_by']) return response.success(`Sukses melakukan assign ke ${user.getDataValue('fullname')} `, [])
       return response.success('Pemeriksaan lhpa berhasil disimpan')
+    } catch (error) {
+      await t.rollback()
+      console.log('err', error)
+      throw (error)
+    }
+  },
+
+  /**
+   * 
+   * @param {*} sid 
+   * @param {*} obj 
+   * @returns 
+   */
+  async checkCancel(sid, obj = {}) {
+    const t = await sequelize.transaction();
+
+    try {
+      const sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      let user;
+      if (sessions.length === 0)
+        return response.failed('Session expires')
+
+      obj.lhpa['umodified'] = sessions[0].user_id;
+      obj.lhpa['dmodified'] = new Date();
+      obj.lhpa['arranged_date'] = null
+      obj.lhpa['approved_by'] = null
+      obj.lhpa['approved_date'] = null
+      obj.lhpa['checked_by'] = null
+      obj.lhpa['checked_date'] = null
+      
+      await models.lhpa.update(obj.lhpa, {
+        where: { idx_t_lhpa: obj.lhpa.id },
+        transaction: t,
+      });
+
+      await models.clogs.create({
+        idx_m_complaint: obj.lhpa['idx_m_complaint'],
+        action: 'U',
+        flow: '12',
+        changes: JSON.stringify(obj),
+        ucreate: sessions[0].user_id,
+        notes: 'telah melakukan CANCEL PEMERIKSAAN pada LHPA'
+      }, { transaction: t, });
+
+      await t.commit()
+      return response.success('Cancel pemeriksaan lhpa berhasil disimpan')
     } catch (error) {
       await t.rollback()
       console.log('err', error)
@@ -378,15 +449,16 @@ module.exports = {
     const t = await sequelize.transaction();
 
     try {
-      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      const sessions = await core.checkSession(sid).catch(e => { throw (e) })
       if (sessions.length === 0)
         return response.failed('Session expires')
 
       obj.lhpa['umodified'] = sessions[0].user_id;
       obj.lhpa['dmodified'] = new Date();
       obj.lhpa['approved_date'] = new Date();
+      obj.lhpa['approved_by'] = sessions[0].user_id;
 
-      let is_checked = await models.lhpa.count({
+      const is_checked = await models.lhpa.count({
         where: {
           idx_t_lhpa: obj.lhpa.id,
           [Op.or]: [
@@ -397,7 +469,7 @@ module.exports = {
         transaction: t
       })
 
-      let is_approved = await models.lhpa.count({
+      const is_approved = await models.lhpa.count({
         where: {
           idx_t_lhpa: obj.lhpa.id,
           approved_by: {[Op.ne]: null},
@@ -415,6 +487,7 @@ module.exports = {
         idx_m_status: 13
       },{transaction:t, where: { idx_m_complaint: obj.lhpa['idx_m_complaint'], }})
 
+      ///// ada auto create
       await models.surgery.create({
         idx_m_complaint: obj.lhpa['idx_m_complaint'],
         ucreate: sessions[0].user_id
@@ -442,6 +515,70 @@ module.exports = {
 
       await t.commit()
       return response.success('Penyetujuan lhpa berhasil disimpan')
+    } catch (error) {
+      await t.rollback()
+      console.log('err', error)
+      throw (error)
+    }
+  },
+  /**
+   * 
+   * @param {*} sid 
+   * @param {*} obj 
+   * @returns 
+   */
+  async approveCancel(sid, obj = {}) {
+    const t = await sequelize.transaction();
+
+    try {
+      const sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      if (sessions.length === 0)
+        return response.failed('Session expires')
+
+      obj.lhpa['umodified'] = sessions[0].user_id;
+      obj.lhpa['dmodified'] = new Date();
+      obj.lhpa['checked_date'] = null
+      obj.lhpa['approved_date'] = null
+      obj.lhpa['approved_by'] = null
+
+      const is_checked = await models.lhpa.count({
+        where: {
+          idx_t_lhpa: obj.lhpa.id,
+          [Op.or]: [
+            { checked_by: null, },
+            { checked_date: null }
+          ]
+        },
+        transaction: t
+      })
+
+      const is_approved = await models.lhpa.count({
+        where: {
+          idx_t_lhpa: obj.lhpa.id,
+          approved_by: {[Op.ne]: null},
+          approved_date: {[Op.ne]: null}
+        },
+        transaction: t
+      })
+
+      if(is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
+      if(is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
+      await models.lhpa.update(obj.lhpa, { where: { idx_t_lhpa: obj.lhpa.id }, transaction: t });
+      
+      // to Bedah Pengaduan
+      await models.clogs.bulkCreate([
+        {
+          idx_m_complaint: obj.lhpa['idx_m_complaint'],
+          action: 'U',
+          flow: '12',
+          changes: JSON.stringify(obj),
+          ucreate: sessions[0].user_id,
+          notes: 'telah melakukan CANCEL PENYETUJUAN pada LHPA'
+        }
+      ], { transaction: t, });
+
+      await t.commit()
+      return response.success('Cancel penyetujuan LHPA berhasil disimpan')
     } catch (error) {
       await t.rollback()
       console.log('err', error)
