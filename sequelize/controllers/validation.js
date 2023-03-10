@@ -230,7 +230,7 @@ module.exports = {
 
       obj.validation['ucreate'] = sessions[0].user_id;
       obj.validation['arranged_by'] = sessions[0].user_id;
-      
+
       let v = await models.validation.create(obj.validation, { transaction: t });
       let checklists = obj.checklists;
       let communication = obj.communication;
@@ -320,15 +320,18 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session TIDAK ditemukan');
 
+      const step = JSON.parse(obj.validation['step'])
+      if (step.length == 0) return response.failed('Gagal melanjutkan, Kolom Tahapan pada poin A. Informasi Aduan TIDAK boleh kosong.')
+
       obj.validation['umodified'] = sessions[0].user_id;
       obj.validation['dmodified'] = new Date();
-      if(obj.validation['checked_by']) obj.validation['arranged_date'] = new Date();
-      if(obj.validation['checked_by'])
+      if (obj.validation['checked_by']) obj.validation['arranged_date'] = new Date();
+      if (obj.validation['checked_by'])
         user = await models.users.findOne({
           transaction: t,
           attributes: ['fullname', 'email'],
           where: { record_status: 'A', idx_m_user: obj.validation['checked_by'] }
-        }).catch(e => { throw(e) })
+        }).catch(e => { throw (e) })
 
       // delete heula before create, bisa pake beforeDestroy tp belom paham cuy
       await models.validation_checklists.destroy({ transaction: t, where: { idx_t_validation: obj.validation.id } })
@@ -393,7 +396,7 @@ module.exports = {
       }
 
       await t.commit();
-      if(obj.validation['checked_by']) return response.success(`Sukses melakukan assign ke ${user.getDataValue('fullname')} `, [])
+      if (obj.validation['checked_by']) return response.success(`Sukses melakukan assign ke ${user.getDataValue('fullname')} `, [])
       return response.success('Sukses meng-update validasi', [])
     } catch (err) {
       await t.rollback()
@@ -417,16 +420,19 @@ module.exports = {
       if (sessions.length === 0)
         return response.failed('Session TIDAK ditemukan');
 
+      const step = JSON.parse(obj.validation['step'])
+      if (step.length == 0) return response.failed('Gagal melanjutkan, Kolom Tahapan pada poin A. Informasi Aduan TIDAK boleh kosong.')
+
       obj.validation['umodified'] = sessions[0].user_id;
       obj.validation['dmodified'] = new Date();
       obj.validation['checked_by'] = sessions[0].user_id;
-      if(obj.validation['approved_by']) obj.validation['checked_date'] = new Date();
-      if(obj.validation['approved_by'])
+      if (obj.validation['approved_by']) obj.validation['checked_date'] = new Date();
+      if (obj.validation['approved_by'])
         user = await models.users.findOne({
           transaction: t,
           attributes: ['fullname', 'email'],
           where: { record_status: 'A', idx_m_user: obj.validation['approved_by'] }
-        }).catch(e => { throw(e) })
+        }).catch(e => { throw (e) })
 
       let is_arranged = await models.validation.count({
         where: {
@@ -505,7 +511,7 @@ module.exports = {
       }
 
       await t.commit();
-      if(obj.validation['approved_by']) return response.success(`Sukses melakukan assign ke ${user.getDataValue('fullname')} `, [])
+      if (obj.validation['approved_by']) return response.success(`Sukses melakukan assign ke ${user.getDataValue('fullname')} `, [])
       return response.success('Pemeriksaan validasi berhasil disimpan', [])
     } catch (err) {
       await t.rollback()
@@ -579,9 +585,11 @@ module.exports = {
 
     try {
       const sessions = await core.checkSession(sid);
-      let user;
       if (sessions.length === 0)
         return response.failed('Session TIDAK ditemukan');
+
+      const step = JSON.parse(obj.validation['step'])
+      if (step.length == 0) return response.failed('Gagal melanjutkan, Kolom Tahapan pada poin A. Informasi Aduan TIDAK boleh kosong.')
 
       obj.validation['umodified'] = sessions[0].user_id;
       obj.validation['dmodified'] = new Date();
@@ -610,7 +618,7 @@ module.exports = {
 
       if (is_checked > 0) return response.failed('Form belum dilakukan pengecekan, Silakan klik tombol DIPERIKSA untuk melakukan sign pemeriksaan.')
       if (is_approved > 0) return response.failed(`Form sudah dilakukan penyetujuan`)
-
+      
       // delete heula before create, bisa pake beforeDestroy tp belom paham cuy
       await models.validation_checklists.destroy({ transaction: t, where: { idx_t_validation: obj.validation.id } })
       await models.validation_comm.destroy({ transaction: t, where: { idx_t_validation: obj.validation.id } })

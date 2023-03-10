@@ -313,7 +313,9 @@ module.exports = {
     try {
       let steps = await models.options.findAll(
         {
-          attributes: ['value', 'text'],
+          attributes: [
+            'value', [Sequelize.literal("text || ' (LHPA ' || remarks || ')'"), 'text']
+          ],
           where: {
             option_id: '4'
           },
@@ -321,7 +323,7 @@ module.exports = {
             ['order_no', 'ASC']
           ]
         }
-      )
+      ).catch(e => { throw(e) })
 
       let checklists = await models.options.findAll(
         {
@@ -457,7 +459,8 @@ module.exports = {
         scopes: scopes
       }
     } catch (err) {
-      throw (error)
+      console.log(`err`, err)
+      throw (err)
     }
   },
 

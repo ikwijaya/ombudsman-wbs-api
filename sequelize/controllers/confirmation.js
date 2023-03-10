@@ -187,6 +187,19 @@ module.exports = {
       if (sessions.length === 0 && id)
         return response.failed('Session expires')
 
+      //// define LAPORAN MASYARAKAT atau PENCEGAHAN
+      //// 9,10 = LAPORAN MASYARAKAT/PENYELESAIAN
+      //// 5 = LAPORAN PENCEGAHAN
+      const vd = await models.validation.findOne({
+        transaction: t,
+        attributes: ['product', 'step'],
+        where: { idx_m_complaint: id }
+      }).catch(e => { throw(e) })
+
+      const vProduct = !vd ? [] : JSON.parse(vd.getDataValue('product'))
+      const step = !vd ? [] : JSON.parse(vd.getDataValue('step'))
+      if(step.length == 0) return response.failed('Tidak dapat melakukan APPROVE karena terdapat data yang kurang sesuai pada Tahapan Validasi.')
+
       let where = {};
       where['idx_m_complaint'] = id;
       // where['via'] = { [Op.eq]: null };
@@ -202,32 +215,22 @@ module.exports = {
         }
       )
 
-      //// define LAPORAN MASYARAKAT atau PENCEGAHAN
-      //// 9,10 = LAPORAN MASYARAKAT/PENYELESAIAN
-      //// 5 = LAPORAN PENCEGAHAN
-      const decision = await models.complaint_decisions.findOne(
-        {
-          transaction: t,
-          attributes: ['idx_m_violation'],
-          where: { record_status: 'A', idx_m_complaint: id }
-        }
-      ).catch(e => { throw(e) })
-
-      const violation = decision.getDataValue('idx_m_violation')
       const pendapat_pemeriksa = `<p><strong>Substansi</strong>, &nbsp;<br>&nbsp;</p><p><strong>Prosedur</strong><br>&nbsp;</p><p><strong>Produk</strong><br>&nbsp;</p>`
       const tindak_lanjut = `<p>Usulan tindak lanjut, sebagai berikut:</p><ol><li>Kepada Teradu:&nbsp;<ul><li>&nbsp;</li></ul></li><li>Kepada Pengadu:<ul><li>&nbsp;</li></ul></li><li>(other option)&nbsp;</li></ol>`
       const analisis_pemeriksaan = `<p>Analisis pemeriksaan aduan, sebagai berikut:</p><ol><li>Substansi:<ul><li>&nbsp;</li></ul></li><li>Prosedur:&nbsp;<ul><li>&nbsp;</li></ul></li><li>&nbsp;Produk:<ul><li>&nbsp;</li></ul></li></ol>`
-
-      const vd = await models.validation.findOne({
+      const opts = await models.options.findAll({
+        raw: true,
         transaction: t,
-        attributes: ['product'],
-        where: { idx_m_complaint: id }
+        attributes: ['remarks'],
+        where: { option_id: '4', value: { [Op.in]: step.map(e => e.value) } }
       }).catch(e => { throw(e) })
-      const vProduct = !vd ? [] : JSON.parse(vd.getDataValue('product'))
+
+      //// remove duplicate
+      const unikOpt = [...new Set(opts.map(e => e.remarks))]
       
       // AUTO CREATE LHPA 
       // 1. LAPORAN PENCEGAHAN
-      if ([5].includes(parseInt(violation))) {
+      if (unikOpt.includes('PENCEGAHAN')) {
         const lhpa_01 = await models.lhpa.create({
           idx_m_complaint: id, type: 'PENCEGAHAN',
           analisis_pemeriksaan: analisis_pemeriksaan,
@@ -438,7 +441,7 @@ module.exports = {
       }
 
       // 1. LAPORAN PENYELESAIAN
-      if ([9, 10].includes(parseInt(violation))) {
+      if (unikOpt.includes('PENYELESAIAN')) {
         const lhpa_02 = await models.lhpa.create({
           idx_m_complaint: id, type: 'PENYELESAIAN',
           analisis_pemeriksaan: analisis_pemeriksaan,
