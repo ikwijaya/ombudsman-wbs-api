@@ -128,10 +128,10 @@ module.exports = {
         e.value = parseInt(value)
         if (value == 5) {
           e.next_color = r.filter(a => a.idx_m_form == 5 && (a.is_read)).length > 0 ? 'blue' : 'red';
-          e.next_status = r.filter(a => a.idx_m_form == 5 && (a.is_read)).length > 0 ? 'SELANJUTNYA' : 'TIDAK DI IZINKAN'
+          e.next_status = r.filter(a => a.idx_m_form == 5 && (a.is_read)).length > 0 ? 'GOTO' : 'FORBIDDEN'
         } else {
           e.next_color = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'blue' : 'red';
-          e.next_status = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'SELANJUTNYA' : 'TIDAK DI IZINKAN'
+          e.next_status = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'GOTO' : 'FORBIDDEN'
         }
 
         e.is_rollback =
@@ -354,7 +354,7 @@ module.exports = {
         e.name = `${e.name}`;
         e.name_color = 'black';
         e.next_color = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'blue' : 'red';
-        e.next_status = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'SELANJUTNYA' : 'TIDAK DI IZINKAN'
+        e.next_status = r.filter(a => a.idx_m_form == value && (a.is_insert || a.is_update)).length > 0 ? 'GOTO' : 'FORBIDDEN'
         e.is_rollback =
           r.filter(a => a.idx_m_form == RollbackProcedure && a.is_read).length > 0 &&
           parseInt(c.getDataValue('status_code')) == parseInt(e.value) &&

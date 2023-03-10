@@ -143,7 +143,7 @@ module.exports = {
                 attributes: ['idx_t_action_detail', 'step', 'date', 'notes', 'is_checklist', [Sequelize.literal(`true`), 'is_update'], [Sequelize.literal(`true`), 'is_delete'], 'sort'],
                 model: models.lhpa_act_detail,
                 order: [
-                  ['sort', 'asc'],
+                  [models.lhpa, models.lhpa_actions, {model: models.lhpa_act_detail},'sort', 'desc'],
                   // ['idx_t_action_detail', 'asc'],
                   // ['dcreate', 'asc'],
                 ]
@@ -152,7 +152,9 @@ module.exports = {
           }
         ],
         where: { idx_m_complaint: id, record_status: 'A' },
-        order: [['dcreate', 'asc']]
+        order: [
+          ['dcreate', 'asc'],
+        ]
       })
 
       const is_update = r.filter(a => a.idx_m_form == FORM_ID && a.is_update).length > 0
