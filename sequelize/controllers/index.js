@@ -27,6 +27,7 @@ const clogs = require('./clogs')
 const userregion = require('./userregion')
 const region = require('./region')
 const usertypes = require('./usertypes')
+const dashboard = require('./dashboard')
 
 module.exports = {
   additional, core, security,
@@ -37,5 +38,5 @@ module.exports = {
   request, clarification, confirmation,
   study_lys, lhpa, surgery, pleno, delivery,
   users, letters, clogs, userregion, region,
-  usertypes
+  usertypes, dashboard
 }

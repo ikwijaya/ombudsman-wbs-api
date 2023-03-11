@@ -27,3 +27,4 @@ INSERT INTO m_form (idx_m_form,form_name,form_url,form_color,form_icon,form_sort
 	 (203,'External Users','/ExternalUsers',NULL,'mdi-user-groups','101',NULL,true),
 	 (9998,'Module','/Master','red','mdi-chart-donut','999',NULL,true),
 	 (300,'Rollback Procedure',NULL,NULL,NULL,NULL,1,true);
+	 (21,'Statistik','/Statistik','white','mdi-graph','1',NULL,true),

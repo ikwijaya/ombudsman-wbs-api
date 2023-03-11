@@ -37,10 +37,10 @@ class Dashboard {
    * @param {*} sid 
    * @returns 
    */
-  async getCountByType(sid) {
+  async getCountByType(sid, isp=false) {
     try {
-      let db = knex(opt);
-      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      const db = knex(opt);
+      const sessions = await core.checkSession(sid).catch(e => { throw (e) })
       if (sessions.length === 0)
         return []
 
@@ -65,9 +65,16 @@ class Dashboard {
             .andOn('mo.option_id', '=', db.raw(`?`, ['1']))
         })
         .whereRaw(`true=CASE WHEN 'PUBLIC'=? THEN mc.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
+        .andWhereRaw(`
+          case 
+            when ?=true then mc.idx_m_status IN (1,2,3,4,5,6)
+            when ?=false then mc.idx_m_status IN (7,8,9,10,11,12,13,14,15,16,17)
+          else false end
+          `, [isp,isp])
         .andWhereRaw(`mc.form_status='1'`)
         .groupByRaw(`mo.text, mo.value`)
     } catch (error) {
+      console.log(`err`, error)
       throw (error)
     }
   }
@@ -180,36 +187,71 @@ class Dashboard {
         .select(
           'c.idx_m_complaint',
           'c.form_no',
+          db.raw(`date_part('year', c.dcreate) as year`),
           db.raw(`concat('Regional ', CAST(wk.regional AS VARCHAR)) AS regional`),
           db.raw(`CASE WHEN c.idx_m_legal_standing = -1 THEN c.manpower ELSE u.fullname END AS pengadu`),
           'str.name AS teradu',
           'wk.name AS unit_kerja',
+          db.raw(`
+            CASE 
+              WHEN c.idx_m_status IN (3,4,5,6) THEN concat('/Inspektorat/', c.idx_m_complaint)
+              WHEN c.idx_m_status IN (7,8,9,10,11,12,13,14,15,16,17) THEN concat('/KeasistenanUtama/', c.idx_m_complaint)
+              ELSE null 
+            END AS to
+          `),
           // 'st.name AS tahapan',
-          db.raw(`CASE WHEN st.idx_m_status = 3 THEN CONCAT(st.name,'*') ELSE st.name END AS tahapan`)
+          db.raw(`CASE WHEN st.idx_m_status = 3 THEN CONCAT(st.name,'*') ELSE st.name END AS tahapan`),
+          db.raw(`
+          CASE 
+            WHEN dc.idx_m_violation IN (5,9) THEN 'MDP'
+            WHEN dc.idx_m_violation IN (10) THEN 'TPA'
+          ELSE null END AS jenis_aduan
+          `),
+          db.raw(`
+          CASE 
+            WHEN dc.idx_m_violation IN (5,9) THEN 'purple darken-1'
+            WHEN dc.idx_m_violation IN (10) THEN 'red darken-1'
+          ELSE null END AS jenis_aduan_color
+          `),
+          db.raw(`case 
+            when td.date is not null then concat((td.date::date - now()::date),' days') 
+            else null end 
+          as duration`),
+          db.raw(`case 
+            when tcl.ba_date is null then 'BA Not Found'  
+            when tcl.ba_date is not null and td.date is not null 
+              then concat((td.date::date - tcl.ba_date::date), ' days')
+            else null end 
+          as close_duration`)
         )
+        .leftJoin('t_complaint_decision AS dc', 'c.idx_m_complaint', 'dc.idx_m_complaint')
         .innerJoin('t_complaint_study AS s', 'c.idx_m_complaint', 's.idx_m_complaint')
         .innerJoin('t_complaint_study_reported AS str', 's.idx_t_complaint_study', 'str.idx_t_complaint_study')
         .innerJoin('m_work_unit AS wk', 'str.idx_m_work_unit', 'wk.idx_m_work_unit')
         .leftJoin('m_status AS st', 'st.idx_m_status', 'c.idx_m_status')
         .leftJoin('m_user AS u', db.raw(`CAST(u.idx_m_user AS VARCHAR)`), 'c.ucreate')
+        .leftJoin('t_complaint_determination AS td', 'c.idx_m_complaint', 'td.idx_m_complaint')
+        .leftJoin('t_closing AS tcl', 'c.idx_m_complaint', 'tcl.idx_m_complaint')
         .andWhereRaw(`true=CASE WHEN 'PUBLIC'=? THEN c.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
         .andWhereRaw(`c.form_status = '1'`)
+        .orderByRaw(`c.dcreate DESC`)
         .then(async r => {
-          return await db('t_complaint_determination AS td')
-            .select(
-              'td.idx_m_complaint',
-              db.raw(`concat(u.fullname, ' - ', u.email) AS name`)
-            )
-            .innerJoin('t_complaint_determination_user AS tds', 'td.idx_t_complaint_determination', 'tds.idx_t_complaint_determination')
-            .innerJoin('m_user AS u', 'u.idx_m_user', 'tds.idx_m_user')
-            .whereRaw('td.idx_m_complaint is not null')
-            .then((r2 => {
-              r.map(e => {
-                e['penugasan'] = r2.filter(a => a['idx_m_complaint'] == e['idx_m_complaint'])
-              })
+          return r
+          // return await db('t_complaint_determination AS td')
+          //   .select(
+          //     'td.idx_m_complaint',
+          //     db.raw(`concat(u.fullname, ' - ', u.email) AS name`)
+          //   )
+          //   .innerJoin('t_complaint_determination_user AS tds', 'td.idx_t_complaint_determination', 'tds.idx_t_complaint_determination')
+          //   .innerJoin('m_user AS u', 'u.idx_m_user', 'tds.idx_m_user')
+          //   .whereRaw('td.idx_m_complaint is not null')
+          //   .then((r2 => {
+          //     r.map(e => {
+          //       e['penugasan'] = r2.filter(a => a['idx_m_complaint'] == e['idx_m_complaint'])
+          //     })
 
-              return r
-            }))
+          //     return r
+          //   }))
         })
     } catch (error) {
       throw (error)
@@ -413,8 +455,8 @@ class Dashboard {
 
   async getCountByUKRegion2(sid) {
     try {
-      let db = knex(opt);
-      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      const db = knex(opt);
+      const sessions = await core.checkSession(sid).catch(e => { throw (e) })
       if (sessions.length === 0)
         return []
 
@@ -471,6 +513,42 @@ class Dashboard {
       throw (error)
     }
   }
+  /**
+   * 
+   * @param {*} sid 
+   * @returns 
+   */
+  async getCountByUKRegion3(sid) {
+    try {
+      const db = knex(opt);
+      const sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      if (sessions.length === 0)
+        return []
+
+      return await db('m_work_unit AS wk')
+        .select(
+          db.raw(`count(wk.regional) AS value`),
+          db.raw(`CONCAT('Regional ', wk.regional) AS text`),
+          db.raw(`CASE 
+              WHEN c.idx_m_status > 1 AND c.idx_m_status < 17 THEN 'Aduan Diterima/Diproses' 
+              WHEN c.idx_m_status > 16 THEN 'Aduan Diselesaikan' 
+            END AS status_name`
+          ),
+        )
+        .innerJoin('t_complaint_study_reported AS rp', 'wk.idx_m_work_unit', 'rp.idx_m_work_unit')
+        .innerJoin('t_complaint_study AS s', 'rp.idx_t_complaint_study', 's.idx_t_complaint_study')
+        .leftJoin('m_complaint AS c', 's.idx_m_complaint', 'c.idx_m_complaint')
+        .whereRaw(`true=CASE WHEN 'PUBLIC'=? THEN c.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
+        .andWhereRaw(`c.form_status = '1' AND wk.regional IS NOT NULL`)
+        .groupByRaw(`wk.regional, 
+          CASE 
+            WHEN c.idx_m_status > 1 AND c.idx_m_status < 17 THEN 'Aduan Diterima/Diproses' 
+            WHEN c.idx_m_status > 16 THEN 'Aduan Diselesaikan' 
+          END`)
+    } catch (error) {
+      throw (error)
+    }
+  }
 
   /**
    * 
@@ -507,8 +585,8 @@ class Dashboard {
    */
   async getComplaintByViolation(sid) {
     try {
-      let db = knex(opt);
-      let sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      const db = knex(opt);
+      const sessions = await core.checkSession(sid).catch(e => { throw (e) })
       if (sessions.length === 0)
         return []
 
@@ -637,6 +715,32 @@ class Dashboard {
         .innerJoin(`m_user AS d`, `c.idx_m_user`, `d.idx_m_user`)
         .whereRaw(`true=CASE WHEN 'PUBLIC'=? THEN a.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
         .groupBy('d.idx_m_user');
+    } catch (error) {
+      throw (error)
+    }
+  }
+
+  /**
+   * 
+   * @param {*} sid 
+   * @returns 
+   */
+  async getCountByMonthly(sid) {
+    try {
+      const db = knex(opt);
+      const sessions = await core.checkSession(sid).catch(e => { throw (e) })
+      if (sessions.length === 0)
+        return []
+
+      return await db('m_complaint AS a')
+        .select(
+          db.raw(`COUNT(to_char(a.dcreate, 'YYYY-MM')) AS value`, []),
+          db.raw(`to_char(a.dcreate, 'MON') AS month`, []),
+          db.raw(`to_char(a.dcreate, 'YYYY') AS year`, []),
+        )
+        .whereRaw(`true=CASE WHEN 'PUBLIC'=? THEN a.ucreate=? ELSE true END`, [sessions[0].user_type, sessions[0].user_id])
+        .andWhereRaw(`a.idx_m_status >= 2`)
+        .groupByRaw(`to_char(a.dcreate, 'YYYY-MM'),to_char(a.dcreate, 'MON'),to_char(a.dcreate, 'YYYY')`)
     } catch (error) {
       throw (error)
     }
