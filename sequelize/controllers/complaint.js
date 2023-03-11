@@ -1845,6 +1845,30 @@ module.exports = {
         }).catch(e => { throw (e) })
       }
 
+      ////// remove penyampaian tindak lanjut data when rollback from here (15)
+      if(parseInt(status_code) == 15){
+        await models.delivery.destroy({
+          transaction: t,
+          where: { idx_m_complaint: id, record_status: 'A' }
+        }).catch(e => { throw (e) })
+      }
+
+      ////// remove data monitoring when rollback from here (16)
+      if(parseInt(status_code) == 16){
+        await models.monitoring.destroy({
+          transaction: t,
+          where: { idx_m_complaint: id, record_status: 'A' }
+        }).catch(e => { throw (e) })
+      }
+
+      ////// remove data closing when rollback from here (17)
+      if(parseInt(status_code) == 17){
+        await models.closing.destroy({
+          transaction: t,
+          where: { idx_m_complaint: id, record_status: 'A' }
+        }).catch(e => { throw (e) })
+      }
+
       // added history
       await models.clogs.create({
         idx_m_complaint: id,

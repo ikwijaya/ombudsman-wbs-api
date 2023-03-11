@@ -129,7 +129,7 @@ module.exports = {
       where[Op.or] = {
         'letter_no': { [Op.eq]: null },
         'letter_date': { [Op.eq]: null },
-        'filename': { [Op.eq]: null }
+        //'filename': { [Op.eq]: null }
       }
 
       let count = await models.delivery.count({
@@ -137,7 +137,7 @@ module.exports = {
         transaction: t
       })
 
-      if(count > 0) return response.failed(`<ul><li>` + ['Kolom Nomor Surat, Tanggal Surat dan Upload Dokumen Surat TIDAK boleh kosong.'].join('</li><li>') + `</li></ul>`)
+      if(count > 0) return response.failed(`<ul><li>` + ['Kolom Nomor Surat dan Tanggal Surat TIDAK boleh kosong.'].join('</li><li>') + `</li></ul>`)
       await models.complaints.update(
         { idx_m_status: 16 }, // to Monitoring
         {
