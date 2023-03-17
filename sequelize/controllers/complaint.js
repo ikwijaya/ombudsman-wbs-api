@@ -1605,13 +1605,15 @@ module.exports = {
    * @param {*} sid 
    * @param {*} id 
    */
-  async rollbackInspektorat(sid, id) {
+  async rollbackInspektorat(sid, id, reason=null) {
     const t = await sequelize.transaction()
 
     try {
       let sessions = await core.checkSession(sid).catch(e => { throw (e) })
       if (sessions.length === 0)
         return response.failed('Session expired, please relogin.')
+
+      if(!reason) return response.failed('Kolom alasan TIDAK boleh kosong')
 
       const c = await models.complaints.findOne(
         {
@@ -1664,7 +1666,8 @@ module.exports = {
         action: 'RB',  //rollback
         flow: c.getDataValue('status_code'),    //pengaduan
         changes: JSON.stringify(c),
-        ucreate: sessions[0].user_id
+        ucreate: sessions[0].user_id,
+        notes: `telah melakukan rollback ke tahapan ${status.getDataValue('name')}, dengan alasan: <b>${reason}</b>`
       }, { transaction: t, });
 
       await t.commit()
@@ -1680,13 +1683,15 @@ module.exports = {
    * @param {*} sid 
    * @param {*} id 
    */
-  async rollbackKUMM(sid, id) {
+  async rollbackKUMM(sid, id, reason) {
     const t = await sequelize.transaction()
 
     try {
       let sessions = await core.checkSession(sid).catch(e => { throw (e) })
       if (sessions.length === 0)
         return response.failed('Session expired, please relogin.')
+
+      if(!reason) return response.failed('Kolom alasan TIDAK boleh kosong')
 
       const c = await models.complaints.findOne(
         {
@@ -1875,7 +1880,8 @@ module.exports = {
         action: 'RB',  //rollback
         flow: c.getDataValue('status_code'),    //pengaduan
         changes: JSON.stringify(c),
-        ucreate: sessions[0].user_id
+        ucreate: sessions[0].user_id,
+        notes: `telah melakukan rollback ke tahapan ${status.getDataValue('name')}, dengan alasan: <b>${reason}</b>`
       }, { transaction: t, });
 
       await t.commit()

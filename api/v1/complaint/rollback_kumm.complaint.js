@@ -4,13 +4,12 @@ const { response } = require('../../../models')
 const { complaint } = require('../../../sequelize/controllers')
 
 router.post('/', async (req, res, next) => {
-  let sid = req.body.sid || null;
-  let id = req.body.idx_m_complaint || null;
-
-  console.log(req.body)
+  const sid = req.body.sid || null;
+  const id = req.body.idx_m_complaint || null;
+  const reason = req.body.reason || null;
 
   try {
-    let o = await complaint.rollbackKUMM(sid, id).catch(e => { throw (e) })
+    const o = await complaint.rollbackKUMM(sid, id, reason).catch(e => { throw (e) })
     res.status(200).send(o)
   } catch (err) {
     res.status(401).send(response.failed(err, []))
