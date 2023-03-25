@@ -32,6 +32,7 @@ module.exports = (sq) => {
     object: DataTypes.TEXT(),
     desc: DataTypes.TEXT(),
     via: DataTypes.STRING,
+    tembusan: DataTypes.JSON(),
 
     dcreate: {
       type: DataTypes.DATE,

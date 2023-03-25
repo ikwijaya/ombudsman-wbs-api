@@ -29,6 +29,8 @@ module.exports = (sq) => {
     approved_by: DataTypes.BIGINT,
     arranged_date: DataTypes.DATE,
     arranged_by: DataTypes.BIGINT,
+    tembusan: DataTypes.JSON(),
+    
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,

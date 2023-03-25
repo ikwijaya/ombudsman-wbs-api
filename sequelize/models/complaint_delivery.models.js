@@ -32,6 +32,7 @@ module.exports = (sq) => {
     path: DataTypes.STRING(),
     mime_type: DataTypes.STRING(),
     filesize: DataTypes.STRING(),
+    tembusan: DataTypes.JSON(),
     
     dcreate: {
       type: DataTypes.DATE,

@@ -35,6 +35,8 @@ module.exports = (sq) => {
     head_of_reg_date: DataTypes.DATE,
     head_of_kumm: DataTypes.BIGINT,
     head_of_kumm_date: DataTypes.DATE,
+    tembusan: DataTypes.JSON(),
+    
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,

@@ -23,6 +23,8 @@ module.exports = (sq) => {
     verification_by: DataTypes.STRING,
     verification_date: DataTypes.DATE,
     remarks: DataTypes.TEXT(),
+    tembusan: DataTypes.JSON(),
+    
     dcreate: {
       type: DataTypes.DATE,
       allowNull: false,

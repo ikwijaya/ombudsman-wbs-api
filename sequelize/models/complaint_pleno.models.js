@@ -20,6 +20,7 @@ module.exports = (sq) => {
     // bego nih, ngapain sih minta di input ulang!!
     pengadu: DataTypes.TEXT(),
     form_no: DataTypes.TEXT(),
+    tembusan: DataTypes.JSON(),
 
     dcreate: {
       type: DataTypes.DATE,
