@@ -19,3 +19,6 @@ It is built using **Node.js**, **Express**, **Sequelize**, and **PostgreSQL**, d
 
 This API powers the Ombudsman WBS web frontend:
 👉 https://wbs2.ombudsman.go.id/#/ 
+
+Please refer this repo for FrontEnd
+https://github.com/ikwijaya/ombudsman-wbs-web 
