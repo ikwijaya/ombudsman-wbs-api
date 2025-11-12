@@ -1,3 +1,4 @@
+require('dotenv').configDotenv()
 const sequelize = require('./sequelize')
 const authenticate = async () => {
   try {

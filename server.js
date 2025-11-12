@@ -1,3 +1,4 @@
+require('dotenv').configDotenv()
 const express = require('express')
 const compression = require('compression')
 const path = require('path')
@@ -8,7 +9,7 @@ const port = PORT
 const app = express()
 const bunyan = require('bunyan')
 const log = bunyan.createLogger({
-    name: APP_CODE,
+    name: APP_CODE ?? 'API',
     serializers: bunyan.stdSerializers
 })
 const sequelize = require('./sequelize')
